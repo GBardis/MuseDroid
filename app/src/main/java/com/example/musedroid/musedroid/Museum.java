@@ -4,14 +4,14 @@ package com.example.musedroid.musedroid;
 // see function createMuseum
 
 public class Museum {
-    String museumId;
+
     String name;
     String description;
     String lat;
     String lon;
 
-    public Museum(String museumId, String name, String description,String lat,String lon) {
-        this.museumId = museumId;
+    public Museum(String name, String description, String lat, String lon) {
+
         this.name = name;
         this.description = description;
         this.lat = lat;

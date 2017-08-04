@@ -13,7 +13,7 @@ public class FirebaseHandler extends AppCompatActivity {
 
     public DatabaseReference mDatabase;
 
-    public void createMuseum(String museumId,Museum museum) {
+    public void createMuseum(String museumId, Museum museum) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("museums").child(museumId).setValue(museum);
     }
