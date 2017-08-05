@@ -14,8 +14,7 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 
 public class FirebaseHandler extends AppCompatActivity {
-    public DatabaseReference mDatabase;
-
+    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
     // function that creates nosql entries from museum object
     public void createMuseum(String museumId, Museum museum) {
@@ -23,7 +22,8 @@ public class FirebaseHandler extends AppCompatActivity {
         mDatabase.child("museums").child(museumId).setValue(museum);
     }
 
-    public void getMUseums(DatabaseReference mDatabase, final ArrayAdapter<String> adapter){
+    public void getMUseums(final ArrayAdapter<String> adapter) {
+
         mDatabase.child("museums").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

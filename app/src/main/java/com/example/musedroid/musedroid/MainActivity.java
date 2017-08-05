@@ -8,9 +8,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 public class MainActivity extends AppCompatActivity {
     FirebaseHandler firebaseHandler = new FirebaseHandler();
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,13 +21,14 @@ public class MainActivity extends AppCompatActivity {
 
     // Use Firebase to populate a listview.
     public void listViewFromFirebase() {
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
         final ListView listView = (ListView) findViewById(R.id.LIstView);
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
 
         listView.setAdapter(adapter);
-        firebaseHandler.getMUseums(mDatabase,adapter);
+        firebaseHandler.getMUseums(adapter);
         changeActivity(listView);
+
     }
 
     private void changeActivity(final ListView listView) {
