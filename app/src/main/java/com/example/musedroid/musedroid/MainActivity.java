@@ -8,14 +8,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
-
+    FirebaseHandler firebaseHandler = new FirebaseHandler();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -32,35 +29,8 @@ public class MainActivity extends AppCompatActivity {
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
 
         listView.setAdapter(adapter);
+        firebaseHandler.getMUseums(mDatabase,adapter);
         changeActivity(listView);
-        firebaseDataImportHandler(mDatabase, adapter);
-    }
-
-    private void firebaseDataImportHandler(DatabaseReference mDatabase, final ArrayAdapter<String> adapter) {
-        mDatabase.child("museums").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                String museumName = (String) dataSnapshot.child("name").getValue();
-                adapter.add(museumName);
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                adapter.remove((String) dataSnapshot.child("name").getValue());
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
     }
 
     private void changeActivity(final ListView listView) {
