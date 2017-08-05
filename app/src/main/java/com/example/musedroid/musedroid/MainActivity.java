@@ -1,7 +1,10 @@
 package com.example.musedroid.musedroid;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -13,7 +16,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity {
 
-
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -23,20 +25,23 @@ public class MainActivity extends AppCompatActivity {
         //  firebase.createMuseum("2", new Museum("2", "museum goulandri", "The Goulandris Museum of Natural History is a museum in Kifisia, a northeastern suburb of Athens, Greece. It was founded by Angelos Goulandris and Niki Goulandris in 1965 in order to promote interest in the natural sciences, to raise the awareness of the public, in general, and in particular to call its attention to the need to protect Greece's natural wildlife habitats and species in the danger of extinction.", "38.074472", "23.814854"));
     }
 
-
-
     // Use Firebase to populate a listview.
     public void listViewFromFirebase() {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         final ListView listView = (ListView) findViewById(R.id.LIstView);
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
+
         listView.setAdapter(adapter);
+        changeActivity(listView);
+        firebaseDataImportHandler(mDatabase, adapter);
+    }
 
-
+    private void firebaseDataImportHandler(DatabaseReference mDatabase, final ArrayAdapter<String> adapter) {
         mDatabase.child("museums").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                adapter.add((String) dataSnapshot.child("name").getValue());
+                String museumName = (String) dataSnapshot.child("name").getValue();
+                adapter.add(museumName);
             }
 
             @Override
@@ -58,9 +63,15 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//    public void getMuseum() {
-//
-//
-//    }
-
+    private void changeActivity(final ListView listView) {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            // argument position gives the index of item which is clicked
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                Intent intent = new Intent(view.getContext(), ShowActivity.class);
+                intent.putExtra("", listView.getItemAtPosition(position).toString());
+                startActivity(intent);
+            }
+        });
+    }
 }
