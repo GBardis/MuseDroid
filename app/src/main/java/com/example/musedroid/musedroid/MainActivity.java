@@ -6,38 +6,62 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.Button;
+import android.widget.Spinner;
 
 public class MainActivity extends AppCompatActivity {
-    FirebaseHandler firebaseHandler = new FirebaseHandler();
+    Button goToListView;
+    Intent intent;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        listViewFromFirebase();
-        //firebaseHandler.createMuseum("1", new Museum("museum akropolis", "The Acropolis Museum (Greek: Μουσείο Ακρόπολης, Mouseio Akropolis) is an archaeological museum focused on the findings of the archaeological site of the Acropolis of Athens.", "37.968450", "23.728523"));
-        // firebaseHandler.createMuseum("2", new Museum("museum goulandri", "The Goulandris Museum of Natural History is a museum in Kifisia, a northeastern suburb of Athens, Greece. It was founded by Angelos Goulandris and Niki Goulandris in 1965 in order to promote interest in the natural sciences, to raise the awareness of the public, in general, and in particular to call its attention to the need to protect Greece's natural wildlife habitats and species in the danger of extinction.", "38.074472", "23.814854"));
-    }
 
-    // Use Firebase to populate a listview.
-    public void listViewFromFirebase() {
+        goToListView = (Button) findViewById(R.id.goToListView);
+        getItemsOnSpinner();
 
-        final ListView listView = (ListView) findViewById(R.id.LIstView);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
-        listView.setAdapter(adapter);
-        firebaseHandler.getMuseums(adapter);
-        changeActivity(listView);
-    }
-
-    private void changeActivity(final ListView listView) {
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        goToListView.setOnClickListener(new View.OnClickListener() {
             @Override
-            // argument position gives the index of item which is clicked
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Intent intent = new Intent(view.getContext(), ShowActivity.class);
-                intent.putExtra("", listView.getItemAtPosition(position).toString());
+            public void onClick(View v) {
+                intent = new Intent(MainActivity.this, ListViewActivity.class);
                 startActivity(intent);
             }
         });
     }
+
+    private void getItemsOnSpinner() {
+        final ArrayAdapter<String> adapterSpinner = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item);
+        final Spinner museumsSpinner = (Spinner) findViewById(R.id.museumsSpinner);
+        FirebaseHandler firebaseHandler = new FirebaseHandler();
+
+        //Get items for spinner
+        firebaseHandler.getMuseums(adapterSpinner);
+        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //Init Adapter
+        museumsSpinner.setAdapter(adapterSpinner);
+        //Go to museum activities
+        changeActivity(museumsSpinner);
+    }
+
+    private void changeActivity(final Spinner spinner) {
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            int check = 0;
+
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (++check > 1) {
+                    Intent intent = new Intent(view.getContext(), ShowActivity.class);
+                    intent.putExtra("", spinner.getItemAtPosition(position).toString());
+                    startActivity(intent);
+                }
+            } // to close the onItemSelected
+
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
 }
+
+
