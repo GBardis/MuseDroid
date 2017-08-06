@@ -12,7 +12,7 @@ import android.widget.Spinner;
 public class MainActivity extends AppCompatActivity {
     Button goToListView;
     Intent intent;
-
+    FirebaseHandler firebaseHandler = new FirebaseHandler();
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
         final ArrayAdapter<String> adapterSpinner = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item);
         final Spinner museumsSpinner = (Spinner) findViewById(R.id.museumsSpinner);
-        FirebaseHandler firebaseHandler = new FirebaseHandler();
 
         //Get items for spinner
         firebaseHandler.getMuseums(adapterSpinner);
@@ -51,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
 
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (++check > 1) {
-                    Intent intent = new Intent(view.getContext(), ShowActivity.class);
+                    intent = new Intent(view.getContext(), ShowActivity.class);
                     intent.putExtra("", spinner.getItemAtPosition(position).toString());
                     startActivity(intent);
                 }

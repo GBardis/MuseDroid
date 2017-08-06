@@ -10,6 +10,7 @@ import android.widget.ListView;
 
 public class ListViewActivity extends AppCompatActivity {
     FirebaseHandler firebaseHandler = new FirebaseHandler();
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,8 +22,7 @@ public class ListViewActivity extends AppCompatActivity {
         // firebaseHandler.createMuseum("2", new Museum("museum goulandri", "The Goulandris Museum of Natural History is a museum in Kifisia, a northeastern suburb of Athens, Greece. It was founded by Angelos Goulandris and Niki Goulandris in 1965 in order to promote interest in the natural sciences, to raise the awareness of the public, in general, and in particular to call its attention to the need to protect Greece's natural wildlife habitats and species in the danger of extinction.", "38.074472", "23.814854"));
     }
 
-    public void listViewFromFirebase() {
-
+    private void listViewFromFirebase() {
         final ListView listView = (ListView) findViewById(R.id.LIstView);
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         listView.setAdapter(adapter);
@@ -35,7 +35,7 @@ public class ListViewActivity extends AppCompatActivity {
             @Override
             // argument position gives the index of item which is clicked
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                Intent intent = new Intent(view.getContext(), ShowActivity.class);
+                intent = new Intent(view.getContext(), ShowActivity.class);
                 intent.putExtra("", listView.getItemAtPosition(position).toString());
                 startActivity(intent);
             }
