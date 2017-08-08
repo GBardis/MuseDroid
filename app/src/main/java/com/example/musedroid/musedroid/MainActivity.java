@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
         final Spinner museumsSpinner = (Spinner) findViewById(R.id.museumsSpinner);
 
         //Get items for spinner
-        firebaseHandler.getMuseums(adapterSpinner);
+      //  firebaseHandler.getMuseums(adapterSpinner);
         adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         //Init Adapter
         museumsSpinner.setAdapter(adapterSpinner);

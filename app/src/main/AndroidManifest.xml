@@ -18,6 +18,11 @@
         </activity>
         <activity android:name=".ShowActivity" />
         <activity android:name=".ListViewActivity"></activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBbDEqUxFrTYXE7CMX4JFbJjhqUcrk--Kw"/>
+
     </application>
 
 </manifest>

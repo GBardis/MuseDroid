@@ -24,7 +24,7 @@ public class ListViewActivity extends AppCompatActivity {
 
     private void listViewFromFirebase() {
         final ListView listView = (ListView) findViewById(R.id.LIstView);
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
+        final ArrayAdapter<Museum> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         listView.setAdapter(adapter);
         firebaseHandler.getMuseums(adapter);
         changeActivity(listView);
@@ -36,10 +36,12 @@ public class ListViewActivity extends AppCompatActivity {
             // argument position gives the index of item which is clicked
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 intent = new Intent(view.getContext(), ShowActivity.class);
-                intent.putExtra("", listView.getItemAtPosition(position).toString());
+                intent.putExtra("museum", (Museum)listView.getItemAtPosition(position));
                 startActivity(intent);
             }
         });
+
+
     }
 }
 
