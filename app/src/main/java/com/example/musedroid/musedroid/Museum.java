@@ -13,18 +13,20 @@ public class Museum implements Parcelable{
     String lat;
     String lon;
     String placeId;
+    String distance="";
 
     public Museum(){
 
     }
 
-    public Museum(String name, String description, String lat, String lon,String placeId) {
+    public Museum(String name, String description, String lat, String lon,String placeId,String distance) {
 
         this.name = name;
         this.description = description;
         this.lat = lat;
         this.lon = lon;
         this.placeId = placeId;
+        this.distance = distance;
     }
 
     protected Museum(Parcel in) {
@@ -33,6 +35,7 @@ public class Museum implements Parcelable{
         lat = in.readString();
         lon = in.readString();
         placeId = in.readString();
+        distance = in.readString();
     }
 
     @Override
@@ -42,6 +45,7 @@ public class Museum implements Parcelable{
         dest.writeString(lat);
         dest.writeString(lon);
         dest.writeString(placeId);
+        dest.writeString(distance);
     }
 
     @Override

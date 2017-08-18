@@ -35,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class MainActivity extends AppCompatActivity {
     //GPS Vars
     public static final int REQUEST_LOCATION=001;
     GoogleApiClient googleApiClient;
@@ -57,14 +57,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
         context = this;
         setContentView(R.layout.activity_main);
-
-        //FireBase GET
-        final ArrayAdapter<Museum> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
-
-        firebaseHandler.getMuseums(adapter);
 
 
         //set Buttons from View!
@@ -73,19 +68,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         btnNearbyMuseum.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    askForPermission();
-                    onRequestPermissionsResult(permissionCode, perm, result);
-                } else if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    getUpdates();
-                }
+                intent = new Intent(MainActivity.this, NearbyListViewActivity.class);
+                startActivity(intent);
             }
+
         });
-
-
-        //ask for permissions GPS!
-
-
 
         goToListView = (Button) findViewById(R.id.goToListView);
 
@@ -96,65 +83,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 startActivity(intent);
             }
         });
-
-
-        //Google location service opener
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Toast.makeText(this, "Gps is Enabled", Toast.LENGTH_SHORT).show();
-
-        } else {
-            mEnableGps();
-        }
-    }
-
-    //GPS Permissions callback
-    @Override
-    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
-//        button = (Button) findViewById(R.id.button);
-        switch (requestCode) {
-            case 100: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                    button.setText("Stop Guide");
-//                    clickFlag = true;
-                    getUpdates();
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-//                    button.setText("Start Guide");
-//                    clickFlag = false;
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
     }
 
 
-    public void askForPermission() {
-        ActivityCompat.requestPermissions(MainActivity.this,perm, permissionCode);
-    }
-
-
-    public void getUpdates() {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, MainActivity.this);
-
-    }
 
 
     private void changeActivity(final Spinner spinner) {
@@ -174,105 +105,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
             }
         });
-    }
-
-    public void mEnableGps() {
-        googleApiClient = new GoogleApiClient.Builder(context)
-                .addApi(LocationServices.API).addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
-        googleApiClient.connect();
-        mLocationSetting();
-    }
-
-    public void mLocationSetting() {
-        locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(1 * 1000);
-        locationRequest.setFastestInterval(1 * 1000);
-
-        locationSettingsRequest = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
-
-        mResult();
-
-    }
-
-    public void mResult() {
-        pendingResult = LocationServices.SettingsApi.checkLocationSettings(googleApiClient, locationSettingsRequest.build());
-        pendingResult.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(@NonNull LocationSettingsResult locationSettingsResult) {
-                Status status = locationSettingsResult.getStatus();
-
-
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        // All location settings are satisfied. The client can initialize location
-                        // requests here.
-
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-
-                        try {
-
-                            status.startResolutionForResult(MainActivity.this, REQUEST_LOCATION);
-                        } catch (IntentSender.SendIntentException e) {
-
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        // Location settings are not satisfied. However, we have no way to fix the
-                        // settings so we won't show the dialog.
-
-
-                        break;
-                }
-            }
-
-        });
-    }
-
-
-//    public void checkProximity(Location location){
-//       double a =  location.getLatitude();
-//    }
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-        double currentLat = location.getLatitude();
-        double currentLong = location.getLongitude();
-        //Location.distanceBetween(currentLat, currentLong, athensLat, athensLong, distance1);
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
     }
 }
 
