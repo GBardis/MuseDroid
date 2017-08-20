@@ -25,8 +25,8 @@ public class MainActivity extends AppCompatActivity {
 
         btnNearbyMuseum.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                switch (v.getId()) {
+            public void onClick(View view) {
+                switch (view.getId()) {
                     case R.id.btnNearbyMuseum:
                         new AsyncIntent().execute(intent = new Intent(MainActivity.this, NearbyListViewActivity.class));
                         break;
@@ -39,9 +39,12 @@ public class MainActivity extends AppCompatActivity {
 
         goToListView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                intent = new Intent(MainActivity.this, ListViewActivity.class);
-                startActivity(intent);
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.goToListView:
+                        new AsyncIntent().execute(intent = new Intent(MainActivity.this, ListViewActivity.class));
+                        break;
+                }
             }
         });
     }

@@ -40,7 +40,7 @@ public class FirebaseHandler extends AppCompatActivity {
                 //adapter.add(museumName);
                 //museumList.add((Museum) dataSnapshot.getValue(Museum.class));
                 //museumList.add((Museum) dataSnapshot.getValue(Museum.class));
-                adapter.add(dataSnapshot.getValue(Museum.class));
+                adapter.addAll(dataSnapshot.getValue(Museum.class));
                 museumList.add(dataSnapshot.getValue(Museum.class));
             }
 

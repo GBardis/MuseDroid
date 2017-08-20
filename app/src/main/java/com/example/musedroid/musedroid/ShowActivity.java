@@ -1,6 +1,7 @@
 package com.example.musedroid.musedroid;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -15,17 +16,21 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class ShowActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     RatingBar ratingBar;
+    TextView textDescription;
     private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show);
-        TextView textDescription;
-        Intent i = getIntent();
+        Intent intent = getIntent();
+
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -33,20 +38,15 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                 .enableAutoManage(this, this)
                 .build();
 
+        new AsyncShow().execute(intent);
 
-        if (i != null) {
-            Museum museum = i.getParcelableExtra("museum");
-            setTitle(museum.name);
-            textDescription = (TextView) findViewById(R.id.textDescription);
-            textDescription.setText(museum.description);
-            getPlace(museum.placeId.toString());
-        }
     }
+
 
     private void getPlace(final String placeId) {
         Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
                 .setResultCallback(new ResultCallback<PlaceBuffer>() {
-                    public static final String TAG = "TAG";
+                    public static final String TAG = "";
 
                     @Override
                     public void onResult(PlaceBuffer places) {
@@ -68,5 +68,33 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    private class AsyncShow extends AsyncTask<Intent, Void, List<String>> {
+
+        @Override
+        protected List<String> doInBackground(Intent... params) {
+            Intent i = params[0];
+            Museum museum = i.getParcelableExtra("museum");
+            final List<String> googleplacesData = new ArrayList<>();
+            googleplacesData.add(museum.description);
+            googleplacesData.add(museum.placeId.toString());
+            googleplacesData.add(museum.name);
+            return googleplacesData;
+        }
+
+        @Override
+        protected void onPostExecute(List<String> googleplaces) {
+
+            // set Name description and call google api UIthread
+            String description = googleplaces.get(0);
+            textDescription = (TextView) findViewById(R.id.textDescription);
+            textDescription.setText(description);
+            String placeId = googleplaces.get(1);
+            String museumName = googleplaces.get(2);
+            setTitle(museumName);
+
+            getPlace(placeId);
+        }
     }
 }
