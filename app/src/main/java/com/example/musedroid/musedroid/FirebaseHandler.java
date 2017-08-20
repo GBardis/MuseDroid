@@ -17,11 +17,12 @@ import java.util.List;
  */
 
 public class FirebaseHandler extends AppCompatActivity {
+    public static ArrayList<Museum> museumList = new ArrayList<Museum>();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabase = database.getReference();
     DatabaseReference secondReference = database.getReference();
-    public static ArrayList<Museum> museumList = new ArrayList<Museum>();
     int tempSize;
+
     // function that creates nosql entries from museum object
     public void createMuseum(String museumId, Museum museum) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -29,11 +30,7 @@ public class FirebaseHandler extends AppCompatActivity {
     }
 
 
-
     public void getMuseums(final ArrayAdapter<Museum> adapter, final List<Museum> museumList) {
-
-
-
 
 
         mDatabase.child("museums").addChildEventListener(new ChildEventListener() {
@@ -49,7 +46,7 @@ public class FirebaseHandler extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-              //  String museumName = (String) dataSnapshot.child("name")
+                //  String museumName = (String) dataSnapshot.child("name")
             }
 
             @Override

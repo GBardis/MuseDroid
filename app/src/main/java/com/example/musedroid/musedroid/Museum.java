@@ -6,20 +6,31 @@ package com.example.musedroid.musedroid;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Museum implements Parcelable{
+public class Museum implements Parcelable {
 
+    public static final Creator<Museum> CREATOR = new Creator<Museum>() {
+        @Override
+        public Museum createFromParcel(Parcel in) {
+            return new Museum(in);
+        }
+
+        @Override
+        public Museum[] newArray(int size) {
+            return new Museum[size];
+        }
+    };
     String name;
     String description;
     String lat;
     String lon;
     String placeId;
-    String distance="";
+    String distance = "";
 
-    public Museum(){
+    public Museum() {
 
     }
 
-    public Museum(String name, String description, String lat, String lon,String placeId,String distance) {
+    public Museum(String name, String description, String lat, String lon, String placeId, String distance) {
 
         this.name = name;
         this.description = description;
@@ -53,20 +64,8 @@ public class Museum implements Parcelable{
         return 0;
     }
 
-    public static final Creator<Museum> CREATOR = new Creator<Museum>() {
-        @Override
-        public Museum createFromParcel(Parcel in) {
-            return new Museum(in);
-        }
-
-        @Override
-        public Museum[] newArray(int size) {
-            return new Museum[size];
-        }
-    };
-
     @Override
-    public String toString(){
+    public String toString() {
         return this.name.toString();
     }
 }
