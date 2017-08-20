@@ -1,6 +1,5 @@
 package com.example.musedroid.musedroid;
 
-import android.*;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
@@ -9,11 +8,11 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -37,9 +36,13 @@ import java.util.List;
 public class NearbyListViewActivity extends AppCompatActivity implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
 
-    public static final int REQUEST_LOCATION=001;
-    GoogleApiClient googleApiClient;
+    public static final int REQUEST_LOCATION = 001;
+    private static List<Museum> museumList;
     private final int permissionCode = 100;
+    public ListView nearbyListView;
+    public ArrayAdapter<Museum> adapter, listFeed;
+    public GetFirebase getFirebase;
+    GoogleApiClient googleApiClient;
     LocationRequest locationRequest;
     LocationManager locationManager;
     LocationSettingsRequest.Builder locationSettingsRequest;
@@ -47,12 +50,6 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
     String[] perm = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
     int result[] = new int[]{};
     Context context;
-
-    public ListView nearbyListView;
-    public ArrayAdapter<Museum> adapter,listFeed;
-    public GetFirebase getFirebase;
-    private static List<Museum> museumList;
-
     Intent intent;
 
     @Override
@@ -63,13 +60,14 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
         nearbyListView = (ListView) findViewById(R.id.NearbyListViewList);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         getFirebase = new GetFirebase();
-        museumList = new ArrayList<Museum>();
+        museumList = new ArrayList<>();
 
-        listFeed = getFirebase.listViewFromFirebase(adapter,museumList);
+
+        listFeed = getFirebase.listViewFromFirebase(adapter, museumList);
         nearbyListView.setAdapter(listFeed);
         changeActivity(nearbyListView);
 
-        for (int i = 0 ; i < listFeed.getCount() ; i++){
+        for (int i = 0; i < listFeed.getCount(); i++) {
             museumList.add(listFeed.getItem(i));
         }
 
@@ -89,8 +87,27 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
             mEnableGps();
         }
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getUpdates();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        stopGps();
 
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        stopGps();
+    }
+
 
     private void changeActivity(final ListView listView) {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -98,14 +115,14 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
             // argument position gives the index of item which is clicked
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 intent = new Intent(view.getContext(), ShowActivity.class);
-                intent.putExtra("museum", (Museum)listView.getItemAtPosition(position));
+                intent.putExtra("museum", (Museum) listView.getItemAtPosition(position));
                 startActivity(intent);
             }
         });
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 //        button = (Button) findViewById(R.id.button);
         switch (requestCode) {
             case 100: {
@@ -132,7 +149,12 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
 
 
     public void askForPermission() {
-        ActivityCompat.requestPermissions(NearbyListViewActivity.this,perm, permissionCode);
+        ActivityCompat.requestPermissions(NearbyListViewActivity.this, perm, permissionCode);
+    }
+
+
+    public void stopGps() {
+        locationManager.removeUpdates(this);
     }
 
 
@@ -150,6 +172,8 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, NearbyListViewActivity.this);
 
     }
+
+
     public void mEnableGps() {
         googleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(LocationServices.API).addConnectionCallbacks(this)
@@ -209,19 +233,19 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
     public void onLocationChanged(Location location) {
         Location dest = new Location("provider");
 
-        int i =0;
+        int i = 0;
         adapter.clear();
-            for (Museum museum : museumList) {
-                i++;
-                dest.setLatitude(Double.parseDouble(museum.lat));
-                dest.setLongitude(Double.parseDouble(museum.lon));
-                museum.distance = String.valueOf(location.distanceTo(dest)/1000);
-                if (Double.parseDouble(museum.distance) < 5){
-                    adapter.add(museum);
-                }
+        for (Museum museum : museumList) {
+            i++;
+            dest.setLatitude(Double.parseDouble(museum.lat));
+            dest.setLongitude(Double.parseDouble(museum.lon));
+            museum.distance = String.valueOf(location.distanceTo(dest) / 1000);
+            if (Double.parseDouble(museum.distance) < 5) {
+                adapter.add(museum);
             }
-            nearbyListView.clearChoices();
-            nearbyListView.setAdapter(adapter);
+        }
+        nearbyListView.clearChoices();
+        nearbyListView.setAdapter(adapter);
     }
 
     @Override
