@@ -32,11 +32,11 @@ public class ListViewActivity extends AppCompatActivity {
     class ListHandler extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ex) {
-                Thread.interrupted();
-            }
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException ex) {
+//                Thread.interrupted();
+//            }
             return null;
         }
 

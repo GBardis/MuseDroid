@@ -5,13 +5,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
@@ -42,29 +40,6 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
-
-    private void getPlace(final String placeId) {
-        Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
-                .setResultCallback(new ResultCallback<PlaceBuffer>() {
-                    public static final String TAG = "";
-
-                    @Override
-                    public void onResult(PlaceBuffer places) {
-                        if (places.getStatus().isSuccess() && places.getCount() > 0) {
-                            final Place myPlace = places.get(0);
-                            final float rating = myPlace.getRating();
-                            ratingBar = (RatingBar) findViewById(R.id.ratingBar);
-                            ratingBar.setNumStars(5);
-                            ratingBar.setRating(rating);
-                            Log.i(TAG, "Place found: " + myPlace.getName());
-                        } else {
-                            Log.e(TAG, "Place not found");
-                        }
-                        places.release();
-                    }
-                });
-    }
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
@@ -74,27 +49,39 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
 
         @Override
         protected List<String> doInBackground(Intent... params) {
+
+
             Intent i = params[0];
             Museum museum = i.getParcelableExtra("museum");
-            final List<String> googleplacesData = new ArrayList<>();
-            googleplacesData.add(museum.description);
-            googleplacesData.add(museum.placeId.toString());
-            googleplacesData.add(museum.name);
-            return googleplacesData;
+            final List<String> googlePlacesData = new ArrayList<>();
+            // google places api call
+            PlaceBuffer result = Places.GeoDataApi.getPlaceById(mGoogleApiClient, museum.placeId.toString()).await();
+            final Place myPlace = result.get(0);
+            final float rating = myPlace.getRating();
+            // Add data to list
+            googlePlacesData.add(museum.description);
+            googlePlacesData.add(museum.placeId.toString());
+            googlePlacesData.add(museum.name);
+            googlePlacesData.add(String.valueOf(rating));
+
+            return googlePlacesData;
         }
 
         @Override
-        protected void onPostExecute(List<String> googleplaces) {
+        protected void onPostExecute(List<String> googlePlacesData) {
 
-            // set Name description and call google api UIthread
-            String description = googleplaces.get(0);
+            // set Name description
+            String description = googlePlacesData.get(0);
+            // set description UIthread
             textDescription = (TextView) findViewById(R.id.textDescription);
             textDescription.setText(description);
-            String placeId = googleplaces.get(1);
-            String museumName = googleplaces.get(2);
+            String museumName = googlePlacesData.get(2);
             setTitle(museumName);
-
-            getPlace(placeId);
+            // set rating UIthread
+            Float rating = Float.parseFloat(googlePlacesData.get(3));
+            ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+            ratingBar.setNumStars(5);
+            ratingBar.setRating(rating);
         }
     }
 }
