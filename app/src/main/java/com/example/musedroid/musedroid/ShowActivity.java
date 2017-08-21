@@ -36,6 +36,10 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                 .enableAutoManage(this, this)
                 .build();
 
+        textDescription = (TextView) findViewById(R.id.textDescription);
+        ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+        ratingBar.setNumStars(5);
+
         new AsyncShow().execute(intent);
 
     }
@@ -49,8 +53,6 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
 
         @Override
         protected List<String> doInBackground(Intent... params) {
-
-
             Intent i = params[0];
             Museum museum = i.getParcelableExtra("museum");
             final List<String> googlePlacesData = new ArrayList<>();
@@ -64,24 +66,22 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
             googlePlacesData.add(museum.name);
             googlePlacesData.add(String.valueOf(rating));
 
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Thread.interrupted();
+            }
             return googlePlacesData;
         }
 
         @Override
         protected void onPostExecute(List<String> googlePlacesData) {
-
-            // set Name description
-            String description = googlePlacesData.get(0);
             // set description UIthread
-            textDescription = (TextView) findViewById(R.id.textDescription);
-            textDescription.setText(description);
-            String museumName = googlePlacesData.get(2);
-            setTitle(museumName);
+            textDescription.setText(googlePlacesData.get(0));
+            // set Name description
+            setTitle(googlePlacesData.get(2));
             // set rating UIthread
-            Float rating = Float.parseFloat(googlePlacesData.get(3));
-            ratingBar = (RatingBar) findViewById(R.id.ratingBar);
-            ratingBar.setNumStars(5);
-            ratingBar.setRating(rating);
+            ratingBar.setRating(Float.parseFloat(googlePlacesData.get(3)));
         }
     }
 }

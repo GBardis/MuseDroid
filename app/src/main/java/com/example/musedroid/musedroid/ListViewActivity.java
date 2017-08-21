@@ -24,24 +24,28 @@ public class ListViewActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.LIstView);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         getFirebase = new GetFirebase();
-        listView.setAdapter(getFirebase.listViewFromFirebase(adapter, new ArrayList<Museum>()));
-        new ListHandler().execute();
+
+
+        new ListHandler().execute(adapter);
     }
 
 
-    class ListHandler extends AsyncTask<Void, Void, Void> {
+    class ListHandler extends AsyncTask<ArrayAdapter<Museum>, Void, ArrayAdapter<Museum>> {
         @Override
-        protected Void doInBackground(Void... params) {
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException ex) {
-//                Thread.interrupted();
-//            }
-            return null;
+        protected ArrayAdapter<Museum> doInBackground(ArrayAdapter<Museum>... params) {
+
+            ArrayAdapter<Museum> MuseumAdapterList = getFirebase.listViewFromFirebase(adapter, new ArrayList<Museum>());
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Thread.interrupted();
+            }
+            return MuseumAdapterList;
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(ArrayAdapter<Museum> adapter) {
+            listView.setAdapter(adapter);
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 // argument position gives the index of item which is clicked

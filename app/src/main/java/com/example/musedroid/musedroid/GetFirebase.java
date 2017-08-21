@@ -1,6 +1,5 @@
 package com.example.musedroid.musedroid;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 
@@ -11,7 +10,7 @@ import java.util.List;
  */
 
 public class GetFirebase extends AppCompatActivity {
-    Intent intent;
+
     private FirebaseHandler firebaseHandler = new FirebaseHandler();
 
 
