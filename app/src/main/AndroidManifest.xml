@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.musedroid.musedroid">
 
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,12 +21,17 @@
             </intent-filter>
         </activity>
         <activity android:name=".ShowActivity" />
-        <activity android:name=".ListViewActivity"></activity>
+        <activity android:name=".ListViewActivity" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBbDEqUxFrTYXE7CMX4JFbJjhqUcrk--Kw"/>
+            android:value="AIzaSyBbDEqUxFrTYXE7CMX4JFbJjhqUcrk--Kw" />
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode" />
 
+        <activity android:name=".NearbyListViewActivity" />
+        <activity android:name=".QrShowActivity"></activity>
     </application>
 
 </manifest>

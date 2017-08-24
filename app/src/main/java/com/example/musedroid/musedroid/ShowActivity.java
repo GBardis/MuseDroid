@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -20,6 +22,7 @@ import com.google.android.gms.location.places.Places;
 public class ShowActivity extends AppCompatActivity  implements GoogleApiClient.OnConnectionFailedListener {
     private GoogleApiClient mGoogleApiClient;
     RatingBar ratingBar;
+    Button qrButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,9 +36,16 @@ public class ShowActivity extends AppCompatActivity  implements GoogleApiClient.
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(this, this)
                 .build();
+        qrButton = (Button) findViewById(R.id.qrButton);
 
-
-
+        qrButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ShowActivity.this,QrShowActivity.class);
+                intent.putExtra("flag",false);
+                startActivity(intent);
+            }
+        });
 
 
         if (i != null) {

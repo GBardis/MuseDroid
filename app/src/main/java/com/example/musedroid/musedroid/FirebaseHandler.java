@@ -30,7 +30,7 @@ public class FirebaseHandler extends AppCompatActivity {
 
 
 
-    public void getMuseums(final ArrayAdapter<Museum> adapter) {
+    public void getMuseums(final ArrayAdapter<Museum> adapter, final List<Museum> museumList) {
 
 
 
@@ -44,7 +44,7 @@ public class FirebaseHandler extends AppCompatActivity {
                 //museumList.add((Museum) dataSnapshot.getValue(Museum.class));
                 //museumList.add((Museum) dataSnapshot.getValue(Museum.class));
                 adapter.add(dataSnapshot.getValue(Museum.class));
-
+                museumList.add(dataSnapshot.getValue(Museum.class));
             }
 
             @Override
