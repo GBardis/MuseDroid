@@ -1,7 +1,8 @@
 package com.example.musedroid.musedroid;
 
-import android.*;
+
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -29,6 +30,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import java.util.ArrayList;
@@ -64,6 +66,7 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         getFirebase = new GetFirebase();
         museumList = new ArrayList<Museum>();
+        context = this;
 
         listFeed = getFirebase.listViewFromFirebase(adapter,museumList);
         nearbyListView.setAdapter(listFeed);
@@ -86,7 +89,11 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
             Toast.makeText(this, "Gps is Enabled", Toast.LENGTH_SHORT).show();
 
         } else {
-            mEnableGps();
+            try {
+                mEnableGps();
+            }catch(Exception ex){
+                int s = 1;
+            }
         }
 
 
@@ -239,6 +246,30 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
 
     }
 
+    //callback method
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        final LocationSettingsStates states = LocationSettingsStates.fromIntent(data);
+        switch (requestCode) {
+            case REQUEST_LOCATION:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        // All required changes were successfully made
+                        Toast.makeText(context, "Gps enabled", Toast.LENGTH_SHORT).show();
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        // The user was asked to change settings, but chose not to
+                        Toast.makeText(context, "Gps Canceled", Toast.LENGTH_SHORT).show();
+                        break;
+                    default:
+                        break;
+                }
+                break;
+        }
+    }
+
+
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
@@ -253,4 +284,8 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+
+
+
 }

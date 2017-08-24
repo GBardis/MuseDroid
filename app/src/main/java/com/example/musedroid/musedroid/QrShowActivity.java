@@ -2,7 +2,11 @@ package com.example.musedroid.musedroid;
 
 import android.*;
 import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Camera;
+import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,6 +32,9 @@ public class QrShowActivity extends AppCompatActivity {
     CameraSource cameraSource;
     BarcodeDetector barcodeDetector;
     String[] perm = new String[]{Manifest.permission.CAMERA};
+    Vibrator v;
+    Context context;
+    boolean foundFlag;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +43,12 @@ public class QrShowActivity extends AppCompatActivity {
         cameraView = (SurfaceView) findViewById(R.id.cameraView);
         qrInfo = (TextView) findViewById(R.id.qrTextView);
         ActivityCompat.requestPermissions(QrShowActivity.this,perm, permissionCode);
+        context = this;
+        Intent i = getIntent();
+        foundFlag = i.getBooleanExtra("flag",false);
+
+
+        v = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
         barcodeDetector =
                 new BarcodeDetector.Builder(this)
                         .setBarcodeFormats(Barcode.QR_CODE)
@@ -46,31 +59,6 @@ public class QrShowActivity extends AppCompatActivity {
                 .setRequestedPreviewSize(640, 480)
                 .build();
 
-        startCamera();
-
-        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
-            @Override
-            public void release() {
-            }
-
-            @Override
-            public void receiveDetections(Detector.Detections<Barcode> detections) {
-                final SparseArray<Barcode> barcodes = detections.getDetectedItems();
-
-                if (barcodes.size() != 0) {
-                    qrInfo.post(new Runnable() {    // Use the post method of the TextView
-                        public void run() {
-                            qrInfo.setText(    // Update the TextView
-                                    barcodes.valueAt(0).displayValue
-                            );
-                        }
-                    });
-                }
-            }
-        });
-    }
-
-    private void startCamera() {
         cameraView.getHolder().addCallback(new SurfaceHolder.Callback() {
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
@@ -85,6 +73,7 @@ public class QrShowActivity extends AppCompatActivity {
                         // for ActivityCompat#requestPermissions for more details.
                         return;
                     }
+
                     cameraSource.start(cameraView.getHolder());
                 } catch (IOException ie) {
                     Log.e("CAMERA SOURCE", ie.getMessage());
@@ -101,6 +90,35 @@ public class QrShowActivity extends AppCompatActivity {
             }
 
         });
+
+        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+            @Override
+            public void release() {
+            }
+
+            @Override
+            public void receiveDetections(Detector.Detections<Barcode> detections) {
+                final SparseArray<Barcode> barcodes = detections.getDetectedItems();
+
+                if (barcodes.size() != 0 && foundFlag == false) {
+
+                    // Vibrate for 500 milliseconds
+                    v.vibrate(500);
+                    qrInfo.post(new Runnable() {    // Use the post method of the TextView
+                        public void run() {
+                            qrInfo.setText(    // Update the TextView
+                                    barcodes.valueAt(0).displayValue
+                            );
+                        }
+                    });
+                    foundFlag=true;
+                }
+            }
+        });
+    }
+
+    private void startCamera() {
+
     }
 
     @Override
@@ -110,7 +128,11 @@ public class QrShowActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    startCamera();
+                    try {
+                        cameraSource.start(cameraView.getHolder());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else {
 
                     // permission denied, boo! Disable the

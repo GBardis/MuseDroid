@@ -42,6 +42,7 @@ public class ShowActivity extends AppCompatActivity  implements GoogleApiClient.
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ShowActivity.this,QrShowActivity.class);
+                intent.putExtra("flag",false);
                 startActivity(intent);
             }
         });
