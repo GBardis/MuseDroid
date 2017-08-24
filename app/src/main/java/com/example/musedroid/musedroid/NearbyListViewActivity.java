@@ -100,14 +100,18 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
     @Override
     protected void onResume() {
         super.onResume();
-        getUpdates();
+        if (ActivityCompat.checkSelfPermission(NearbyListViewActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            askForPermission();
+            onRequestPermissionsResult(permissionCode,perm,result);
+        }else if(ActivityCompat.checkSelfPermission(NearbyListViewActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            getUpdates();
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         stopGps();
-
     }
 
     @Override
@@ -162,7 +166,7 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
 
 
     public void stopGps() {
-        locationManager.removeUpdates(this);
+        locationManager.removeUpdates(NearbyListViewActivity.this);
     }
 
 
