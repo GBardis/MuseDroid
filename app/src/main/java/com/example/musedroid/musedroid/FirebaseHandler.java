@@ -20,21 +20,17 @@ public class FirebaseHandler extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabase = database.getReference();
     DatabaseReference secondReference = database.getReference();
+    Museum museum;
     public static ArrayList<Museum> museumList = new ArrayList<Museum>();
     int tempSize;
+
     // function that creates nosql entries from museum object
     public void createMuseum(String museumId, Museum museum) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("museums").child(museumId).setValue(museum);
     }
 
-
-
     public void getMuseums(final ArrayAdapter<Museum> adapter, final List<Museum> museumList) {
-
-
-
-
 
         mDatabase.child("museums").addChildEventListener(new ChildEventListener() {
             @Override
@@ -44,12 +40,22 @@ public class FirebaseHandler extends AppCompatActivity {
                 //museumList.add((Museum) dataSnapshot.getValue(Museum.class));
                 //museumList.add((Museum) dataSnapshot.getValue(Museum.class));
                 adapter.add(dataSnapshot.getValue(Museum.class));
+
+                adapter.getItem(adapter.getCount() - 1).key = dataSnapshot.getKey().toString();
+
                 museumList.add(dataSnapshot.getValue(Museum.class));
+                int i = 0;
+                for (Museum museum : museumList) {
+                    i++;
+                    if (i == museumList.size()) {
+                        museum.key = dataSnapshot.getKey();
+                    }
+                }
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-              //  String museumName = (String) dataSnapshot.child("name")
+                //  String museumName = (String) dataSnapshot.child("name")
             }
 
             @Override

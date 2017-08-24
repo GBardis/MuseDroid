@@ -23,6 +23,7 @@ public class ShowActivity extends AppCompatActivity  implements GoogleApiClient.
     private GoogleApiClient mGoogleApiClient;
     RatingBar ratingBar;
     Button qrButton;
+    Museum museum;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,23 +39,25 @@ public class ShowActivity extends AppCompatActivity  implements GoogleApiClient.
                 .build();
         qrButton = (Button) findViewById(R.id.qrButton);
 
-        qrButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(ShowActivity.this,QrShowActivity.class);
-                intent.putExtra("flag",false);
-                startActivity(intent);
-            }
-        });
 
 
         if (i != null) {
-            Museum museum = i.getParcelableExtra("museum");
+            museum = i.getParcelableExtra("museum");
             setTitle(museum.name);
             textDescription = (TextView) findViewById(R.id.textDescription);
             textDescription.setText(museum.description);
             getPlace(museum.placeId.toString());
         }
+
+        qrButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ShowActivity.this,QrShowActivity.class);
+                intent.putExtra("flag",false);
+                intent.putExtra("museumId",museum.key);
+                startActivity(intent);
+            }
+        });
     }
 
     private void getPlace(final String placeId) {

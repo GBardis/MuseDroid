@@ -7,7 +7,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Museum implements Parcelable{
-
+    String key;
     String name;
     String description;
     String lat;
@@ -19,8 +19,8 @@ public class Museum implements Parcelable{
 
     }
 
-    public Museum(String name, String description, String lat, String lon,String placeId,String distance) {
-
+    public Museum(String name, String description, String lat, String lon,String placeId,String distance,String key) {
+        this.key = key;
         this.name = name;
         this.description = description;
         this.lat = lat;
@@ -30,6 +30,7 @@ public class Museum implements Parcelable{
     }
 
     protected Museum(Parcel in) {
+        key = in.readString();
         name = in.readString();
         description = in.readString();
         lat = in.readString();
@@ -40,6 +41,7 @@ public class Museum implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(key);
         dest.writeString(name);
         dest.writeString(description);
         dest.writeString(lat);
