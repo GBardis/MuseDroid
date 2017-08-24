@@ -17,13 +17,19 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 
+import java.util.ArrayList;
+import java.util.List;
 
-public class ShowActivity extends AppCompatActivity  implements GoogleApiClient.OnConnectionFailedListener {
-    private GoogleApiClient mGoogleApiClient;
+
+public class ShowActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     RatingBar ratingBar;
     Button qrButton;
     Museum museum;
     FirebaseHandler firebaseHandler = new FirebaseHandler();
+    List<Exhibit> exhibitsList = new ArrayList();
+    Exhibit exhibit = new Exhibit();
+    private GoogleApiClient mGoogleApiClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,23 +45,23 @@ public class ShowActivity extends AppCompatActivity  implements GoogleApiClient.
         qrButton = (Button) findViewById(R.id.qrButton);
 
 
-
         if (i != null) {
             museum = i.getParcelableExtra("museum");
             setTitle(museum.name);
             textDescription = (TextView) findViewById(R.id.textDescription);
-            textDescription.setText(museum.description);
-            getPlace(museum.placeId.toString());
+           // textDescription.setText(museum.description);
+            getPlace(museum.placeId);
 
-           firebaseHandler.getExibitById("-Kr1FksV0GyAinNNyAMH");
+            GetFirebase getfire = new GetFirebase();
+            textDescription.setText(getfire.getExhibit("-Kr1FksV0GyAinNNyAMH", exhibitsList).get(0).description);
         }
 
         qrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ShowActivity.this,QrShowActivity.class);
-                intent.putExtra("flag",false);
-                intent.putExtra("museumId",museum.key);
+                Intent intent = new Intent(ShowActivity.this, QrShowActivity.class);
+                intent.putExtra("flag", false);
+                intent.putExtra("museumId", museum.key);
                 startActivity(intent);
             }
         });

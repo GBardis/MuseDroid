@@ -2,11 +2,9 @@ package com.example.musedroid.musedroid;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,23 +14,17 @@ import java.util.List;
 public class GetFirebase extends AppCompatActivity {
     Intent intent;
     private FirebaseHandler firebaseHandler = new FirebaseHandler();
-
+    private List<Exhibit> exhibitList = new ArrayList<>();
 
     public ArrayAdapter<Museum> listViewFromFirebase(ArrayAdapter<Museum> adapter, List<Museum> museumList) {
 
-        firebaseHandler.getMuseums(adapter,museumList);
+        firebaseHandler.getMuseums(adapter, museumList);
         return adapter;
     }
 
-    public void changeActivity(final ListView listView) {
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            // argument position gives the index of item which is clicked
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                intent = new Intent(view.getContext(), ShowActivity.class);
-                intent.putExtra("museum", (Museum)listView.getItemAtPosition(position));
-                startActivity(intent);
-            }
-        });
+    public List<Exhibit> getExhibit(String id, List<Exhibit> exhibit) {
+        firebaseHandler.getExibitById(id,exhibit);
+        return exhibit;
     }
+
 }

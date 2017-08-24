@@ -20,18 +20,19 @@ public class FirebaseHandler extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabase = database.getReference();
 
+
     // function that creates nosql entries from museum object
     public void createMuseum(String museumId, Museum museum) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("museums").child(museumId).setValue(museum);
     }
 
-    public void getExibitById(String id) {
+    public void getExibitById(final String id,final List<Exhibit> exhibitList) {
         mDatabase.child("exhibits").child(id).addValueEventListener(new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String exhibits;
-                exhibits = dataSnapshot.getValue().toString();
+                exhibitList.add(dataSnapshot.getValue(Exhibit.class));
             }
 
             @Override
