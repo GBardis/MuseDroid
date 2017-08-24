@@ -3,6 +3,8 @@
     package="com.example.musedroid.musedroid">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
@@ -24,8 +26,12 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBbDEqUxFrTYXE7CMX4JFbJjhqUcrk--Kw" />
+        <meta-data
+            android:name="com.google.android.gms.vision.DEPENDENCIES"
+            android:value="barcode" />
 
-        <activity android:name=".NearbyListViewActivity"></activity>
+        <activity android:name=".NearbyListViewActivity" />
+        <activity android:name=".QrShowActivity"></activity>
     </application>
 
 </manifest>
