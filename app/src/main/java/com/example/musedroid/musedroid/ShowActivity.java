@@ -1,7 +1,6 @@
 package com.example.musedroid.musedroid;
 
 import android.content.Intent;
-import android.media.Rating;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -23,7 +22,8 @@ public class ShowActivity extends AppCompatActivity  implements GoogleApiClient.
     private GoogleApiClient mGoogleApiClient;
     RatingBar ratingBar;
     Button qrButton;
-
+    Museum museum;
+    FirebaseHandler firebaseHandler = new FirebaseHandler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,23 +38,27 @@ public class ShowActivity extends AppCompatActivity  implements GoogleApiClient.
                 .build();
         qrButton = (Button) findViewById(R.id.qrButton);
 
+
+
+        if (i != null) {
+            museum = i.getParcelableExtra("museum");
+            setTitle(museum.name);
+            textDescription = (TextView) findViewById(R.id.textDescription);
+            textDescription.setText(museum.description);
+            getPlace(museum.placeId.toString());
+
+           firebaseHandler.getExibitById("-Kr1FksV0GyAinNNyAMH");
+        }
+
         qrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ShowActivity.this,QrShowActivity.class);
                 intent.putExtra("flag",false);
+                intent.putExtra("museumId",museum.key);
                 startActivity(intent);
             }
         });
-
-
-        if (i != null) {
-            Museum museum = i.getParcelableExtra("museum");
-            setTitle(museum.name);
-            textDescription = (TextView) findViewById(R.id.textDescription);
-            textDescription.setText(museum.description);
-            getPlace(museum.placeId.toString());
-        }
     }
 
     private void getPlace(final String placeId) {
