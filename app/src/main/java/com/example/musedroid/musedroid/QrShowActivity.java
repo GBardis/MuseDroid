@@ -1,15 +1,13 @@
 package com.example.musedroid.musedroid;
 
-import android.*;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Camera;
+import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
@@ -21,13 +19,11 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 
 public class QrShowActivity extends AppCompatActivity {
-    SurfaceView cameraView;
     private final int permissionCode = 101;
+    SurfaceView cameraView;
     TextView qrInfo;
     CameraSource cameraSource;
     BarcodeDetector barcodeDetector;
@@ -42,10 +38,10 @@ public class QrShowActivity extends AppCompatActivity {
         setContentView(R.layout.activity_qr_show);
         cameraView = (SurfaceView) findViewById(R.id.cameraView);
         qrInfo = (TextView) findViewById(R.id.qrTextView);
-        ActivityCompat.requestPermissions(QrShowActivity.this,perm, permissionCode);
+        ActivityCompat.requestPermissions(QrShowActivity.this, perm, permissionCode);
         context = this;
         Intent i = getIntent();
-        foundFlag = i.getBooleanExtra("flag",false);
+        foundFlag = i.getBooleanExtra("flag", false);
 
 
         v = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -111,7 +107,7 @@ public class QrShowActivity extends AppCompatActivity {
                             );
                         }
                     });
-                    foundFlag=true;
+                    foundFlag = true;
                 }
             }
         });
@@ -122,7 +118,7 @@ public class QrShowActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 101: {
                 // If request is cancelled, the result arrays are empty.

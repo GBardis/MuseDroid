@@ -16,18 +16,21 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 
 public class ShowActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     RatingBar ratingBar;
     Button qrButton;
     Museum museum;
-    FirebaseHandler firebaseHandler = new FirebaseHandler();
-    List<Exhibit> exhibitsList = new ArrayList();
-    Exhibit exhibit = new Exhibit();
+    Exhibit exhibit;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference mDatabase = database.getReference();
+    TextView textDescription;
     private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -48,12 +51,11 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
         if (i != null) {
             museum = i.getParcelableExtra("museum");
             setTitle(museum.name);
-            textDescription = (TextView) findViewById(R.id.textDescription);
-           // textDescription.setText(museum.description);
             getPlace(museum.placeId);
+            textDescription = (TextView) findViewById(R.id.textDescription);
+            textDescription.setText(museum.description);
+            getExibitById("-Kr1FksV0GyAinNNyAMH");
 
-            GetFirebase getfire = new GetFirebase();
-            textDescription.setText(getfire.getExhibit("-Kr1FksV0GyAinNNyAMH", exhibitsList).get(0).description);
         }
 
         qrButton.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +63,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onClick(View v) {
                 Intent intent = new Intent(ShowActivity.this, QrShowActivity.class);
                 intent.putExtra("flag", false);
+                intent.putExtra("exhibitId",exhibit.key);
                 intent.putExtra("museumId", museum.key);
                 startActivity(intent);
             }
@@ -92,5 +95,21 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    public void getExibitById(final String id) {
+        mDatabase.child("exhibits").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                 exhibit = dataSnapshot.getValue(Exhibit.class);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

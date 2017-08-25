@@ -8,7 +8,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -21,26 +20,14 @@ public class FirebaseHandler extends AppCompatActivity {
     DatabaseReference mDatabase = database.getReference();
 
 
+
+
     // function that creates nosql entries from museum object
     public void createMuseum(String museumId, Museum museum) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("museums").child(museumId).setValue(museum);
     }
 
-    public void getExibitById(final String id,final List<Exhibit> exhibitList) {
-        mDatabase.child("exhibits").child(id).addValueEventListener(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                exhibitList.add(dataSnapshot.getValue(Exhibit.class));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
 
     public void getMuseums(final ArrayAdapter<Museum> adapter, final List<Museum> museumList) {
 
