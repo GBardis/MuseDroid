@@ -18,11 +18,20 @@ import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 
 public class QrShowActivity extends AppCompatActivity {
     private final int permissionCode = 101;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference mDatabase = database.getReference();
+    Exhibit exhibit;
+    Intent intent;
     SurfaceView cameraView;
     TextView qrInfo;
     CameraSource cameraSource;
@@ -101,14 +110,33 @@ public class QrShowActivity extends AppCompatActivity {
                     // Vibrate for 500 milliseconds
                     v.vibrate(500);
                     qrInfo.post(new Runnable() {    // Use the post method of the TextView
+                        // Update the TextView
                         public void run() {
-                            qrInfo.setText(    // Update the TextView
-                                    barcodes.valueAt(0).displayValue
-                            );
+                            qrInfo.setText(barcodes.valueAt(0).displayValue);
+                            getExibitById("-Kr1FksV0GyAinNNyAMH");
+                            intent = new Intent(QrShowActivity.this, ExhibitShowActivity.class);
+                            intent.putExtra("Exhibit", exhibit);
+                            startActivity(intent);
                         }
                     });
                     foundFlag = true;
                 }
+            }
+        });
+    }
+
+    public void getExibitById(final String id) {
+        mDatabase.child("exhibits").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                exhibit = dataSnapshot.getValue(Exhibit.class);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
     }
@@ -125,6 +153,16 @@ public class QrShowActivity extends AppCompatActivity {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     try {
+                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
                         cameraSource.start(cameraView.getHolder());
                     } catch (IOException e) {
                         e.printStackTrace();

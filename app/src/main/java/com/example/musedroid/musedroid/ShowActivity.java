@@ -16,21 +16,14 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 
 public class ShowActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     RatingBar ratingBar;
     Button qrButton;
     Museum museum;
-    Exhibit exhibit;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference mDatabase = database.getReference();
-    TextView textDescription;
+
+
     private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -54,7 +47,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
             getPlace(museum.placeId);
             textDescription = (TextView) findViewById(R.id.textDescription);
             textDescription.setText(museum.description);
-            getExibitById("-Kr1FksV0GyAinNNyAMH");
+
 
         }
 
@@ -63,7 +56,6 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onClick(View v) {
                 Intent intent = new Intent(ShowActivity.this, QrShowActivity.class);
                 intent.putExtra("flag", false);
-                intent.putExtra("exhibitId",exhibit.key);
                 intent.putExtra("museumId", museum.key);
                 startActivity(intent);
             }
@@ -95,21 +87,5 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
-    }
-
-    public void getExibitById(final String id) {
-        mDatabase.child("exhibits").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                 exhibit = dataSnapshot.getValue(Exhibit.class);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
     }
 }
