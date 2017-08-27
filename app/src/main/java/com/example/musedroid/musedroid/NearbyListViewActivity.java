@@ -63,7 +63,7 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         getFirebase = new GetFirebase();
 
-        museumList = new ArrayList<Museum>();
+        museumList = new ArrayList<>();
         context = this;
 
 

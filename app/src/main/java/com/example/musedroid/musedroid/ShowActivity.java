@@ -22,7 +22,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
     RatingBar ratingBar;
     Button qrButton;
     Museum museum;
-    FirebaseHandler firebaseHandler = new FirebaseHandler();
+
     private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -43,11 +43,9 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
         if (i != null) {
             museum = i.getParcelableExtra("museum");
             setTitle(museum.name);
+            getPlace(museum.placeId);
             textDescription = (TextView) findViewById(R.id.textDescription);
             textDescription.setText(museum.description);
-            getPlace(museum.placeId.toString());
-
-            firebaseHandler.getExibitById("-Kr1FksV0GyAinNNyAMH");
         }
 
         qrButton.setOnClickListener(new View.OnClickListener() {
