@@ -20,7 +20,7 @@ public class GetFirebase extends AppCompatActivity {
 
     public ArrayAdapter<Museum> listViewFromFirebase(ArrayAdapter<Museum> adapter, List<Museum> museumList) {
 
-        firebaseHandler.getMuseums(adapter,museumList);
+        firebaseHandler.getMuseums(adapter, museumList);
         return adapter;
     }
 
@@ -30,7 +30,7 @@ public class GetFirebase extends AppCompatActivity {
             // argument position gives the index of item which is clicked
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 intent = new Intent(view.getContext(), ShowActivity.class);
-                intent.putExtra("museum", (Museum)listView.getItemAtPosition(position));
+                intent.putExtra("museum", (Museum) listView.getItemAtPosition(position));
                 startActivity(intent);
             }
         });
