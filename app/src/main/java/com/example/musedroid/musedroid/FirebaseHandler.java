@@ -20,8 +20,6 @@ public class FirebaseHandler extends AppCompatActivity {
     DatabaseReference mDatabase = database.getReference();
 
 
-
-
     // function that creates nosql entries from museum object
     public void createMuseum(String museumId, Museum museum) {
         mDatabase = FirebaseDatabase.getInstance().getReference();

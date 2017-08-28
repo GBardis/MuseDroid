@@ -19,5 +19,4 @@ public class GetFirebase extends AppCompatActivity {
         firebaseHandler.getMuseums(adapter, museumList);
         return adapter;
     }
-
 }

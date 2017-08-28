@@ -1,8 +1,7 @@
 package com.example.musedroid.musedroid;
-import android.Manifest;
+
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -10,32 +9,13 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Spinner;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.LocationSettingsResult;
-
 
 public class MainActivity extends AppCompatActivity {
-    //GPS Vars
-    public static final int REQUEST_LOCATION=001;
-    GoogleApiClient googleApiClient;
-    private final int permissionCode = 100;
-    LocationRequest locationRequest;
-    LocationManager locationManager;
-    LocationSettingsRequest.Builder locationSettingsRequest;
-    PendingResult<LocationSettingsResult> pendingResult;
-    //
     Button btnNearbyMuseum;
     Button goToListView;
     Intent intent;
-    FirebaseHandler firebaseHandler = new FirebaseHandler();
 
     Context context;
-    String[] perm = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
-    int result[] = new int[]{};
-
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
 
     private void changeActivity(final Spinner spinner) {
@@ -103,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
 //        //Go to museum activities
 //        changeActivity(museumsSpinner);
 //    }
-
 
 
 //

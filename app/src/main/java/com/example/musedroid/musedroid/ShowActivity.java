@@ -22,8 +22,8 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
     RatingBar ratingBar;
     Button qrButton;
     Museum museum;
-
-
+    Button goToMaps;
+    Intent intent;
     private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -39,7 +39,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                 .enableAutoManage(this, this)
                 .build();
         qrButton = (Button) findViewById(R.id.qrButton);
-
+        goToMaps = (Button) findViewById(R.id.goToMaps);
 
         if (i != null) {
             museum = i.getParcelableExtra("museum");
@@ -51,10 +51,18 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
 
         }
 
+        goToMaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(ShowActivity.this, MapsActivity.class);
+                startActivity(intent);
+            }
+        });
+
         qrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ShowActivity.this, QrShowActivity.class);
+                intent = new Intent(ShowActivity.this, QrShowActivity.class);
                 intent.putExtra("flag", false);
                 intent.putExtra("museumId", museum.key);
                 startActivity(intent);

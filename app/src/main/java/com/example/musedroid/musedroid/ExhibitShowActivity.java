@@ -13,8 +13,8 @@ public class ExhibitShowActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_exhibit_show);
-        intent =  getIntent();
-        Exhibit exhibit  =intent.getParcelableExtra("Exhibit");
+        intent = getIntent();
+        Exhibit exhibit = intent.getParcelableExtra("Exhibit");
 
 
         exhibitDescription = (TextView) findViewById(R.id.exhibitDescription);
