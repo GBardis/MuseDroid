@@ -1,7 +1,6 @@
 package com.example.musedroid.musedroid;
 
 import android.content.Intent;
-import android.media.Rating;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -19,11 +18,12 @@ import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 
 
-public class ShowActivity extends AppCompatActivity  implements GoogleApiClient.OnConnectionFailedListener {
-    private GoogleApiClient mGoogleApiClient;
+public class ShowActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     RatingBar ratingBar;
     Button qrButton;
     Museum museum;
+
+    private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,21 +40,20 @@ public class ShowActivity extends AppCompatActivity  implements GoogleApiClient.
         qrButton = (Button) findViewById(R.id.qrButton);
 
 
-
         if (i != null) {
             museum = i.getParcelableExtra("museum");
             setTitle(museum.name);
+            getPlace(museum.placeId);
             textDescription = (TextView) findViewById(R.id.textDescription);
             textDescription.setText(museum.description);
-            getPlace(museum.placeId.toString());
         }
 
         qrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ShowActivity.this,QrShowActivity.class);
-                intent.putExtra("flag",false);
-                intent.putExtra("museumId",museum.key);
+                Intent intent = new Intent(ShowActivity.this, QrShowActivity.class);
+                intent.putExtra("flag", false);
+                intent.putExtra("museumId", museum.key);
                 startActivity(intent);
             }
         });

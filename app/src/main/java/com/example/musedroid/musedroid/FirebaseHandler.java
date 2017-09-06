@@ -9,7 +9,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,16 +18,14 @@ import java.util.List;
 public class FirebaseHandler extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabase = database.getReference();
-    DatabaseReference secondReference = database.getReference();
-    Museum museum;
-    public static ArrayList<Museum> museumList = new ArrayList<Museum>();
-    int tempSize;
+
 
     // function that creates nosql entries from museum object
     public void createMuseum(String museumId, Museum museum) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase.child("museums").child(museumId).setValue(museum);
     }
+
 
     public void getMuseums(final ArrayAdapter<Museum> adapter, final List<Museum> museumList) {
 
