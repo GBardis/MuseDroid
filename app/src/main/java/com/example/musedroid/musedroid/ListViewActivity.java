@@ -11,12 +11,11 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 public class ListViewActivity extends AppCompatActivity {
-    static final String SOME_VALUE = "museum_list";
+    static final String MUSEUM_LIST = "museum_list";
     public ListView listView;
-    public ArrayAdapter<Museum> adapter;
+    public ArrayAdapter<Museum> adapter, museumAdapter;
     public GetFirebase getFirebase;
     Intent intent;
-    ArrayAdapter<Museum> museumAdapter;
     ArrayList<Museum> museumList = new ArrayList<>();
 
     @Override
@@ -34,27 +33,32 @@ public class ListViewActivity extends AppCompatActivity {
         changeActivity(listView);
     }
 
+    //This function convert adapter to arrayList and serialize it into a bundle, so that can be restore
+    //after orientation change
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         // Save custom values into the bundle
-        for (int i = 0; i < museumAdapter.getCount(); i++) {
-            museumList.add(museumAdapter.getItem(i));
+        if (savedInstanceState != null) {
+            for (int i = 0; i < museumAdapter.getCount(); i++) {
+                museumList.add(museumAdapter.getItem(i));
+            }
+            savedInstanceState.putSerializable(MUSEUM_LIST, museumList);
         }
-        savedInstanceState.putSerializable(SOME_VALUE, museumList);
-
-        // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
     }
 
+    //This function restores restore ArrayList after orientation and set it into listview
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
-        // Restore state members from saved instance
-        museumList = (ArrayList<Museum>) savedInstanceState.getSerializable(SOME_VALUE);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, museumList);
-        listView.setAdapter(museumAdapter);
-        changeActivity(listView);
+        if (savedInstanceState != null) {
+            // Restore state members from saved instance
+            museumList = (ArrayList<Museum>) savedInstanceState.getSerializable(MUSEUM_LIST);
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, museumList);
+            listView.setAdapter(museumAdapter);
+            changeActivity(listView);
+        }
     }
 
     private void changeActivity(final ListView listView) {
