@@ -17,8 +17,7 @@ public class ListViewActivity extends AppCompatActivity {
     public GetFirebase getFirebase;
     Intent intent;
     ArrayAdapter<Museum> museumAdapter;
-    ArrayList<Museum> budleArrayList= new ArrayList<>();;
-    ArrayList<Museum> listAfterDestroy = new ArrayList<>();
+    ArrayList<Museum> museumList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,9 +38,9 @@ public class ListViewActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         // Save custom values into the bundle
         for (int i = 0; i < museumAdapter.getCount(); i++) {
-            budleArrayList.add(museumAdapter.getItem(i));
+            museumList.add(museumAdapter.getItem(i));
         }
-        savedInstanceState.putSerializable(SOME_VALUE, budleArrayList);
+        savedInstanceState.putSerializable(SOME_VALUE, museumList);
 
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(savedInstanceState);
@@ -52,8 +51,8 @@ public class ListViewActivity extends AppCompatActivity {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
         // Restore state members from saved instance
-        budleArrayList = (ArrayList<Museum>) savedInstanceState.getSerializable(SOME_VALUE);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1,budleArrayList);
+        museumList = (ArrayList<Museum>) savedInstanceState.getSerializable(SOME_VALUE);
+        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, museumList);
         listView.setAdapter(museumAdapter);
         changeActivity(listView);
     }
