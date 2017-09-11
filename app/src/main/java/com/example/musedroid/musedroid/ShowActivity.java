@@ -17,37 +17,46 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 
+import static android.R.attr.rating;
+
 
 public class ShowActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+    private static final String RATING = "Museum rating";
+    private static final String DESCRIPTION = "museum description";
+    private static final String TITLE = "museum title";
     RatingBar ratingBar;
     Button qrButton;
     Museum museum;
-
+    TextView textDescription;
+    Intent i;
     private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show);
-        TextView textDescription;
-        Intent i = getIntent();
+
+        i = getIntent();
+
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(this, this)
                 .build();
+
         qrButton = (Button) findViewById(R.id.qrButton);
+        textDescription = (TextView) findViewById(R.id.textDescription);
 
+        if (savedInstanceState == null) {
+            if (i != null) {
+                museum = i.getParcelableExtra("museum");
+                setTitle(museum.name);
+                getPlace(museum.placeId);
 
-        if (i != null) {
-            museum = i.getParcelableExtra("museum");
-            setTitle(museum.name);
-            getPlace(museum.placeId);
-            textDescription = (TextView) findViewById(R.id.textDescription);
-            textDescription.setText(museum.description);
+                textDescription.setText(museum.description);
+            }
         }
-
         qrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,6 +67,38 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
     }
+
+    //This function convert adapter to arrayList and serialize it into a bundle, so that can be restore
+    //after orientation change
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save custom values into the bundle
+        if (savedInstanceState != null) {
+            museum = i.getParcelableExtra("museum");
+
+            savedInstanceState.putFloat(RATING, rating);
+            savedInstanceState.putString(DESCRIPTION, museum.description);
+            savedInstanceState.putString(TITLE, museum.name);
+        }
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    //This function restores restore ArrayList after orientation and set it into listview
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            // Restore state members from saved instance
+            textDescription.setText(savedInstanceState.getString(DESCRIPTION));
+
+            setTitle(savedInstanceState.getString(TITLE));
+            ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+            ratingBar.setNumStars(5);
+            ratingBar.setRating(savedInstanceState.getFloat(RATING));
+        }
+    }
+
 
     private void getPlace(final String placeId) {
         Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
