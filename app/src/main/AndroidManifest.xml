@@ -32,7 +32,8 @@
 
         <activity android:name=".NearbyListViewActivity" />
         <activity android:name=".QrShowActivity" />
-        <activity android:name=".ExhibitShowActivity"></activity>
+        <activity android:name=".ExhibitShowActivity" />
+        <activity android:name=".WorkerFragment"></activity>
     </application>
 
 </manifest>
