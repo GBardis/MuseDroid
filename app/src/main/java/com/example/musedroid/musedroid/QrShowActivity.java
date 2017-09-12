@@ -30,9 +30,7 @@ import java.io.IOException;
 
 public class QrShowActivity extends AppCompatActivity {
     private final int permissionCode = 101;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference mDatabase = database.getReference();
-    Exhibit exhibit;
+
     Intent intent;
     SurfaceView cameraView;
     TextView qrInfo;
@@ -108,6 +106,9 @@ public class QrShowActivity extends AppCompatActivity {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
 
                 if (barcodes.size() != 0 && foundFlag == false) {
+//                    getExibitById("-Kr1FksV0GyAinNNyAMH");
+//                    while(exhibit == null) {
+//                    }
 
                     // Vibrate for 500 milliseconds
                     v.vibrate(500);
@@ -115,9 +116,8 @@ public class QrShowActivity extends AppCompatActivity {
                         // Update the TextView
                         public void run() {
                             qrInfo.setText(barcodes.valueAt(0).displayValue);
-                            getExibitById("-Kr1FksV0GyAinNNyAMH");
                             intent = new Intent(QrShowActivity.this, ExhibitShowActivity.class);
-                            intent.putExtra("Exhibit", exhibit);
+                            intent.putExtra("exhibitId",barcodes.valueAt(0).displayValue);
                             startActivity(intent);
                         }
                     });
@@ -127,25 +127,7 @@ public class QrShowActivity extends AppCompatActivity {
         });
     }
 
-    public void getExibitById(final String id) {
-        mDatabase.child("exhibits").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
 
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                exhibit = dataSnapshot.getValue(Exhibit.class);
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void startCamera() {
-
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
