@@ -63,7 +63,7 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         getFirebase = new GetFirebase();
 
-        museumList = new ArrayList<Museum>();
+        museumList = new ArrayList<>();
         context = this;
 
 
@@ -90,7 +90,7 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
         } else {
             try {
                 mEnableGps();
-            }catch(Exception ex){
+            } catch (Exception ex) {
                 int s = 1;
             }
         }
@@ -102,8 +102,8 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
         super.onResume();
         if (ActivityCompat.checkSelfPermission(NearbyListViewActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             askForPermission();
-            onRequestPermissionsResult(permissionCode,perm,result);
-        }else if(ActivityCompat.checkSelfPermission(NearbyListViewActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            onRequestPermissionsResult(permissionCode, perm, result);
+        } else if (ActivityCompat.checkSelfPermission(NearbyListViewActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             getUpdates();
         }
     }
@@ -298,7 +298,6 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
     }
 
 
-
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
@@ -313,8 +312,6 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
-
 
 
 }

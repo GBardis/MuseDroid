@@ -1,15 +1,13 @@
 package com.example.musedroid.musedroid;
 
-import android.*;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Camera;
+import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
@@ -21,13 +19,20 @@ import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
 
-import org.w3c.dom.Text;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 
 import java.io.IOException;
 
 public class QrShowActivity extends AppCompatActivity {
-    SurfaceView cameraView;
     private final int permissionCode = 101;
+
+    Intent intent;
+    SurfaceView cameraView;
     TextView qrInfo;
     CameraSource cameraSource;
     BarcodeDetector barcodeDetector;
@@ -42,10 +47,10 @@ public class QrShowActivity extends AppCompatActivity {
         setContentView(R.layout.activity_qr_show);
         cameraView = (SurfaceView) findViewById(R.id.cameraView);
         qrInfo = (TextView) findViewById(R.id.qrTextView);
-        ActivityCompat.requestPermissions(QrShowActivity.this,perm, permissionCode);
+        ActivityCompat.requestPermissions(QrShowActivity.this, perm, permissionCode);
         context = this;
         Intent i = getIntent();
-        foundFlag = i.getBooleanExtra("flag",false);
+        foundFlag = i.getBooleanExtra("flag", false);
 
 
         v = (Vibrator) this.context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -101,34 +106,48 @@ public class QrShowActivity extends AppCompatActivity {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
 
                 if (barcodes.size() != 0 && foundFlag == false) {
+//                    getExibitById("-Kr1FksV0GyAinNNyAMH");
+//                    while(exhibit == null) {
+//                    }
 
                     // Vibrate for 500 milliseconds
                     v.vibrate(500);
                     qrInfo.post(new Runnable() {    // Use the post method of the TextView
+                        // Update the TextView
                         public void run() {
-                            qrInfo.setText(    // Update the TextView
-                                    barcodes.valueAt(0).displayValue
-                            );
+                            qrInfo.setText(barcodes.valueAt(0).displayValue);
+                            intent = new Intent(QrShowActivity.this, ExhibitShowActivity.class);
+                            intent.putExtra("exhibitId",barcodes.valueAt(0).displayValue);
+                            startActivity(intent);
+                            finish();
                         }
                     });
-                    foundFlag=true;
+                    foundFlag = true;
                 }
             }
         });
     }
 
-    private void startCamera() {
 
-    }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 101: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     try {
+                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
                         cameraSource.start(cameraView.getHolder());
                     } catch (IOException e) {
                         e.printStackTrace();
