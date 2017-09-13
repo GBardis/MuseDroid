@@ -119,6 +119,7 @@ public class QrShowActivity extends AppCompatActivity {
                             intent = new Intent(QrShowActivity.this, ExhibitShowActivity.class);
                             intent.putExtra("exhibitId",barcodes.valueAt(0).displayValue);
                             startActivity(intent);
+                            finish();
                         }
                     });
                     foundFlag = true;
