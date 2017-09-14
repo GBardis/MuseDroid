@@ -59,10 +59,14 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
 
         if (savedInstanceState == null) {
             if (i != null) {
-                museum = i.getParcelableExtra("museum");
-                setTitle(museum.name);
-                getPlace(museum.placeId);
-                textDescription.setText(museum.description);
+                try {
+                    museum = i.getParcelableExtra("museum");
+                    setTitle(museum.name);
+                    getPlace(museum.placeId);
+                    textDescription.setText(museum.description);
+                } catch (Exception ex) {
+
+                }
             }
         }
 
@@ -94,11 +98,15 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         // Save custom values into the bundle
         if (savedInstanceState != null) {
-            museum = i.getParcelableExtra("museum");
+            try {
+                museum = i.getParcelableExtra("museum");
 
-            savedInstanceState.putFloat(RATING, rating);
-            savedInstanceState.putString(DESCRIPTION, museum.description);
-            savedInstanceState.putString(TITLE, museum.name);
+                savedInstanceState.putFloat(RATING, rating);
+                savedInstanceState.putString(DESCRIPTION, museum.description);
+                savedInstanceState.putString(TITLE, museum.name);
+            } catch (Exception ex) {
+
+            }
         }
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -109,16 +117,20 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-            // Restore state members from saved instance
-            textDescription.setText(savedInstanceState.getString(DESCRIPTION));
 
-            setTitle(savedInstanceState.getString(TITLE));
-            ratingBar = (RatingBar) findViewById(R.id.ratingBar);
-            ratingBar.setNumStars(5);
-            ratingBar.setRating(savedInstanceState.getFloat(RATING));
+            // Restore state members from saved instance
+            try {
+                textDescription.setText(savedInstanceState.getString(DESCRIPTION));
+
+                setTitle(savedInstanceState.getString(TITLE));
+                ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+                ratingBar.setNumStars(5);
+                ratingBar.setRating(savedInstanceState.getFloat(RATING));
+            } catch (Exception ex) {
+
+            }
         }
     }
-
 
     private void getPlace(final String placeId) {
         Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)

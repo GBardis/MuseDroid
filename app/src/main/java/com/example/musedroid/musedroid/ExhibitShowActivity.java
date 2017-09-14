@@ -13,6 +13,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class ExhibitShowActivity extends AppCompatActivity {
+    private static final String DESCRIPTION = "exhibit_description";
+    private static final String TITLE = "exhibit_title";
     public static Exhibit exhibit;
     TextView exhibitName, exhibitDescription;
     Intent intent;
@@ -26,9 +28,41 @@ public class ExhibitShowActivity extends AppCompatActivity {
         context = this;
         intent = getIntent();
         exhibitId = intent.getStringExtra("exhibitId");
-        getExhibitById(exhibitId);
+        if (savedInstanceState == null) {
+            getExhibitById(exhibitId);
+        }
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save custom values into the bundle
+        if (savedInstanceState != null) {
+            savedInstanceState.putString(DESCRIPTION, exhibit.description);
+            savedInstanceState.putString(TITLE, exhibit.name);
+        }
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    //This function restores restore ArrayList after orientation and set it into listview
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+            savedInstanceState.getString(DESCRIPTION, exhibit.description);
+            savedInstanceState.getString(TITLE, exhibit.name);
+            try {
+                exhibitName = (TextView) findViewById(R.id.exhibitName);
+                exhibitDescription = (TextView) findViewById(R.id.exhibitDescription);
+                exhibitDescription.setText(exhibit.description);
+                exhibitName.setText(exhibit.name);
+            } catch (Exception ex) {
+
+                intent = getIntent();
+                Exhibit exhibit = intent.getParcelableExtra("Exhibit");
+            }
+        }
+    }
 
     public void getExhibitById(final String id) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
