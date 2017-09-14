@@ -1,6 +1,7 @@
 package com.example.musedroid.musedroid;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,10 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
     RatingBar ratingBar;
     Button qrButton;
     Museum museum;
+    Button goToMaps;
+    Intent intent;
+    String museumName;
+    String museumAddress;
 
     private GoogleApiClient mGoogleApiClient;
 
@@ -38,7 +43,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                 .enableAutoManage(this, this)
                 .build();
         qrButton = (Button) findViewById(R.id.qrButton);
-
+        goToMaps = (Button) findViewById(R.id.goToMaps);
 
         if (i != null) {
             museum = i.getParcelableExtra("museum");
@@ -48,12 +53,22 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
             textDescription.setText(museum.description);
         }
 
+        goToMaps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri gmmIntentUri = Uri.parse("google.navigation:q= " + museumName + museumAddress);
+                intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                intent.setPackage("com.google.android.apps.maps");
+                startActivity(intent);
+            }
+        });
+
         qrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ShowActivity.this, QrShowActivity.class);
+                intent = new Intent(ShowActivity.this, QrShowActivity.class);
                 intent.putExtra("flag", false);
-                intent.putExtra("museumId", museum.key);
+
                 startActivity(intent);
             }
         });
@@ -69,6 +84,8 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                         if (places.getStatus().isSuccess() && places.getCount() > 0) {
                             final Place myPlace = places.get(0);
                             final float rating = myPlace.getRating();
+                            museumName = myPlace.getName().toString();
+                            museumAddress = myPlace.getAddress().toString();
                             ratingBar = (RatingBar) findViewById(R.id.ratingBar);
                             ratingBar.setNumStars(5);
                             ratingBar.setRating(rating);
@@ -77,6 +94,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                             Log.e(TAG, "Place not found");
                         }
                         places.release();
+
                     }
                 });
     }

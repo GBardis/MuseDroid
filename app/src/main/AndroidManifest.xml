@@ -23,6 +23,10 @@
         <activity android:name=".ShowActivity" />
         <activity android:name=".ListViewActivity" />
 
+        <uses-feature
+            android:glEsVersion="0x00020000"
+            android:required="true" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBbDEqUxFrTYXE7CMX4JFbJjhqUcrk--Kw" />
@@ -36,3 +40,4 @@
     </application>
 
 </manifest>
+

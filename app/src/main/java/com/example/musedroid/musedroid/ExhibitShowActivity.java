@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
-import com.google.android.gms.vision.text.Text;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -14,13 +13,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class ExhibitShowActivity extends AppCompatActivity {
-    TextView exhibitName,exhibitDescription;
+    public static Exhibit exhibit;
+    TextView exhibitName, exhibitDescription;
     Intent intent;
     Context context;
     String exhibitId;
-
-
-    public static Exhibit exhibit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +42,10 @@ public class ExhibitShowActivity extends AppCompatActivity {
                     exhibitDescription.setText(exhibit.description);
                     exhibitName = (TextView) findViewById(R.id.exhibitName);
                     exhibitName.setText(exhibit.name);
-                }
-                catch(Exception ex){
+                } catch (Exception ex) {
 
+                    intent = getIntent();
+                    Exhibit exhibit = intent.getParcelableExtra("Exhibit");
                 }
             }
 
