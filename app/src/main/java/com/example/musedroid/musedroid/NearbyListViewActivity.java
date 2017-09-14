@@ -67,13 +67,13 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
 
         museumList = new ArrayList<>();
         context = this;
-//        if (listFeed == null) {
+        if (listFeed == null) {
             listFeed = getFirebase.listViewFromFirebase(adapter, museumList);
 
             for (int i = 0; i < listFeed.getCount(); i++) {
                 museumList.add(listFeed.getItem(i));
             }
-//        }
+        }
 
         if (ActivityCompat.checkSelfPermission(NearbyListViewActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             askForPermission();
@@ -288,6 +288,7 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
         }
         nearbyListView.clearChoices();
         nearbyListView.setAdapter(adapter);
+        changeActivity(nearbyListView);
     }
 
     @Override
