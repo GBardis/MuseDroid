@@ -27,7 +27,7 @@
         android:id="@+id/qrTextView"
         android:layout_width="0dp"
         android:layout_height="80dp"
-        android:text="TextView"
+        android:text="@string/textview"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintBottom_creator="1"
         android:layout_marginStart="14dp"

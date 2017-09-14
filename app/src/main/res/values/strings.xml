@@ -2,4 +2,10 @@
     <string name="app_name">MuseDroid</string>
     <string name="button">See Available Museums</string>
     <string name="title_activity_maps">Map</string>
+    <string name="nearby_museums">Nearby Museums</string>
+    <string name="textview">TextView</string>
+    <string name="scan_exhibit">Scan Exhibit</string>
+    <string name="nfc_exhibit">NFC Exhibit</string>
+    <string name="gotomaps">goToMaps</string>
+    <string name="museumdescription">museumdescription</string>
 </resources>

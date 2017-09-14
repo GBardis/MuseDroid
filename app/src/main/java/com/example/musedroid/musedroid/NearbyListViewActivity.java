@@ -39,6 +39,7 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
 
 
     public static final int REQUEST_LOCATION = 001;
+    private static final String NEARBY_MUSEUM = "NearByMuseum";
     private static List<Museum> museumList;
     private final int permissionCode = 100;
     public ListView nearbyListView;
@@ -53,6 +54,7 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
     int result[] = new int[]{};
     Context context;
     Intent intent;
+    private ArrayList<Museum> nearbyMuseumList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,15 +67,13 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
 
         museumList = new ArrayList<>();
         context = this;
+//        if (listFeed == null) {
+            listFeed = getFirebase.listViewFromFirebase(adapter, museumList);
 
-
-        listFeed = getFirebase.listViewFromFirebase(adapter, museumList);
-        nearbyListView.setAdapter(listFeed);
-        changeActivity(nearbyListView);
-
-        for (int i = 0; i < listFeed.getCount(); i++) {
-            museumList.add(listFeed.getItem(i));
-        }
+            for (int i = 0; i < listFeed.getCount(); i++) {
+                museumList.add(listFeed.getItem(i));
+            }
+//        }
 
         if (ActivityCompat.checkSelfPermission(NearbyListViewActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             askForPermission();
@@ -96,6 +96,33 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
         }
 
     }
+
+    //This function convert adapter to arrayList and serialize it into a bundle, so that can be restore
+    //after orientation change
+    @Override
+    protected void onSaveInstanceState(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            for (int i = 0; i < adapter.getCount(); i++) {
+                nearbyMuseumList.add(adapter.getItem(i));
+            }
+            savedInstanceState.putSerializable(NEARBY_MUSEUM, nearbyMuseumList);
+            // Always call the superclass so it can save the view hierarchy state
+        }
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    //This function restores restore ArrayList after orientation and set it into listview
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1, (ArrayList<Museum>) savedInstanceState.getSerializable(NEARBY_MUSEUM));
+            nearbyListView.setAdapter(adapter);
+            changeActivity(nearbyListView);
+        }
+    }
+
 
     @Override
     protected void onResume() {
@@ -243,7 +270,10 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
 
     @Override
     public void onLocationChanged(Location location) {
+        listFeed.clear();
         Location dest = new Location("provider");
+        //listFeed = getFirebase.listViewFromFirebase(adapter, museumList);
+
 
         int i = 0;
         adapter.clear();
