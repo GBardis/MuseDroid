@@ -46,7 +46,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                 .build();
 
         qrButton = (Button) findViewById(R.id.qrButton);
-        textDescription = (TextView) findViewById(R.id.textDescription);
+        textDescription = (TextView) findViewById(R.id.MuseumDescription);
 
         if (savedInstanceState == null) {
             if (i != null) {
