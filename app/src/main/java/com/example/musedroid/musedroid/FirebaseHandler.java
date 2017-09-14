@@ -26,16 +26,11 @@ public class FirebaseHandler extends AppCompatActivity {
         mDatabase.child("museums").child(museumId).setValue(museum);
     }
 
-
     public void getMuseums(final ArrayAdapter<Museum> adapter, final List<Museum> museumList) {
 
         mDatabase.child("museums").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                //String museumName = (String) dataSnapshot.child("name").getValue();
-                //adapter.add(museumName);
-                //museumList.add((Museum) dataSnapshot.getValue(Museum.class));
-                //museumList.add((Museum) dataSnapshot.getValue(Museum.class));
                 adapter.add(dataSnapshot.getValue(Museum.class));
 
                 adapter.getItem(adapter.getCount() - 1).key = dataSnapshot.getKey().toString();
