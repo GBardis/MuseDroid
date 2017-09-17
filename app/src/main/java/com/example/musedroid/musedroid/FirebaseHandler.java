@@ -27,7 +27,8 @@ public class FirebaseHandler extends AppCompatActivity {
     }
 
 
-    public void getMuseums(final ArrayAdapter<Museum> adapter, final List<Museum> museumList) {
+    public void getMuseums(
+            final ArrayAdapter<Museum> adapter, final List<Museum> museumList) {
 
         mDatabase.child("museums").addChildEventListener(new ChildEventListener() {
             @Override
