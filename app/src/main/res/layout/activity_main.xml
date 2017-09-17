@@ -1,58 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.musedroid.musedroid.MainActivity"
-    tools:layout_editor_absoluteY="81dp"
-    tools:layout_editor_absoluteX="0dp">
+    android:layout_gravity="center"
+    android:background="@android:color/white"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingEnd="20dp"
+    android:paddingStart="20dp"
+    tools:context="com.example.musedroid.musedroid.MainActivity">
 
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/welcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="Welcome"
+        android:textColor="@color/colorPrimary"
+        android:textSize="26sp" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/appCompatImageView"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/museumsSpinner"
+        android:layout_centerHorizontal="true"
+        android:clickable="true"
+        android:scaleType="fitCenter"
+        android:src="@mipmap/museum_bg" />
 
     <Spinner
         android:id="@+id/museumsSpinner"
-        android:layout_width="0dp"
-        android:layout_height="42dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        tools:layout_constraintTop_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toBottomOf="@+id/goToListView"
-        app:layout_constraintRight_toRightOf="parent"
-        android:layout_marginTop="130dp"
-        tools:layout_constraintLeft_creator="1"
-        android:layout_marginBottom="127dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="150dp"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/goToListView"
-        android:layout_width="166dp"
-        android:layout_height="63dp"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/btnNearbyMuseum"
+        android:layout_alignBottom="@+id/btnNearbyMuseum"
+        android:layout_alignParentStart="true"
+        android:background="@drawable/drawable_rounded_buttons"
+        android:padding="15dp"
         android:text="@string/button"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintBottom_creator="1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        tools:layout_constraintLeft_creator="1"
-        android:layout_marginBottom="212dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintHorizontal_bias="0.49" />
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/btnNearbyMuseum"
-        android:layout_width="166dp"
-        android:layout_height="51dp"
-        android:layout_marginBottom="111dp"
-        android:layout_marginTop="113dp"
+        android:layout_width="140dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/drawable_rounded_buttons"
+        android:padding="15dp"
         android:text="Nearby Museums"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/goToListView"
-        tools:layout_constraintBottom_creator="1"
-        tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_constraintTop_creator="1" />
-</android.support.constraint.ConstraintLayout>
+        android:textColor="@android:color/white" />
+</RelativeLayout>
