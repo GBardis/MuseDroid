@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">MuseDroid</string>
     <string name="button">See Available Museums</string>
+    <string name="bundle_museum_list">bundle_museum_list</string>
+    <string name="drawer_open">drawer_open</string>
+    <string name="drawer_close">drawer_close</string>
 </resources>

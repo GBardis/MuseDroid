@@ -9,6 +9,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,6 +70,53 @@ public class FirebaseHandler extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+
+    }
+
+
+
+    public ArrayList<Museum> getMuseums() {
+        final ArrayList<Museum> museumList = new ArrayList<>();
+        mDatabase.child("museums").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                //String museumName = (String) dataSnapshot.child("name").getValue();
+                //adapter.add(museumName);
+                //museumList.add((Museum) dataSnapshot.getValue(Museum.class));
+                //museumList.add((Museum) dataSnapshot.getValue(Museum.class));
+//                adapter.add(dataSnapshot.getValue(Museum.class));
+//
+//                adapter.getItem(adapter.getCount() - 1).key = dataSnapshot.getKey().toString();
+
+                museumList.add(dataSnapshot.getValue(Museum.class));
+                int i = 0;
+                for (Museum museum : museumList) {
+                    i++;
+                    if (i == museumList.size()) {
+                        museum.key = dataSnapshot.getKey();
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                //  String museumName = (String) dataSnapshot.child("name")
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                //adapter.remove((String) dataSnapshot.child("name").getValue());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        return museumList;
     }
 
 }

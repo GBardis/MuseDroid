@@ -3,6 +3,7 @@ package com.example.musedroid.musedroid;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,5 +19,10 @@ public class GetFirebase extends AppCompatActivity {
 
         firebaseHandler.getMuseums(adapter, museumList);
         return adapter;
+    }
+
+
+    public ArrayList<Museum> getMuseumList() {
+        return firebaseHandler.getMuseums();
     }
 }
