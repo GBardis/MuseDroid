@@ -3,12 +3,9 @@ package com.example.musedroid.musedroid;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -34,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
         //set Buttons from View!
-        btnNearbyMuseum = (Button) findViewById(R.id.btnNearbyMuseum);
+        btnNearbyMuseum = findViewById(R.id.btnNearbyMuseum);
 
         btnNearbyMuseum.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -45,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         });
 
-        goToListView = (Button) findViewById(R.id.goToListView);
+        goToListView = findViewById(R.id.goToListView);
 
         goToListView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,10 +53,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,13 +65,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        drawer.addDrawerListener(toggle);
+
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -123,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (id == R.id.nav_camera) {
             if (this.getClass().getSimpleName().equals("ListViewActivity")) {
-                drawer =  findViewById(R.id.drawer_layout);
+                drawer = findViewById(R.id.drawer_layout);
             } else {
                 Intent i = new Intent(this, ListViewActivity.class);
                 startActivity(i);
@@ -141,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
