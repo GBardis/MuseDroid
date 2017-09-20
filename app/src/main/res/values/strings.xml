@@ -49,5 +49,6 @@
     <string name="logout">Logout</string>
     <string name="navigate_to_nearest_museum_in_your_city">Navigate to nearest museum</string>
     <string name="musedroid">MuseDroid</string>
+    <string name="naviconmuseum">NavIconMuseum</string>
 </resources>
 
