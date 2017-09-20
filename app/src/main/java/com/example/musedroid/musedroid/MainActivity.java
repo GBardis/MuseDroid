@@ -150,14 +150,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (id == R.id.Profile) {
             if (auth.getCurrentUser() != null) {
                 startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-                finish();
             }
         } else if (id == R.id.Logout) {
             //TODO: must change the icon of logout button
             if (auth.getCurrentUser() != null) {
                 auth.signOut();
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                finish();
             } else if (id == R.id.Info) {
 
 
