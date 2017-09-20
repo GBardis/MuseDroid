@@ -43,5 +43,11 @@
     <string name="btn_sign_out">Sign Out</string>
     <string name="lbl_forgot_password">Forgot password?</string>
     <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
+    <string name="profile">Profile</string>
+    <string name="home">Home</string>
+    <string name="info">Info</string>
+    <string name="logout">Logout</string>
+    <string name="navigate_to_nearest_museum_in_your_city">Navigate to nearest museum</string>
+    <string name="musedroid">MuseDroid</string>
 </resources>
 
