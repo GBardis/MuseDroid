@@ -15,7 +15,7 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         if (position ==0) {
             return new Fragment1();
         } else if (position == 1) {
-            return new Fragment();
+            return new Fragment2();
         } else return new Fragment();
     }
 

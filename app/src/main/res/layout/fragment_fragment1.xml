@@ -5,14 +5,10 @@
     tools:context="com.example.musedroid.musedroid.Fragment1">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
 
     <ListView
         android:id="@+id/allListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <!--  android:text="@string/hello_blank_fragment" /-->
 
 </FrameLayout>
