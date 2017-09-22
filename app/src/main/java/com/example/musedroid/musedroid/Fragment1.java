@@ -30,7 +30,7 @@ public class Fragment1 extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ListView allListView  = view.findViewById(R.id.allListView);
-        adapter = new ArrayAdapter<Museum>(getActivity().getApplicationContext(),android.R.layout.simple_list_item_1,android.R.id.text1);
+        adapter = new ArrayAdapter<>(getActivity().getApplicationContext(),android.R.layout.simple_list_item_1,android.R.id.text1);
         getFirebase = new GetFirebase();
         museumAdapter = getFirebase.listViewFromFirebase(adapter, new ArrayList<Museum>());
         allListView.setAdapter(museumAdapter);
