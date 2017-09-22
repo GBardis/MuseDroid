@@ -1,13 +1,24 @@
 package com.example.musedroid.musedroid;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 public class Fragment1 extends Fragment {
+    public ArrayAdapter<Museum> adapter, museumAdapter;
+    ArrayList<Museum> museumList = new ArrayList<>();
+    public GetFirebase getFirebase;
+    Intent intent;
+
 
     @Nullable
     @Override
@@ -18,10 +29,24 @@ public class Fragment1 extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-//        Button button = (Button) view.findViewById(R.id.button);
-//        button.setVisibility(View.GONE);
-//        TextView textView = (TextView)view.findViewById(R.id.text_view);
-//        textView.setText("A TextView in Fragment");
+        ListView allListView  = view.findViewById(R.id.allListView);
+        adapter = new ArrayAdapter<Museum>(getActivity().getApplicationContext(),android.R.layout.simple_list_item_1,android.R.id.text1);
+        getFirebase = new GetFirebase();
+        museumAdapter = getFirebase.listViewFromFirebase(adapter, new ArrayList<Museum>());
+        allListView.setAdapter(museumAdapter);
+        changeActivity(allListView);
+    }
+
+    private void changeActivity(final ListView listView) {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            // argument position gives the index of item which is clicked
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                intent = new Intent(view.getContext(), ShowActivity.class);
+                intent.putExtra("museum", (Museum) listView.getItemAtPosition(position));
+                startActivity(intent);
+            }
+        });
     }
 }
 
