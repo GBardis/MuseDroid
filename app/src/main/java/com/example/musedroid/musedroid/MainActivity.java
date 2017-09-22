@@ -11,7 +11,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -21,7 +20,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     private TabLayout tabLayout;
     private String[] pageTitle = {"Fragment 1", "Fragment 2", "Fragment 3"};
-    private ProgressBar progressBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

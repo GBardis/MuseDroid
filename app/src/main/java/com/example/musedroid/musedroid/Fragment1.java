@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -20,11 +21,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 
 public class Fragment1 extends Fragment {
-    public GetFirebase getFirebase;
     public ArrayList<Museum> museumArrayList;
     Intent intent;
     RecyclerView mRecyclerView;
     MuseumAdapter museumAdapter;
+    ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -39,11 +40,12 @@ public class Fragment1 extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mRecyclerView = view.findViewById(R.id.museumRecycleView);
+        progressBar = view.findViewById(R.id.museumProgressbar);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
         // use a linear layout manager
-        //use getActivity instend of this in LinearLayoutManager
+        //use getActivity instead of this in LinearLayoutManager
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -53,7 +55,8 @@ public class Fragment1 extends Fragment {
         museumAdapter = new MuseumAdapter(museumArrayList);
         mRecyclerView.setAdapter(museumAdapter);
         //It is important for the adapter to works to use museumAdapter.notifyDataSetChanged(); after
-        //the firebase add all museum inside the list , trigers adapter to see the data changes
+        //the firebase add all museum inside the list , triggers adapter to see the data changes
+        progressBar.setVisibility(View.VISIBLE);
         getMuseums();
     }
 
@@ -81,6 +84,7 @@ public class Fragment1 extends Fragment {
         mDatabase.child("museums").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                progressBar.setVisibility(View.GONE);
                 Museum museum = dataSnapshot.getValue(Museum.class);
                 museumArrayList.add(museum);
                 museumAdapter.notifyDataSetChanged();
