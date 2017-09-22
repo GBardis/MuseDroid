@@ -26,17 +26,24 @@ public class Fragment1 extends Fragment {
     RecyclerView mRecyclerView;
     MuseumAdapter museumAdapter;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        getMuseums();
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //getMuseums();
         return inflater.inflate(R.layout.fragment_fragment1, container, false);
-
-
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
 
         mRecyclerView = view.findViewById(R.id.museumRecycleView);
         // use this setting to improve performance if you know that changes
@@ -54,7 +61,7 @@ public class Fragment1 extends Fragment {
         mRecyclerView.setAdapter(museumAdapter);
         //It is important for the adapter to works to use museumAdapter.notifyDataSetChanged(); after
         //the firebase add all museum inside the list , trigers adapter to see the data changes
-        getMuseums();
+
     }
 
     @Override
@@ -104,7 +111,10 @@ public class Fragment1 extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+
+
     }
+
 
 
 //    private void changeActivity(final ListView listView) {

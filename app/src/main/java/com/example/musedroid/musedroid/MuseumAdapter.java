@@ -65,6 +65,10 @@ public class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder
         public void onItemClick(int position, View v);
     }
 
+    public Museum getItem(int position) {
+        return museumList.get(position);
+    }
+
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder

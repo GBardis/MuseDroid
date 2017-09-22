@@ -14,10 +14,9 @@ public class ListViewActivity extends AppCompatActivity {
     static final String MUSEUM_LIST = "museum_list";
     public ListView listView;
     public ArrayAdapter<Museum> adapter, museumAdapter;
-    ArrayList<Museum> museumList = new ArrayList<>();
     public GetFirebase getFirebase;
     Intent intent;
-
+    ArrayList<Museum> museumList = new ArrayList<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -25,7 +24,7 @@ public class ListViewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_list_view);
 
 
-
+        setContentView(R.layout.activity_list_view);
         listView = (ListView) findViewById(R.id.LIstView);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         getFirebase = new GetFirebase();
