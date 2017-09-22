@@ -94,28 +94,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         int id = item.getItemId();
-
-        if (id == R.id.Profile) {
-            if (auth.getCurrentUser() != null) {
-                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-            }
-        } else if (id == R.id.Logout) {
-            if (auth.getCurrentUser() != null) {
-                auth.signOut();
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            }
-        } else if (id == R.id.fr1) {
-            viewPager.setCurrentItem(0);
-        } else if (id == R.id.fr2) {
-            viewPager.setCurrentItem(1);
-        } else if (id == R.id.fr3) {
-            viewPager.setCurrentItem(2);
-        } else if (id == R.id.go) {
-            Intent intent = new Intent(this, DesActivity.class);
-            intent.putExtra("string", "Go to other Activity by NavigationView item cliked!");
-            startActivity(intent);
-        } else if (id == R.id.close) {
-            finish();
+        switch(id){
+            case R.id.Profile:
+                            if (auth.getCurrentUser() != null) {
+                                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                            }
+                            break;
+            case R.id.Logout:
+                            if (auth.getCurrentUser() != null) {
+                                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                            }
+                            break;
         }
 
         drawer.closeDrawer(GravityCompat.START);
