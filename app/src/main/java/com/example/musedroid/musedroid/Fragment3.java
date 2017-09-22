@@ -16,7 +16,6 @@ import android.view.ViewGroup;
  * to handle interaction events.
  * Use the {@link Fragment3#newInstance} factory method to
  * create an instance of this fragment.
- *
  */
 public class Fragment3 extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -29,6 +28,10 @@ public class Fragment3 extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    public Fragment3() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -46,9 +49,6 @@ public class Fragment3 extends Fragment {
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
-    }
-    public Fragment3() {
-        // Required empty public constructor
     }
 
     @Override
