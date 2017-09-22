@@ -46,6 +46,35 @@ public class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder
         holder.description.setText(museum.description);
     }
 
+    public void addItem(Museum dataObj, int index) {
+        museumList.add(index, dataObj);
+        notifyItemInserted(index);
+    }
+
+    public void clear() {
+        int size = this.museumList.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                this.museumList.remove(0);
+            }
+
+            this.notifyItemRangeRemoved(0, size);
+        }
+    }
+
+    public Museum getItem(int position) {
+        return museumList.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    public void add(Museum item) {
+        museumList.add(item);
+    }
+
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);

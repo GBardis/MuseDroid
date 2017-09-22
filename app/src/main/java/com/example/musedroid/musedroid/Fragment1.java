@@ -67,14 +67,10 @@ public class Fragment1 extends Fragment {
             @Override
             public void onItemClick(int position, View view) {
                 intent = new Intent(view.getContext(), ShowActivity.class);
-                intent.putExtra("museum", getItem(position));
+                intent.putExtra("museum", museumAdapter.getItem(position));
                 startActivity(intent);
             }
         });
-    }
-
-    public Museum getItem(int position) {
-        return museumArrayList.get(position);
     }
 
     public void getMuseums() {
