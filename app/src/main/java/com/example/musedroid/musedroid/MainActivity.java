@@ -1,6 +1,7 @@
 package com.example.musedroid.musedroid;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
@@ -8,26 +9,28 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+import com.google.firebase.auth.FirebaseAuth;
+
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
     private String[] pageTitle = {"Fragment 1", "Fragment 2", "Fragment 3"};
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        viewPager = (ViewPager)findViewById(R.id.view_pager);
+        viewPager = (ViewPager) findViewById(R.id.view_pager);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
-
         setSupportActionBar(toolbar);
 
         //create default navigation drawer toggle
@@ -58,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         //change ViewPager page when tab selected
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
@@ -76,11 +79,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        //to prevent current item select over and over
+        if (item.isChecked()) {
+            drawer.closeDrawer(GravityCompat.START);
+            return false;
+        }
+
         int id = item.getItemId();
 
-        if (id == R.id.fr1) {
+        if (id == R.id.Profile) {
+            if (auth.getCurrentUser() != null) {
+                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+            }
+        } else if (id == R.id.Logout) {
+            if (auth.getCurrentUser() != null) {
+                auth.signOut();
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            }
+        } else if (id == R.id.fr1) {
             viewPager.setCurrentItem(0);
         } else if (id == R.id.fr2) {
             viewPager.setCurrentItem(1);

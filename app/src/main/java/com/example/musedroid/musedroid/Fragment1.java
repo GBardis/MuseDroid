@@ -15,7 +15,6 @@ import java.util.ArrayList;
 
 public class Fragment1 extends Fragment {
     public ArrayAdapter<Museum> adapter, museumAdapter;
-    ArrayList<Museum> museumList = new ArrayList<>();
     public GetFirebase getFirebase;
     Intent intent;
 
@@ -29,8 +28,8 @@ public class Fragment1 extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ListView allListView  = view.findViewById(R.id.allListView);
-        adapter = new ArrayAdapter<Museum>(getActivity().getApplicationContext(),android.R.layout.simple_list_item_1,android.R.id.text1);
+        ListView allListView = view.findViewById(R.id.allListView);
+        adapter = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, android.R.id.text1);
         getFirebase = new GetFirebase();
         museumAdapter = getFirebase.listViewFromFirebase(adapter, new ArrayList<Museum>());
         allListView.setAdapter(museumAdapter);
@@ -49,7 +48,6 @@ public class Fragment1 extends Fragment {
         });
     }
 }
-
 
 
 //package com.example.musedroid.musedroid;
