@@ -4,52 +4,121 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
 public class Fragment1 extends Fragment {
-    public ArrayAdapter<Museum> adapter, museumAdapter;
-    ArrayList<Museum> museumList = new ArrayList<>();
     public GetFirebase getFirebase;
+    public ArrayList<Museum> museumArrayList;
     Intent intent;
-
+    RecyclerView mRecyclerView;
+    MuseumAdapter museumAdapter;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_fragment1, container, false);
+
+
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ListView allListView  = view.findViewById(R.id.allListView);
-        adapter = new ArrayAdapter<>(getActivity().getApplicationContext(),android.R.layout.simple_list_item_1,android.R.id.text1);
-        getFirebase = new GetFirebase();
-        museumAdapter = getFirebase.listViewFromFirebase(adapter, new ArrayList<Museum>());
-        allListView.setAdapter(museumAdapter);
-        changeActivity(allListView);
+
+        mRecyclerView = view.findViewById(R.id.museumRecycleView);
+        // use this setting to improve performance if you know that changes
+        // in content do not change the layout size of the RecyclerView
+        mRecyclerView.setHasFixedSize(true);
+        // use a linear layout manager
+        //use getActivity instend of this in LinearLayoutManager
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        //initialize Museum adapter and give as import an array list
+        //call firebase function after the initialize of the adapter
+        museumArrayList = new ArrayList<>();
+        museumAdapter = new MuseumAdapter(museumArrayList);
+        mRecyclerView.setAdapter(museumAdapter);
+        //It is important for the adapter to works to use museumAdapter.notifyDataSetChanged(); after
+        //the firebase add all museum inside the list , trigers adapter to see the data changes
+        getMuseums();
     }
 
-    private void changeActivity(final ListView listView) {
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MuseumAdapter) museumAdapter).setOnItemClickListener(new MuseumAdapter.MyClickListener() {
             @Override
-            // argument position gives the index of item which is clicked
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+            public void onItemClick(int position, View view) {
                 intent = new Intent(view.getContext(), ShowActivity.class);
-                intent.putExtra("museum", (Museum) listView.getItemAtPosition(position));
+                intent.putExtra("museum", getItem(position));
                 startActivity(intent);
             }
         });
     }
-}
 
+    public Museum getItem(int position) {
+        return museumArrayList.get(position);
+    }
+
+    public void getMuseums() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference mDatabase = database.getReference();
+
+        mDatabase.child("museums").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Museum museum = dataSnapshot.getValue(Museum.class);
+                museumArrayList.add(museum);
+                museumAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                //  String museumName = (String) dataSnapshot.child("name")
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                //adapter.remove((String) dataSnapshot.child("name").getValue());
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+
+//    private void changeActivity(final ListView listView) {
+//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            // argument position gives the index of item which is clicked
+//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+//                intent = new Intent(view.getContext(), ShowActivity.class);
+//                intent.putExtra("museum", (Museum) listView.getItemAtPosition(position));
+//                startActivity(intent);
+//            }
+//        });
+//    }
+}
 
 
 //package com.example.musedroid.musedroid;
