@@ -117,5 +117,6 @@ public class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder
             myClickListener.onItemClick(getAdapterPosition(), view);
         }
     }
+
 }
 

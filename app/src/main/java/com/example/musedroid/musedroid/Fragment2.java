@@ -32,17 +32,16 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 
 public class Fragment2 extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static final int REQUEST_LOCATION = 001;
     private static final String NEARBY_MUSEUM = "NearByMuseum";
     private final int permissionCode = 100;
-    //    public ListView nearbyListView;
-//    public ArrayAdapter<Museum> adapter, listFeed;
-//    public GetFirebase getFirebase;
+    MuseumAdapter museumAdapter, nearbyMuseumAdapter;
+    MuseumAdapter tempMuseumList = new MuseumAdapter(new ArrayList<Museum>());
+    ArrayList<Museum> nearbyMuseumList, museumArrayList;
+
     GoogleApiClient googleApiClient;
     LocationRequest locationRequest;
     LocationManager locationManager;
@@ -53,18 +52,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     Context context;
     Intent intent;
     RecyclerView mRecyclerView;
-    MuseumAdapter museumAdapter, nearbyMuseumAdapter;
-    ArrayList<Museum> nearbyMuseumList, museumArrayList;
     GetFirebase getFirebase;
     ArrayList<Museum> bundledMuseumsList = new ArrayList<>();
-    ArrayList<Museum> tempMuseumList = new ArrayList<>();
 
-    public static <T> boolean listEqualsNoOrder(ArrayList<T> l1, ArrayList<T> l2) {
-        final Set<T> s1 = new HashSet<>(l1);
-        final Set<T> s2 = new HashSet<>(l2);
-
-        return s1.equals(s2);
-    }
 
     @Nullable
     @Override
@@ -162,10 +152,12 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     public void onSaveInstanceState(Bundle outState) {
         try {
             if (outState != null) {
+                bundledMuseumsList.clear();
                 for (int i = 0; i < nearbyMuseumAdapter.getItemCount(); i++) {
                     bundledMuseumsList.add(nearbyMuseumAdapter.getItem(i));
                 }
                 outState.putSerializable(NEARBY_MUSEUM, bundledMuseumsList);
+
                 // Always call the superclass so it can save the view hierarchy state
             }
         } catch (Exception ignored) {
@@ -262,14 +254,16 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             museum.distance = String.valueOf(location.distanceTo(dest) / 1000);
             if (Double.parseDouble(museum.distance) < 5) {
                 nearbyMuseumAdapter.add(museum);
-                tempMuseumList.add(museum);
-                // nearbyMuseumAdapter.notifyDataSetChanged();
-            }
-        }
 
-        mRecyclerView.getRecycledViewPool().clear();
-        mRecyclerView.setAdapter(nearbyMuseumAdapter);
-        changeActivity(nearbyMuseumAdapter);
+            }
+            nearbyMuseumAdapter.notifyDataSetChanged();
+        }
+        if (nearbyMuseumAdapter != tempMuseumList) {
+            tempMuseumList = nearbyMuseumAdapter;
+            mRecyclerView.getRecycledViewPool().clear();
+            mRecyclerView.setAdapter(nearbyMuseumAdapter);
+            changeActivity(nearbyMuseumAdapter);
+        }
     }
 
     @Override
