@@ -30,20 +30,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class Fragment2 extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static final int REQUEST_LOCATION = 001;
     private static final String NEARBY_MUSEUM = "NearByMuseum";
-    private static List<Museum> museumList;
     private final int permissionCode = 100;
     //    public ListView nearbyListView;
 //    public ArrayAdapter<Museum> adapter, listFeed;
@@ -58,8 +51,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     Context context;
     Intent intent;
     RecyclerView mRecyclerView;
-    MuseumAdapter museumAdapter;
-    ArrayList<Museum> nearbyMuseumList, firebaseMuseumList;
+    MuseumAdapter museumAdapter, nearbyMuseumAdapter;
+    ArrayList<Museum> nearbyMuseumList, museumArrayList;
+    GetFirebase getFirebase;
 
     @Nullable
     @Override
@@ -97,7 +91,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        museumList = new ArrayList<>();
         nearbyMuseumList = new ArrayList<>();
 
         mRecyclerView = view.findViewById(R.id.museumNearbyRecycleView);
@@ -111,14 +104,11 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //initialize Museum adapter and give as import an array list
         //call firebase function after the initialize of the adapter
+        getFirebase = new GetFirebase();
+        museumArrayList = new ArrayList<>();
+        museumAdapter = new MuseumAdapter(museumArrayList);
 
-        firebaseMuseumList = new ArrayList<>();
-        museumAdapter = new MuseumAdapter(firebaseMuseumList);
-        mRecyclerView.setAdapter(museumAdapter);
-        getMuseums(firebaseMuseumList);
-        //It is important for the adapter to works to use museumAdapter.notifyDataSetChanged(); after
-        //the firebase add all museum inside the list , triggers adapter to see the data changes
-
+        nearbyMuseumAdapter = getFirebase.listViewFromFirebase(museumAdapter);
     }
 
     public void askForPermission() {
@@ -198,11 +188,11 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
     @Override
     public void onLocationChanged(final Location location) {
-        final Location dest = new Location("provider");
+        Location dest = new Location("provider");
 
         nearbyMuseumList.clear();
-        for (int i = 0; i < museumAdapter.getItemCount(); i++) {
-            nearbyMuseumList.add(museumAdapter.getItem(i));
+        for (int i = 0; i < nearbyMuseumAdapter.getItemCount(); i++) {
+            nearbyMuseumList.add(nearbyMuseumAdapter.getItem(i));
         }
         museumAdapter.clear();
         for (Museum museum : nearbyMuseumList) {
@@ -214,40 +204,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 museumAdapter.notifyDataSetChanged();
             }
         }
-    }
-
-    public void getMuseums(final ArrayList<Museum> museumList) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference mDatabase = database.getReference();
-
-        mDatabase.child("museums").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Museum museum = dataSnapshot.getValue(Museum.class);
-                museumAdapter.add(museum);
-                museumAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                //  String museumName = (String) dataSnapshot.child("name")
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                //adapter.remove((String) dataSnapshot.child("name").getValue());
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-
-
+        mRecyclerView.setAdapter(museumAdapter);
     }
 
     @Override

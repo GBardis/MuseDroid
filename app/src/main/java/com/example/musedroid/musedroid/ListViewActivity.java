@@ -29,7 +29,7 @@ public class ListViewActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.LIstView);
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, android.R.id.text1);
         getFirebase = new GetFirebase();
-        museumAdapter = getFirebase.listViewFromFirebase(adapter, new ArrayList<Museum>());
+        //museumAdapter = getFirebase.listViewFromFirebase(adapter, new ArrayList<Museum>());
         listView.setAdapter(museumAdapter);
         changeActivity(listView);
     }
