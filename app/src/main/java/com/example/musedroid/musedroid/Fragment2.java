@@ -32,6 +32,8 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class Fragment2 extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
@@ -55,6 +57,14 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     ArrayList<Museum> nearbyMuseumList, museumArrayList;
     GetFirebase getFirebase;
     ArrayList<Museum> bundledMuseumsList = new ArrayList<>();
+    ArrayList<Museum> tempMuseumList = new ArrayList<>();
+
+    public static <T> boolean listEqualsNoOrder(ArrayList<T> l1, ArrayList<T> l2) {
+        final Set<T> s1 = new HashSet<>(l1);
+        final Set<T> s2 = new HashSet<>(l2);
+
+        return s1.equals(s2);
+    }
 
     @Nullable
     @Override
@@ -111,7 +121,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             museumAdapter = new MuseumAdapter(museumArrayList);
 
             nearbyMuseumAdapter = getFirebase.listViewFromFirebase(museumAdapter);
-            changeActivity(nearbyMuseumAdapter);
+            //changeActivity(nearbyMuseumAdapter);
         }
     }
 
@@ -168,7 +178,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         ActivityCompat.requestPermissions(getActivity(), perm, permissionCode);
     }
 
-
     public void getUpdates() {
         if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -183,7 +192,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, Fragment2.this);
 
     }
-
 
     public void mEnableGps() {
         googleApiClient = new GoogleApiClient.Builder(context)
@@ -254,9 +262,12 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             museum.distance = String.valueOf(location.distanceTo(dest) / 1000);
             if (Double.parseDouble(museum.distance) < 5) {
                 nearbyMuseumAdapter.add(museum);
-                nearbyMuseumAdapter.notifyDataSetChanged();
+                tempMuseumList.add(museum);
+                // nearbyMuseumAdapter.notifyDataSetChanged();
             }
         }
+
+        mRecyclerView.getRecycledViewPool().clear();
         mRecyclerView.setAdapter(nearbyMuseumAdapter);
         changeActivity(nearbyMuseumAdapter);
     }
