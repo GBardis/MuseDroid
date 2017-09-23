@@ -18,8 +18,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -47,9 +45,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     private static final String NEARBY_MUSEUM = "NearByMuseum";
     private static List<Museum> museumList;
     private final int permissionCode = 100;
-    public ListView nearbyListView;
-    public ArrayAdapter<Museum> adapter, listFeed;
-    public GetFirebase getFirebase;
+    //    public ListView nearbyListView;
+//    public ArrayAdapter<Museum> adapter, listFeed;
+//    public GetFirebase getFirebase;
     GoogleApiClient googleApiClient;
     LocationRequest locationRequest;
     LocationManager locationManager;
@@ -61,8 +59,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     Intent intent;
     RecyclerView mRecyclerView;
     MuseumAdapter museumAdapter;
-    ArrayList<Museum> nearbyMuseumList = new ArrayList<>();
-    private List<Museum> museum;
+    ArrayList<Museum> nearbyMuseumList, firebaseMuseumList;
 
     @Nullable
     @Override
@@ -100,12 +97,8 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // nearbyListView = (ListView) view.findViewById(R.id.nearbyListView);
-        adapter = new ArrayAdapter<>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, android.R.id.text1);
-        getFirebase = new GetFirebase();
-
         museumList = new ArrayList<>();
-
+        nearbyMuseumList = new ArrayList<>();
 
         mRecyclerView = view.findViewById(R.id.museumNearbyRecycleView);
         // use this setting to improve performance if you know that changes
@@ -119,19 +112,13 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         //initialize Museum adapter and give as import an array list
         //call firebase function after the initialize of the adapter
 
-
+        firebaseMuseumList = new ArrayList<>();
+        museumAdapter = new MuseumAdapter(firebaseMuseumList);
+        mRecyclerView.setAdapter(museumAdapter);
+        getMuseums(firebaseMuseumList);
         //It is important for the adapter to works to use museumAdapter.notifyDataSetChanged(); after
         //the firebase add all museum inside the list , triggers adapter to see the data changes
-        if (museumAdapter == null) {
-            museumAdapter = new MuseumAdapter(nearbyMuseumList);
-            mRecyclerView.setAdapter(museumAdapter);
-            getMuseums();
 
-            for (int i = 0; i < museumAdapter.getItemCount(); i++) {
-                museumList.add(museumAdapter.getItem(i));
-            }
-            mRecyclerView.getAdapter().getItemCount();
-        }
     }
 
     public void askForPermission() {
@@ -210,27 +197,26 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-        Location dest = new Location("provider");
+    public void onLocationChanged(final Location location) {
+        final Location dest = new Location("provider");
 
-
-        int i = 0;
+        nearbyMuseumList.clear();
+        for (int i = 0; i < museumAdapter.getItemCount(); i++) {
+            nearbyMuseumList.add(museumAdapter.getItem(i));
+        }
         museumAdapter.clear();
         for (Museum museum : nearbyMuseumList) {
-            i++;
             dest.setLatitude(Double.parseDouble(museum.lat));
             dest.setLongitude(Double.parseDouble(museum.lon));
             museum.distance = String.valueOf(location.distanceTo(dest) / 1000);
             if (Double.parseDouble(museum.distance) < 5) {
-                museumAdapter.addItem(museum, i);
+                museumAdapter.add(museum);
+                museumAdapter.notifyDataSetChanged();
             }
         }
-
-        mRecyclerView.setAdapter(museumAdapter);
-        museumAdapter.notifyDataSetChanged();
     }
 
-    public void getMuseums() {
+    public void getMuseums(final ArrayList<Museum> museumList) {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference mDatabase = database.getReference();
 
@@ -238,7 +224,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 Museum museum = dataSnapshot.getValue(Museum.class);
-                nearbyMuseumList.add(museum);
+                museumAdapter.add(museum);
                 museumAdapter.notifyDataSetChanged();
             }
 
@@ -260,6 +246,8 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+
+
     }
 
     @Override
