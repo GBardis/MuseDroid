@@ -111,6 +111,19 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         nearbyMuseumAdapter = getFirebase.listViewFromFirebase(museumAdapter);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MuseumAdapter) nearbyMuseumAdapter).setOnItemClickListener(new MuseumAdapter.MyClickListener() {
+            @Override
+            public void onItemClick(int position, View view) {
+                intent = new Intent(view.getContext(), ShowActivity.class);
+                intent.putExtra("museum", nearbyMuseumAdapter.getItem(position));
+                startActivity(intent);
+            }
+        });
+    }
+
     public void askForPermission() {
         ActivityCompat.requestPermissions(getActivity(), perm, permissionCode);
     }
