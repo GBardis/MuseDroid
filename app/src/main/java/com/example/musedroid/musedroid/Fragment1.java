@@ -27,17 +27,24 @@ public class Fragment1 extends Fragment {
     MuseumAdapter museumAdapter;
     ProgressBar progressBar;
 
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        getMuseums();
+
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //getMuseums();
         return inflater.inflate(R.layout.fragment_fragment1, container, false);
-
-
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
 
         mRecyclerView = view.findViewById(R.id.museumRecycleView);
         progressBar = view.findViewById(R.id.museumProgressbar);
@@ -58,6 +65,7 @@ public class Fragment1 extends Fragment {
         //the firebase add all museum inside the list , triggers adapter to see the data changes
         progressBar.setVisibility(View.VISIBLE);
         getMuseums();
+
     }
 
     @Override
@@ -108,7 +116,10 @@ public class Fragment1 extends Fragment {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+
+
     }
+
 
 
 //    private void changeActivity(final ListView listView) {

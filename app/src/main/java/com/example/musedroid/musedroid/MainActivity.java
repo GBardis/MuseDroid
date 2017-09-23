@@ -19,9 +19,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
-    private String[] pageTitle = {"Fragment 1", "Fragment 2", "Fragment 3"};
-
-
+    private String[] pageTitle = {"All Museums", "Near by Museums", "Fragment 3"};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         //change ViewPager page when tab selected
+
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -89,28 +88,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         int id = item.getItemId();
-
-        if (id == R.id.Profile) {
-            if (auth.getCurrentUser() != null) {
-                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-            }
-        } else if (id == R.id.Logout) {
-            if (auth.getCurrentUser() != null) {
-                auth.signOut();
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            }
-        } else if (id == R.id.fr1) {
-            viewPager.setCurrentItem(0);
-        } else if (id == R.id.fr2) {
-            viewPager.setCurrentItem(1);
-        } else if (id == R.id.fr3) {
-            viewPager.setCurrentItem(2);
-        } else if (id == R.id.go) {
-            Intent intent = new Intent(this, DesActivity.class);
-            intent.putExtra("string", "Go to other Activity by NavigationView item cliked!");
-            startActivity(intent);
-        } else if (id == R.id.close) {
-            finish();
+        switch(id){
+            case R.id.Profile:
+                            if (auth.getCurrentUser() != null) {
+                                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                            }
+                            break;
+            case R.id.Logout:
+                            if (auth.getCurrentUser() != null) {
+                                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                            }
+                            break;
         }
 
         drawer.closeDrawer(GravityCompat.START);

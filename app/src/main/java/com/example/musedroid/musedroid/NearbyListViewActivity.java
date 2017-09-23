@@ -291,20 +291,7 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
         changeActivity(nearbyListView);
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
 
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
 
     //callback method
     @Override
@@ -328,6 +315,20 @@ public class NearbyListViewActivity extends AppCompatActivity implements Locatio
         }
     }
 
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
