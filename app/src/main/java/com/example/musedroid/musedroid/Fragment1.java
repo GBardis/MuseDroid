@@ -53,6 +53,7 @@ public class Fragment1 extends Fragment {
             //set the adapter with the museum list form firebase
             allMuseums = getFirebase.listViewFromFirebase(museumAdapter);
             mRecyclerView.setAdapter(allMuseums);
+            changeActivity(allMuseums);
         }
     }
 
@@ -64,18 +65,18 @@ public class Fragment1 extends Fragment {
                 museumArrayList = (ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM);
                 allMuseums = new MuseumAdapter(museumArrayList);
                 mRecyclerView.setAdapter(allMuseums);
+                changeActivity(allMuseums);
             }
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
 
         }
         super.onActivityCreated(savedInstanceState);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private void changeActivity(final MuseumAdapter museumAdapter) {
         try {
-            ((MuseumAdapter) museumAdapter).setOnItemClickListener(new MuseumAdapter.MyClickListener() {
+            museumAdapter.setOnItemClickListener(new MuseumAdapter.MyClickListener() {
+
                 @Override
                 public void onItemClick(int position, View view) {
                     intent = new Intent(view.getContext(), ShowActivity.class);
@@ -83,7 +84,7 @@ public class Fragment1 extends Fragment {
                     startActivity(intent);
                 }
             });
-        } catch (Exception ex) {
+        }catch (Exception ignored){
 
         }
     }
