@@ -15,10 +15,12 @@ import android.widget.ProgressBar;
 import java.util.ArrayList;
 
 public class Fragment1 extends Fragment {
-    public ArrayList<Museum> museumArrayList;
+    private static final String ALL_MUSEUM = "ALL MUSEUMS";
+    ArrayList<Museum> museumArrayList;
+    ArrayList<Museum> bundledMuseumsList = new ArrayList<>();
     Intent intent;
     RecyclerView mRecyclerView;
-    MuseumAdapter museumAdapter;
+    MuseumAdapter museumAdapter, allMuseums;
     ProgressBar progressBar;
     GetFirebase getFirebase;
 
@@ -44,24 +46,65 @@ public class Fragment1 extends Fragment {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //initialize Museum adapter and give as import an array list
         //call getfirebase object to get the museumAdapter with all museums
-        getFirebase = new GetFirebase();
-        museumArrayList = new ArrayList<>();
-        museumAdapter = new MuseumAdapter(museumArrayList);
-        //set the adapter with the museum list form firebase
-        mRecyclerView.setAdapter(getFirebase.listViewFromFirebase(museumAdapter));
+        if (savedInstanceState == null) {
+            getFirebase = new GetFirebase();
+            museumArrayList = new ArrayList<>();
+            museumAdapter = new MuseumAdapter(museumArrayList);
+            //set the adapter with the museum list form firebase
+            allMuseums = getFirebase.listViewFromFirebase(museumAdapter);
+            mRecyclerView.setAdapter(allMuseums);
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        try {
+            if (savedInstanceState != null) {
+                //Restore last state for checked position.
+                museumArrayList = (ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM);
+                allMuseums = new MuseumAdapter(museumArrayList);
+                mRecyclerView.setAdapter(allMuseums);
+            }
+        } catch (Exception ex) {
+
+        }
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ((MuseumAdapter) museumAdapter).setOnItemClickListener(new MuseumAdapter.MyClickListener() {
-            @Override
-            public void onItemClick(int position, View view) {
-                intent = new Intent(view.getContext(), ShowActivity.class);
-                intent.putExtra("museum", museumAdapter.getItem(position));
-                startActivity(intent);
+        try {
+            ((MuseumAdapter) museumAdapter).setOnItemClickListener(new MuseumAdapter.MyClickListener() {
+                @Override
+                public void onItemClick(int position, View view) {
+                    intent = new Intent(view.getContext(), ShowActivity.class);
+                    intent.putExtra("museum", museumAdapter.getItem(position));
+                    startActivity(intent);
+                }
+            });
+        } catch (Exception ex) {
+
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@Nullable Bundle outState) {
+        super.onSaveInstanceState(outState);
+        try {
+            if (outState != null) {
+
+                for (int i = 0; i < allMuseums.getItemCount(); i++) {
+                    bundledMuseumsList.add(allMuseums.getItem(i));
+                }
+                outState.putSerializable(ALL_MUSEUM, bundledMuseumsList);
+                // Always call the superclass so it can save the view hierarchy state
+
             }
-        });
+        } catch (Exception ex) {
+
+        }
+
     }
 
 }

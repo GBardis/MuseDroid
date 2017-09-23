@@ -54,6 +54,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     MuseumAdapter museumAdapter, nearbyMuseumAdapter;
     ArrayList<Museum> nearbyMuseumList, museumArrayList;
     GetFirebase getFirebase;
+    ArrayList<Museum> bundledMuseumsList;
 
     @Nullable
     @Override
@@ -104,11 +105,13 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //initialize Museum adapter and give as import an array list
         //call firebase function after the initialize of the adapter
-        getFirebase = new GetFirebase();
-        museumArrayList = new ArrayList<>();
-        museumAdapter = new MuseumAdapter(museumArrayList);
+//        if (savedInstanceState == null) {
+            getFirebase = new GetFirebase();
+            museumArrayList = new ArrayList<>();
+            museumAdapter = new MuseumAdapter(museumArrayList);
 
-        nearbyMuseumAdapter = getFirebase.listViewFromFirebase(museumAdapter);
+            nearbyMuseumAdapter = getFirebase.listViewFromFirebase(museumAdapter);
+//        }
     }
 
     @Override
@@ -123,6 +126,19 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             }
         });
     }
+
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        if (outState != null) {
+//            bundledMuseumsList = new ArrayList<>();
+//            for (int i = 0; i < museumAdapter.getItemCount(); i++) {
+//                bundledMuseumsList.add(museumAdapter.getItem(i));
+//            }
+//            outState.putSerializable(NEARBY_MUSEUM, bundledMuseumsList);
+//            // Always call the superclass so it can save the view hierarchy state
+//        }
+//        super.onSaveInstanceState(outState);
+//    }
 
     public void askForPermission() {
         ActivityCompat.requestPermissions(getActivity(), perm, permissionCode);
