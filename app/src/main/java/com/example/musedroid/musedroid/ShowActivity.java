@@ -68,7 +68,8 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                     textDescription.setText(museum.description);
 
                 } catch (Exception ex) {
-
+                    Log.e("Exception", ex.getMessage());
+                    Log.d("Exception", Arrays.toString(ex.getStackTrace()));
                 }
             }
         }
@@ -88,7 +89,6 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onClick(View v) {
                 intent = new Intent(ShowActivity.this, QrShowActivity.class);
                 intent.putExtra("flag", false);
-
                 startActivity(intent);
             }
         });
@@ -160,7 +160,6 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                         mGoogleApiClient.disconnect();
                     }
                 });
-
     }
 
     @Override

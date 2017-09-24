@@ -66,7 +66,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //setContentView(R.layout.activity_nearby_list_view);
-        FirebaseHandler.database.goOnline();
         context = getActivity().getApplicationContext();
         View view = inflater.inflate(R.layout.fragment_listview, container, false);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -145,26 +144,31 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
     private void changeActivity(final MuseumAdapter museumAdapter) {
         try {
-            museumAdapter.setOnItemClickListener(new MuseumAdapter.MyClickListener() {
+            if (museumAdapter != null) {
+                museumAdapter.setOnItemClickListener(new MuseumAdapter.MyClickListener() {
 
-                @Override
-                public void onItemClick(int position, View view) {
-                    intent = new Intent(view.getContext(), ShowActivity.class);
-                    intent.putExtra("museum", museumAdapter.getItem(position));
-                    startActivity(intent);
-                }
-            });
+                    @Override
+                    public void onItemClick(int position, View view) {
+                        intent = new Intent(view.getContext(), ShowActivity.class);
+                        intent.putExtra("museum", museumAdapter.getItem(position));
+                        startActivity(intent);
+                    }
+                });
+            }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
             Log.d("Exception", Arrays.toString(ex.getStackTrace()));
         }
     }
-
     //Restore last state for checked position.
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         try {
             if (savedInstanceState != null) {
+                mRecyclerView.getRecycledViewPool().clear();
+                allMuseumAdapter.clear();
+                onLocationChangeAdapter.clear();
+
                 allMuseumList = (ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM);
                 museumArrayList = (ArrayList<Museum>) savedInstanceState.getSerializable(NEARBY_MUSEUM);
 
@@ -178,8 +182,10 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                     onLocationChangeAdapter.add(museum);
                 }
                 onLocationChangeAdapter.notifyDataSetChanged();
-                mRecyclerView.setAdapter(onLocationChangeAdapter);
-                changeActivity(onLocationChangeAdapter);
+                if (museumArrayList.size() != 0) {
+                    mRecyclerView.setAdapter(onLocationChangeAdapter);
+                    changeActivity(onLocationChangeAdapter);
+                }
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
@@ -188,16 +194,17 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         }
         super.onActivityCreated(savedInstanceState);
     }
-
     //Save the state of activity for checked position
     @Override
     public void onSaveInstanceState(Bundle outState) {
         try {
             if (outState != null) {
                 bundledNearbyMuseumsList.clear();
+
                 for (int i = 0; i < onLocationChangeAdapter.getItemCount(); i++) {
                     bundledNearbyMuseumsList.add(onLocationChangeAdapter.getItem(i));
                 }
+                bundledAllMuseumList.clear();
 
                 for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
                     bundledAllMuseumList.add(allMuseumAdapter.getItem(i));
@@ -282,26 +289,30 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public void onLocationChanged(final Location location) {
         Location dest = new Location("provider");
-
-        nearbyMuseumList.clear();
-        for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
-            nearbyMuseumList.add(allMuseumAdapter.getItem(i));
-        }
-        onLocationChangeAdapter.clear();
-        for (Museum museum : nearbyMuseumList) {
-            dest.setLatitude(Double.parseDouble(museum.lat));
-            dest.setLongitude(Double.parseDouble(museum.lon));
-            museum.distance = String.valueOf(location.distanceTo(dest) / 1000);
-            if (Double.parseDouble(museum.distance) < 5) {
-                onLocationChangeAdapter.add(museum);
+        try {
+            nearbyMuseumList.clear();
+            for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
+                nearbyMuseumList.add(allMuseumAdapter.getItem(i));
             }
-            onLocationChangeAdapter.notifyDataSetChanged();
-        }
-        if (onLocationChangeAdapter != tempMuseumList) {
-            tempMuseumList = onLocationChangeAdapter;
-            mRecyclerView.getRecycledViewPool().clear();
-            mRecyclerView.setAdapter(onLocationChangeAdapter);
-            changeActivity(onLocationChangeAdapter);
+            onLocationChangeAdapter.clear();
+            for (Museum museum : nearbyMuseumList) {
+                dest.setLatitude(Double.parseDouble(museum.lat));
+                dest.setLongitude(Double.parseDouble(museum.lon));
+                museum.distance = String.valueOf(location.distanceTo(dest) / 1000);
+                if (Double.parseDouble(museum.distance) < 5) {
+                    onLocationChangeAdapter.add(museum);
+                }
+                onLocationChangeAdapter.notifyDataSetChanged();
+            }
+            if (onLocationChangeAdapter != tempMuseumList) {
+                tempMuseumList = onLocationChangeAdapter;
+                mRecyclerView.getRecycledViewPool().clear();
+                mRecyclerView.setAdapter(onLocationChangeAdapter);
+                changeActivity(onLocationChangeAdapter);
+            }
+        } catch (Exception ex) {
+            Log.e("Exception", ex.getMessage());
+            Log.d("Exception", Arrays.toString(ex.getStackTrace()));
         }
     }
 

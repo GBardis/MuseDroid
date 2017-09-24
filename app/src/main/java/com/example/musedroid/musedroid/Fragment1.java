@@ -30,9 +30,7 @@ public class Fragment1 extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         return inflater.inflate(R.layout.fragment_fragment1, container, false);
-
     }
 
     @Override
@@ -52,14 +50,19 @@ public class Fragment1 extends Fragment {
         //initialize Museum adapter and give as import an array list
         //call getfirebase object to get the museumAdapter with all museums
         if (savedInstanceState == null) {
-            getFirebase = new GetFirebase();
-            museumArrayList = new ArrayList<>();
-            museumAdapter = new MuseumAdapter(museumArrayList);
-            //set the adapter with the museum list form firebase
-            allMuseums = getFirebase.listViewFromFirebase(museumAdapter);
+            try {
+                getFirebase = new GetFirebase();
+                museumArrayList = new ArrayList<>();
+                museumAdapter = new MuseumAdapter(museumArrayList);
+                //set the adapter with the museum list form firebase
+                allMuseums = getFirebase.listViewFromFirebase(museumAdapter);
 
-            mRecyclerView.setAdapter(allMuseums);
-            changeActivity(allMuseums);
+                mRecyclerView.setAdapter(allMuseums);
+                changeActivity(allMuseums);
+            } catch (Exception ex) {
+                Log.e("Exception", ex.getMessage());
+                Log.d("Exception", Arrays.toString(ex.getStackTrace()));
+            }
         }
     }
 
@@ -67,9 +70,11 @@ public class Fragment1 extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         try {
             if (savedInstanceState != null) {
+                mRecyclerView.getRecycledViewPool().clear();
                 //Restore last state for checked position.
                 museumArrayList = (ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM);
                 allMuseums = new MuseumAdapter(museumArrayList);
+                allMuseums.notifyDataSetChanged();
                 mRecyclerView.setAdapter(allMuseums);
                 changeActivity(allMuseums);
             }
@@ -104,7 +109,7 @@ public class Fragment1 extends Fragment {
         super.onSaveInstanceState(outState);
         try {
             if (outState != null) {
-
+                bundledMuseumsList.clear();
                 for (int i = 0; i < allMuseums.getItemCount(); i++) {
                     bundledMuseumsList.add(allMuseums.getItem(i));
                 }
