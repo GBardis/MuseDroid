@@ -29,7 +29,6 @@ public class Fragment1 extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //getMuseums();
         return inflater.inflate(R.layout.fragment_fragment1, container, false);
     }
 
@@ -37,7 +36,7 @@ public class Fragment1 extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView = view.findViewById(R.id.museumRecycleView);
-        progressBar = view.findViewById(R.id.museumProgressbar);
+        progressBar = view.findViewById(R.id.progressBarMuseumListAll);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
@@ -48,21 +47,25 @@ public class Fragment1 extends Fragment {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //initialize Museum adapter and give as import an array list
         //call getfirebase object to get the museumAdapter with all museums
+
         if (savedInstanceState == null) {
             try {
                 getFirebase = new GetFirebase();
                 museumArrayList = new ArrayList<>();
                 museumAdapter = new MuseumAdapter(museumArrayList);
                 //set the adapter with the museum list form firebase
+                progressBar.setVisibility(View.VISIBLE);
                 allMuseums = getFirebase.listViewFromFirebase(museumAdapter);
 
                 mRecyclerView.setAdapter(allMuseums);
+                progressBar.setVisibility(View.GONE);
                 changeActivity(allMuseums);
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
                 Log.d("Exception", Arrays.toString(ex.getStackTrace()));
             }
         }
+
     }
 
     @Override
