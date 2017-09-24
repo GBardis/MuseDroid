@@ -48,7 +48,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     ArrayList<Museum> nearbyMuseumList, museumArrayList;
     ArrayList<Museum> bundledNearbyMuseumsList = new ArrayList<>();
     ArrayList<Museum> bundledAllMuseumList = new ArrayList<>();
-    ArrayList<Museum> allmuseumList = new ArrayList<>();
+    ArrayList<Museum> allMuseumList = new ArrayList<>();
 
     GoogleApiClient googleApiClient;
     LocationRequest locationRequest;
@@ -141,11 +141,11 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         try {
             if (savedInstanceState != null) {
-                allmuseumList = (ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM);
+                allMuseumList = (ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM);
                 museumArrayList = (ArrayList<Museum>) savedInstanceState.getSerializable(NEARBY_MUSEUM);
 
-                assert allmuseumList != null;
-                for (Museum museum : allmuseumList) {
+                assert allMuseumList != null;
+                for (Museum museum : allMuseumList) {
                     allMuseumAdapter.add(museum);
                 }
 

@@ -26,10 +26,13 @@ public class Fragment1 extends Fragment {
     ProgressBar progressBar;
     GetFirebase getFirebase;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         return inflater.inflate(R.layout.fragment_fragment1, container, false);
+
     }
 
     @Override
@@ -54,6 +57,7 @@ public class Fragment1 extends Fragment {
             museumAdapter = new MuseumAdapter(museumArrayList);
             //set the adapter with the museum list form firebase
             allMuseums = getFirebase.listViewFromFirebase(museumAdapter);
+
             mRecyclerView.setAdapter(allMuseums);
             changeActivity(allMuseums);
         }
@@ -75,6 +79,7 @@ public class Fragment1 extends Fragment {
         }
         super.onActivityCreated(savedInstanceState);
     }
+
 
     private void changeActivity(final MuseumAdapter museumAdapter) {
         try {
@@ -109,6 +114,30 @@ public class Fragment1 extends Fragment {
             Log.e("Exception", ex.getMessage());
             Log.d("Exception", Arrays.toString(ex.getStackTrace()));
         }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FirebaseHandler.database.goOnline();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseHandler.database.goOnline();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        FirebaseHandler.database.goOffline();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FirebaseHandler.database.goOffline();
     }
 }
 
