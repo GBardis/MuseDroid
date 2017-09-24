@@ -15,11 +15,11 @@ import android.view.MenuItem;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
     private String[] pageTitle = {"All Museums", "Near by Museums", "Fragment 3"};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,17 +88,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         int id = item.getItemId();
-        switch(id){
+        switch (id) {
             case R.id.Profile:
-                            if (auth.getCurrentUser() != null) {
-                                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-                            }
-                            break;
+                if (auth.getCurrentUser() != null) {
+                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                }
+                break;
             case R.id.Logout:
-                            if (auth.getCurrentUser() != null) {
-                                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-                            }
-                            break;
+                if (auth.getCurrentUser() != null) {
+                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                }
+                break;
         }
 
         drawer.closeDrawer(GravityCompat.START);

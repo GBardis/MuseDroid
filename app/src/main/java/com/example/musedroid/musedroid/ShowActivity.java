@@ -18,6 +18,8 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBuffer;
 import com.google.android.gms.location.places.Places;
 
+import java.util.Arrays;
+
 import static android.R.attr.rating;
 
 
@@ -51,11 +53,11 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                 .enableAutoManage(this, this)
                 .build();
 
-        qrButton = (Button) findViewById(R.id.qrButton);
+        qrButton = findViewById(R.id.qrButton);
 
-        goToMaps = (Button) findViewById(R.id.goToMaps);
+        goToMaps = findViewById(R.id.goToMaps);
 
-        textDescription = (TextView) findViewById(R.id.MuseumDescription);
+        textDescription = findViewById(R.id.MuseumDescription);
 
         if (savedInstanceState == null) {
             if (i != null) {
@@ -64,12 +66,13 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                     setTitle(museum.name);
                     getPlace(museum.placeId);
                     textDescription.setText(museum.description);
-                } catch (Exception ex) {
 
+                } catch (Exception ex) {
+                    Log.e("Exception", ex.getMessage());
+                    Log.d("Exception", Arrays.toString(ex.getStackTrace()));
                 }
             }
         }
-
 
         goToMaps.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,7 +89,6 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onClick(View v) {
                 intent = new Intent(ShowActivity.this, QrShowActivity.class);
                 intent.putExtra("flag", false);
-
                 startActivity(intent);
             }
         });
@@ -105,7 +107,8 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                 savedInstanceState.putString(DESCRIPTION, museum.description);
                 savedInstanceState.putString(TITLE, museum.name);
             } catch (Exception ex) {
-
+                Log.e("Exception", ex.getMessage());
+                Log.d("Exception", Arrays.toString(ex.getStackTrace()));
             }
         }
         super.onSaveInstanceState(savedInstanceState);
@@ -123,16 +126,18 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                 textDescription.setText(savedInstanceState.getString(DESCRIPTION));
 
                 setTitle(savedInstanceState.getString(TITLE));
-                ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+                ratingBar = findViewById(R.id.ratingBar);
                 ratingBar.setNumStars(5);
                 ratingBar.setRating(savedInstanceState.getFloat(RATING));
             } catch (Exception ex) {
-
+                Log.e("Exception", ex.getMessage());
+                Log.d("Exception", Arrays.toString(ex.getStackTrace()));
             }
         }
     }
 
     private void getPlace(final String placeId) {
+        mGoogleApiClient.connect();
         Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
                 .setResultCallback(new ResultCallback<PlaceBuffer>() {
                     public static final String TAG = "TAG";
@@ -144,7 +149,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                             final float rating = myPlace.getRating();
                             museumName = myPlace.getName().toString();
                             museumAddress = myPlace.getAddress().toString();
-                            ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+                            ratingBar = findViewById(R.id.ratingBar);
                             ratingBar.setNumStars(5);
                             ratingBar.setRating(rating);
                             Log.i(TAG, "Place found: " + myPlace.getName());
@@ -152,7 +157,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                             Log.e(TAG, "Place not found");
                         }
                         places.release();
-
+                        mGoogleApiClient.disconnect();
                     }
                 });
     }
