@@ -73,6 +73,7 @@ public class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder
 
     public void add(Museum item) {
         museumList.add(item);
+        notifyItemInserted(getItemCount() - 1);
     }
 
     @Override

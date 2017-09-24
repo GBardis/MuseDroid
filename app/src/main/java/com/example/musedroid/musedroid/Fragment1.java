@@ -7,12 +7,14 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Fragment1 extends Fragment {
     private static final String ALL_MUSEUM = "ALL MUSEUMS";
@@ -67,8 +69,9 @@ public class Fragment1 extends Fragment {
                 mRecyclerView.setAdapter(allMuseums);
                 changeActivity(allMuseums);
             }
-        } catch (Exception ignored) {
-
+        } catch (Exception ex) {
+            Log.e("Exception", ex.getMessage());
+            Log.d("Exception", Arrays.toString(ex.getStackTrace()));
         }
         super.onActivityCreated(savedInstanceState);
     }
@@ -84,13 +87,15 @@ public class Fragment1 extends Fragment {
                     startActivity(intent);
                 }
             });
-        }catch (Exception ignored){
-
+        } catch (Exception ex) {
+            Log.e("Exception", ex.getMessage());
+            Log.d("Exception", Arrays.toString(ex.getStackTrace()));
         }
     }
 
     @Override
     public void onSaveInstanceState(@Nullable Bundle outState) {
+        // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(outState);
         try {
             if (outState != null) {
@@ -99,14 +104,11 @@ public class Fragment1 extends Fragment {
                     bundledMuseumsList.add(allMuseums.getItem(i));
                 }
                 outState.putSerializable(ALL_MUSEUM, bundledMuseumsList);
-                // Always call the superclass so it can save the view hierarchy state
-
             }
         } catch (Exception ex) {
-
+            Log.e("Exception", ex.getMessage());
+            Log.d("Exception", Arrays.toString(ex.getStackTrace()));
         }
-
     }
-
 }
 
