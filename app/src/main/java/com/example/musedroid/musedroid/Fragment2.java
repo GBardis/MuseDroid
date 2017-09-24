@@ -62,11 +62,11 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     RecyclerView mRecyclerView;
     GetFirebase getFirebase;
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //setContentView(R.layout.activity_nearby_list_view);
+        FirebaseHandler.database.goOnline();
         context = getActivity().getApplicationContext();
         View view = inflater.inflate(R.layout.fragment_listview, container, false);
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
@@ -117,6 +117,30 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
             allMuseumAdapter = getFirebase.listViewFromFirebase(museumAdapter);
         }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FirebaseHandler.database.goOnline();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        FirebaseHandler.database.goOnline();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        FirebaseHandler.database.goOffline();
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        FirebaseHandler.database.goOffline();
     }
 
     private void changeActivity(final MuseumAdapter museumAdapter) {

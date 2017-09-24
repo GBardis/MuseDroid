@@ -57,7 +57,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
 
         goToMaps = findViewById(R.id.goToMaps);
 
-        textDescription =findViewById(R.id.MuseumDescription);
+        textDescription = findViewById(R.id.MuseumDescription);
 
         if (savedInstanceState == null) {
             if (i != null) {
@@ -66,6 +66,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                     setTitle(museum.name);
                     getPlace(museum.placeId);
                     textDescription.setText(museum.description);
+
                 } catch (Exception ex) {
 
                 }
@@ -136,6 +137,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     private void getPlace(final String placeId) {
+        mGoogleApiClient.connect();
         Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
                 .setResultCallback(new ResultCallback<PlaceBuffer>() {
                     public static final String TAG = "TAG";
@@ -155,8 +157,10 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                             Log.e(TAG, "Place not found");
                         }
                         places.release();
+                        mGoogleApiClient.disconnect();
                     }
                 });
+
     }
 
     @Override
