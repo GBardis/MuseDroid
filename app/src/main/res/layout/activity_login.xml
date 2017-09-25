@@ -20,8 +20,10 @@
             android:layout_width="@dimen/logo_w_h"
             android:layout_height="@dimen/logo_w_h"
             android:layout_gravity="center_horizontal"
-            android:contentDescription="@string/naviconmuseum"
             android:layout_marginBottom="30dp"
+            android:adjustViewBounds="false"
+            android:contentDescription="@string/naviconmuseum"
+            android:cropToPadding="false"
             android:src="@mipmap/ic_launcher" />
 
         <android.support.design.widget.TextInputLayout
@@ -61,7 +63,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
-            android:background="@color/colorAccent"
+            android:background="?android:attr/colorBackground"
             android:text="@string/btn_login"
             android:textColor="@android:color/black" />
 
@@ -73,7 +75,8 @@
             android:background="@null"
             android:text="@string/btn_forgot_password"
             android:textAllCaps="false"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@color/input_login_hint"
+            android:textStyle="bold" />
 
         <!-- Link to Login Screen -->
 
@@ -85,7 +88,7 @@
             android:background="@null"
             android:text="@string/btn_link_to_register"
             android:textAllCaps="false"
-            android:textColor="@color/white"
+            android:textColor="?attr/colorAccent"
             android:textSize="15sp" />
     </LinearLayout>
 
