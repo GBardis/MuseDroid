@@ -28,12 +28,10 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
     private static final String DESCRIPTION = "museum description";
     private static final String TITLE = "museum title";
     RatingBar ratingBar;
-    Button qrButton;
+    Button qrButton, goToMaps, markersMaps;
     Museum museum;
-    Button goToMaps;
     Intent intent;
-    String museumName;
-    String museumAddress;
+    String museumAddress, museumName;
     TextView textDescription;
     Intent i;
 
@@ -58,6 +56,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
         goToMaps = findViewById(R.id.goToMaps);
 
         textDescription = findViewById(R.id.MuseumDescription);
+        markersMaps = findViewById(R.id.button2);
 
         if (savedInstanceState == null) {
             if (i != null) {
@@ -92,6 +91,14 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                 startActivity(intent);
             }
         });
+//        markersMaps.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                intent = new Intent(ShowActivity.this, MapsMarkerActivity.class);
+//                intent.putExtra("flag", false);
+//                startActivity(intent);
+//            }
+//        });
     }
 
     //This function convert adapter to arrayList and serialize it into a bundle, so that can be restore

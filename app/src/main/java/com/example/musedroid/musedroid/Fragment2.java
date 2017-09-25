@@ -217,6 +217,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 }
                 outState.putSerializable(ALL_MUSEUM, bundledAllMuseumList);
                 outState.putSerializable(NEARBY_MUSEUM, bundledNearbyMuseumsList);
+
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());

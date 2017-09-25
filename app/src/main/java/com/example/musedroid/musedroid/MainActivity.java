@@ -4,6 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -14,7 +17,11 @@ import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Fragment1.OnFragmentInteractionListener {
+    static Fragment1 fragOne;
+    static Fragment2 fragTwo;
+    static Fragment3 fragThree;
+    ViewPagerAdapter viewPagerAdapter;
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
@@ -24,6 +31,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        fragOne = new Fragment1();
+        fragTwo = new Fragment2();
+        fragThree = new Fragment3();
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -113,6 +125,39 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    @Override
+    public void onFragmentInteraction(String name, String desc) {
+        viewPagerAdapter.onFragmentInteraction(name, desc);
+    }
+
+    public static class ViewPagerAdapter extends FragmentPagerAdapter implements Fragment1.OnFragmentInteractionListener {
+
+        public ViewPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            if (position == 0) {
+                return fragOne;
+            } else if (position == 1) {
+                return fragTwo;
+            } else if (position == 2) {
+                return fragThree;
+            } else return new Fragment();
+        }
+
+        @Override
+        public int getCount() {
+            return 3;
+        }
+
+        @Override
+        public void onFragmentInteraction(String name, String desc) {
+            fragThree.onFragmentInteraction(name, desc);
         }
     }
 }

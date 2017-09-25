@@ -50,7 +50,10 @@
         <activity android:name=".SignupActivity" />
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".ProfileActivity" />
-        <activity android:name=".DesActivity"></activity>
-    </application>
+        <activity android:name=".DesActivity" />
 
+        <activity
+            android:name="com.example.musedroid.musedroid.MapsMarkerActivity"
+            android:label="@string/title_activity_maps_marker" />
+    </application>
 </manifest>

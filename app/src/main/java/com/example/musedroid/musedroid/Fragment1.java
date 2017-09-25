@@ -1,5 +1,6 @@
 package com.example.musedroid.musedroid;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 
 public class Fragment1 extends Fragment {
     private static final String ALL_MUSEUM = "ALL MUSEUMS";
+    String name, desc;
     ArrayList<Museum> museumArrayList;
     ArrayList<Museum> bundledMuseumsList = new ArrayList<>();
     Intent intent;
@@ -26,6 +28,11 @@ public class Fragment1 extends Fragment {
     MuseumAdapter museumAdapter, allMuseums;
     ProgressBar progressBar;
     GetFirebase getFirebase;
+    private OnFragmentInteractionListener mListener;
+
+    public Fragment1() {
+        // Required empty public constructor
+    }
 
     @Nullable
     @Override
@@ -88,7 +95,6 @@ public class Fragment1 extends Fragment {
             Log.e("Exception", ex.getMessage());
             Log.d("Exception", Arrays.toString(ex.getStackTrace()));
         }
-
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -129,6 +135,23 @@ public class Fragment1 extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnFragmentInteractionListener) {
+            mListener = (OnFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseHandler.database.goOnline();
@@ -137,6 +160,9 @@ public class Fragment1 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        name = "hahahaha".trim();
+        desc = "gsgsogfdou".trim();
+        mListener.onFragmentInteraction(name, desc);
         FirebaseHandler.database.goOnline();
     }
 
@@ -151,6 +177,10 @@ public class Fragment1 extends Fragment {
         super.onStop();
         FirebaseHandler.database.goOffline();
 
+    }
+
+    public interface OnFragmentInteractionListener {
+        void onFragmentInteraction(String name, String desc);
     }
 }
 
