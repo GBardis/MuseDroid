@@ -17,6 +17,8 @@ import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Fragment1.OnFragmentInteractionListener {
     static Fragment1 fragOne;
     static Fragment2 fragTwo;
@@ -129,8 +131,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onFragmentInteraction(String name, String desc) {
-        viewPagerAdapter.onFragmentInteraction(name, desc);
+    public void onFragmentInteraction(ArrayList<Museum> museumSendArrayList) {
+        viewPagerAdapter.onFragmentInteraction(museumSendArrayList);
     }
 
     public static class ViewPagerAdapter extends FragmentPagerAdapter implements Fragment1.OnFragmentInteractionListener {
@@ -156,8 +158,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         @Override
-        public void onFragmentInteraction(String name, String desc) {
-            fragThree.onFragmentInteraction(name, desc);
+        public void onFragmentInteraction(ArrayList<Museum> museumSendArrayList) {
+            fragThree.onFragmentInteraction(museumSendArrayList);
         }
     }
 }

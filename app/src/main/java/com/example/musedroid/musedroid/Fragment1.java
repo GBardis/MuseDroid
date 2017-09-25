@@ -23,6 +23,7 @@ public class Fragment1 extends Fragment {
     String name, desc;
     ArrayList<Museum> museumArrayList;
     ArrayList<Museum> bundledMuseumsList = new ArrayList<>();
+    ArrayList<Museum> museumSendArrayList = new ArrayList<>();
     Intent intent;
     RecyclerView mRecyclerView;
     MuseumAdapter museumAdapter, allMuseums;
@@ -160,15 +161,16 @@ public class Fragment1 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        name = "hahahaha".trim();
-        desc = "gsgsogfdou".trim();
-        mListener.onFragmentInteraction(name, desc);
         FirebaseHandler.database.goOnline();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        for (int i = 0; i < allMuseums.getItemCount(); i++) {
+            museumSendArrayList.add(allMuseums.getItem(i));
+        }
+        mListener.onFragmentInteraction(museumSendArrayList);
         FirebaseHandler.database.goOffline();
     }
 
@@ -180,7 +182,7 @@ public class Fragment1 extends Fragment {
     }
 
     public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(String name, String desc);
+        void onFragmentInteraction(ArrayList<Museum> museumSendArrayList);
     }
 }
 

@@ -18,12 +18,12 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.ArrayList;
+
 
 public class Fragment3 extends Fragment implements Fragment1.OnFragmentInteractionListener {
-    private static final String NEARBY_MUSEUM = "NearByMuseum";
     MapView mMapView;
-    String museumName;
-    String museumDesc;
+    ArrayList<MarkerOptions> markerArrayList = new ArrayList<>();
     private GoogleMap googleMap;
 
     public Fragment3() {
@@ -36,7 +36,6 @@ public class Fragment3 extends Fragment implements Fragment1.OnFragmentInteracti
 
         mMapView = rootView.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
-        String testname = museumName;
         mMapView.onResume(); // needed to get the map to display immediately
 
         try {
@@ -62,11 +61,11 @@ public class Fragment3 extends Fragment implements Fragment1.OnFragmentInteracti
                     return;
                 }
                 googleMap.setMyLocationEnabled(true);
-
-                // For dropping a marker at a point on the Map
-                LatLng sydney = new LatLng(-34, 151);
-                googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"));
-
+                for (MarkerOptions marker : markerArrayList) {
+                    // For dropping a marker at a point on the Map
+                    googleMap.addMarker(marker);
+                }
+                LatLng sydney = new LatLng(37.983810, 23.727539);
                 // For zooming automatically to the location of the marker
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
@@ -75,14 +74,6 @@ public class Fragment3 extends Fragment implements Fragment1.OnFragmentInteracti
 
         return rootView;
     }
-
-//    @Override
-//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//        if (savedInstanceState != null) {
-//            savedInstanceState.getSerializable(NEARBY_MUSEUM);
-//        }
-//    }
 
     @Override
     public void onResume() {
@@ -109,10 +100,12 @@ public class Fragment3 extends Fragment implements Fragment1.OnFragmentInteracti
     }
 
     @Override
-    public void onFragmentInteraction(String name, String desc) {
-        museumName = name;
-        museumDesc = desc;
-
+    public void onFragmentInteraction(ArrayList<Museum> museumSendArrayList) {
+        for (Museum museum : museumSendArrayList) {
+            LatLng museumMarker = new LatLng(Float.parseFloat(museum.lat), Float.parseFloat(museum.lon));
+            MarkerOptions marker = new MarkerOptions().position(museumMarker).title(museum.name).snippet(museum.description);
+            markerArrayList.add(marker);
+        }
     }
 
 }
