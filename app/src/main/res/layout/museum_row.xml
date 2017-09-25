@@ -24,7 +24,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginEnd="16dp" />
+                android:layout_marginEnd="16dp"
+                android:contentDescription="" />
 
             <TextView
                 android:id="@+id/museum_name"
