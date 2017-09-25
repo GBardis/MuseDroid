@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -63,6 +64,8 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     RecyclerView mRecyclerView;
     GetFirebase getFirebase;
     ProgressBar progressBar;
+    private int minLocationUpdateTime = 0;
+    private int minLocationUpdateInterval = 0;
 
     @Nullable
     @Override
@@ -83,8 +86,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
         //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            Toast.makeText(getActivity().getApplicationContext(), "Gps is Enabled", Toast.LENGTH_SHORT).show();
-
+         new ShowGpsSuccessToast().execute();
         } else {
             try {
                 mEnableGps();
@@ -116,8 +118,10 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             getFirebase = new GetFirebase();
             museumArrayList = new ArrayList<>();
             museumAdapter = new MuseumAdapter(museumArrayList);
-
-            allMuseumAdapter = getFirebase.listViewFromFirebase(museumAdapter);
+            allMuseumAdapter = getFirebase.listViewFromFirebase(museumAdapter, progressBar, view);
+        }
+        else{
+            progressBar.setVisibility(View.GONE);
         }
     }
 
@@ -178,6 +182,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 museumArrayList = (ArrayList<Museum>) savedInstanceState.getSerializable(NEARBY_MUSEUM);
 
                 assert allMuseumList != null;
+
                 for (Museum museum : allMuseumList) {
                     allMuseumAdapter.add(museum);
                 }
@@ -188,6 +193,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 }
                 onLocationChangeAdapter.notifyDataSetChanged();
                 if (museumArrayList.size() != 0) {
+                    progressBar.setVisibility(View.GONE);
                     mRecyclerView.setAdapter(onLocationChangeAdapter);
                     changeActivity(onLocationChangeAdapter);
                 }
@@ -241,7 +247,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, Fragment2.this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minLocationUpdateTime, minLocationUpdateInterval, Fragment2.this);
 
     }
 
@@ -313,6 +319,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             if (onLocationChangeAdapter != tempMuseumList) {
                 tempMuseumList = onLocationChangeAdapter;
                 mRecyclerView.getRecycledViewPool().clear();
+                progressBar.setVisibility(View.GONE);
                 mRecyclerView.setAdapter(onLocationChangeAdapter);
                 changeActivity(onLocationChangeAdapter);
             }
@@ -350,5 +357,19 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+
+    private class ShowGpsSuccessToast extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            return null;
+        }
+
+
+        protected void onPostExecute(Void v) {
+            Toast.makeText(getActivity().getApplicationContext(),"GPS ENABLED", Toast.LENGTH_LONG).show();
+        }
     }
 }

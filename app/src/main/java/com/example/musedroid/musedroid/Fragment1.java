@@ -57,11 +57,10 @@ public class Fragment1 extends Fragment {
                 museumArrayList = new ArrayList<>();
                 museumAdapter = new MuseumAdapter(museumArrayList);
                 //set the adapter with the museum list form firebase
-                progressBar.setVisibility(View.VISIBLE);
-                allMuseums = getFirebase.listViewFromFirebase(museumAdapter);
-
+                //progressBar.setVisibility(View.VISIBLE);
+                allMuseums = getFirebase.listViewFromFirebase(museumAdapter,progressBar,view);
                 mRecyclerView.setAdapter(allMuseums);
-                progressBar.setVisibility(View.GONE);
+                //progressBar.setVisibility(View.GONE);
                 changeActivity(allMuseums);
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
@@ -81,6 +80,7 @@ public class Fragment1 extends Fragment {
                 museumArrayList = (ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM);
                 allMuseums = new MuseumAdapter(museumArrayList);
                 allMuseums.notifyDataSetChanged();
+                progressBar.setVisibility(View.GONE);
                 mRecyclerView.setAdapter(allMuseums);
                 changeActivity(allMuseums);
             }
