@@ -31,14 +31,11 @@ public class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder
                 .inflate(R.layout.museum_row, parent, false);
         // set the view's size, margins, paddings and layout parameters
         return new ViewHolder(itemView);
-
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
-
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         Museum museum = museumList.get(position);
@@ -57,7 +54,6 @@ public class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder
             for (int i = 0; i < size; i++) {
                 this.museumList.remove(0);
             }
-
             this.notifyItemRangeRemoved(0, size);
         }
     }
@@ -106,10 +102,10 @@ public class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder
 
         public ViewHolder(View view) {
             super(view);
-            cv = itemView.findViewById(R.id.cv);
+            //cv = itemView.findViewById(R.id.cv);
             title = view.findViewById(R.id.museum_name);
             description = view.findViewById(R.id.museum_description);
-            museumImage = view.findViewById(R.id.museum_image);
+            //museumImage = view.findViewById(R.id.museum_image);
             view.setOnClickListener(this);
         }
 

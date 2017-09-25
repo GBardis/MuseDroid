@@ -17,6 +17,8 @@ public class FirebaseHandler extends AppCompatActivity {
     public static DatabaseReference mDatabase = database.getReference();
 
 
+    // TODO: Start using the Places API.
+
     // function that creates nosql entries from museum object
     public void createMuseum(String museumId, Museum museum) {
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -31,16 +33,6 @@ public class FirebaseHandler extends AppCompatActivity {
                 //firebase add all museum inside the list , triggers adapter to see the data changes
                 adapter.add(dataSnapshot.getValue(Museum.class));
                 adapter.notifyDataSetChanged();
-//                adapter.getItem(adapter.getCount() - 1).key = dataSnapshot.getKey().toString();
-//
-//                museumList.add(dataSnapshot.getValue(Museum.class));
-//                int i = 0;
-//                for (Museum museum : museumList) {
-//                    i++;
-//                    if (i == museumList.size()) {
-//                        museum.key = dataSnapshot.getKey();
-//                    }
-//                }
             }
 
             @Override
@@ -62,5 +54,4 @@ public class FirebaseHandler extends AppCompatActivity {
             }
         });
     }
-
 }
