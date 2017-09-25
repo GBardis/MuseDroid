@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -61,6 +62,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     Intent intent;
     RecyclerView mRecyclerView;
     GetFirebase getFirebase;
+    ProgressBar progressBar;
 
     @Nullable
     @Override
@@ -96,8 +98,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        nearbyMuseumList = new ArrayList<>();
 
+        nearbyMuseumList = new ArrayList<>();
+        progressBar = view.findViewById(R.id.progressBarNearbyListMuseum);
         mRecyclerView = view.findViewById(R.id.museumNearbyRecycleView);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -160,9 +163,11 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             Log.d("Exception", Arrays.toString(ex.getStackTrace()));
         }
     }
+
     //Restore last state for checked position.
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        progressBar.setVisibility(View.VISIBLE);
         try {
             if (savedInstanceState != null) {
                 mRecyclerView.getRecycledViewPool().clear();
@@ -194,6 +199,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         }
         super.onActivityCreated(savedInstanceState);
     }
+
     //Save the state of activity for checked position
     @Override
     public void onSaveInstanceState(Bundle outState) {

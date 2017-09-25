@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.Logout:
                 if (auth.getCurrentUser() != null) {
+                    auth.signOut();
                     startActivity(new Intent(MainActivity.this, ProfileActivity.class));
                 }
                 break;

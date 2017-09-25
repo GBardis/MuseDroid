@@ -70,6 +70,7 @@ public class Fragment1 extends Fragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        progressBar.setVisibility(View.VISIBLE);
         try {
             if (savedInstanceState != null) {
                 mRecyclerView.getRecycledViewPool().clear();
@@ -84,6 +85,7 @@ public class Fragment1 extends Fragment {
             Log.e("Exception", ex.getMessage());
             Log.d("Exception", Arrays.toString(ex.getStackTrace()));
         }
+
         super.onActivityCreated(savedInstanceState);
     }
 
