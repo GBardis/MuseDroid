@@ -51,16 +51,11 @@ public class Fragment1 extends Fragment {
         //initialize Museum adapter and give as import an array list
         //call getfirebase object to get the museumAdapter with all museums
 
-        if (savedInstanceState != null) {
+        if (savedInstanceState == null) {
             try {
-
-                getFirebase = new GetFirebase();
-                museumArrayList = new ArrayList<>();
-                museumAdapter = new MuseumAdapter((ArrayList<Museum>) getArguments().getSerializable(ALL_MUSEUM));
                 //set the adapter with the museum list form firebase
                 progressBar.setVisibility(View.VISIBLE);
-                allMuseums = getFirebase.listViewFromFirebase(museumAdapter);
-
+                allMuseums = MainActivity.museumAdapter;
                 mRecyclerView.setAdapter(allMuseums);
                 progressBar.setVisibility(View.GONE);
                 changeActivity(allMuseums);
@@ -79,8 +74,7 @@ public class Fragment1 extends Fragment {
             if (savedInstanceState != null) {
                 mRecyclerView.getRecycledViewPool().clear();
                 //Restore last state for checked position.
-                museumArrayList = (ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM);
-                allMuseums = new MuseumAdapter(museumArrayList);
+                allMuseums = new MuseumAdapter((ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM));
                 allMuseums.notifyDataSetChanged();
                 mRecyclerView.setAdapter(allMuseums);
                 changeActivity(allMuseums);

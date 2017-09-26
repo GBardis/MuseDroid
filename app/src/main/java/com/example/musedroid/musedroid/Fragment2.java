@@ -13,6 +13,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -41,8 +42,8 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     public static final int REQUEST_LOCATION = 001;
     private static final String NEARBY_MUSEUM = "NearByMuseum";
     private static final String ALL_MUSEUM = "allMuseums";
+    public static Location currentLocation;
     private final int permissionCode = 100;
-    MuseumAdapter museumAdapter;
     MuseumAdapter tempMuseumList = new MuseumAdapter(new ArrayList<Museum>());
     MuseumAdapter onLocationChangeAdapter = new MuseumAdapter(new ArrayList<Museum>());
     MuseumAdapter allMuseumAdapter = new MuseumAdapter(new ArrayList<Museum>());
@@ -50,7 +51,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     ArrayList<Museum> bundledNearbyMuseumsList = new ArrayList<>();
     ArrayList<Museum> bundledAllMuseumList = new ArrayList<>();
     ArrayList<Museum> allMuseumList = new ArrayList<>();
-
     GoogleApiClient googleApiClient;
     LocationRequest locationRequest;
     LocationManager locationManager;
@@ -61,7 +61,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     Context context;
     Intent intent;
     RecyclerView mRecyclerView;
-    GetFirebase getFirebase;
     ProgressBar progressBar;
 
     @Nullable
@@ -109,15 +108,16 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         //use getActivity instead of this in LinearLayoutManager
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //initialize Museum adapter and give as import an array list
         //call firebase function after the initialize of the adapter
         if (savedInstanceState == null) {
-            getFirebase = new GetFirebase();
-            museumArrayList = new ArrayList<>();
-            museumAdapter = new MuseumAdapter(museumArrayList);
-
-            allMuseumAdapter = getFirebase.listViewFromFirebase(museumAdapter);
+//            getFirebase = new GetFirebase();
+//            museumArrayList = new ArrayList<>();
+//            museumAdapter = new MuseumAdapter(museumArrayList);
+//
+            allMuseumAdapter = MainActivity.museumAdapter;
         }
     }
 
@@ -296,6 +296,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public void onLocationChanged(final Location location) {
         Location dest = new Location("provider");
+        currentLocation = location;
         try {
             nearbyMuseumList.clear();
             for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {

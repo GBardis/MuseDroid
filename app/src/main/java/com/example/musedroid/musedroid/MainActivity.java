@@ -19,12 +19,13 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final String ALL_MUSEUMS = "all_museums";
-    MuseumAdapter museumAdapter;
+    public static MuseumAdapter museumAdapter;
     ArrayList<Museum> allMuseum = new ArrayList<>();
     private GetFirebase getFirebase;
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
+    public static String name = "george";
     private String[] pageTitle = {"All Museums", "Near by Museums", "Fragment 3"};
 
     @Override
@@ -94,15 +95,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getFirebase = new GetFirebase();
         museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
         museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()));
-        museumAdapter.notifyDataSetChanged();
-        for (int i = 0; i < museumAdapter.getItemCount(); i++) {
-            allMuseum.add(museumAdapter.getItem(i));
-        }
 
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(ALL_MUSEUMS, allMuseum);
-        Fragment1 fragOne = new Fragment1();
-        fragOne.setArguments(bundle);
     }
 
     @Override
