@@ -70,9 +70,13 @@ public class Fragment1 extends Fragment {
 
     }
 
+    public void startPb(){
+    progressBar.setVisibility(View.VISIBLE);
+    }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         progressBar.setVisibility(View.VISIBLE);
+        MainActivity.startFragmentPb();
         try {
             if (savedInstanceState != null) {
                 mRecyclerView.getRecycledViewPool().clear();
