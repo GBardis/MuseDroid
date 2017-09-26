@@ -53,6 +53,7 @@ public class Fragment1 extends Fragment {
 
         if (savedInstanceState != null) {
             try {
+
                 getFirebase = new GetFirebase();
                 museumArrayList = new ArrayList<>();
                 museumAdapter = new MuseumAdapter((ArrayList<Museum>) getArguments().getSerializable(ALL_MUSEUM));
