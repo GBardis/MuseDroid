@@ -56,5 +56,6 @@
     <string name="prompt_password">prompt_password</string>
     <string name="title_activity_maps_marker">Map</string>
     <string name="action_settings">action_settings</string>
+    <string name="go_to_maps">Go To Maps</string>
 </resources>
 

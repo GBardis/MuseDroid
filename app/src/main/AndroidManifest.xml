@@ -6,7 +6,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>crisl
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    crisl
 
     <application
         android:allowBackup="true"
@@ -18,11 +19,7 @@
         <activity
             android:name=".MainActivity"
             android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            </intent-filter>
         </activity>
         <activity android:name=".ShowActivity" />
         <activity android:name=".ListViewActivity" />
@@ -40,14 +37,15 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <!--<meta-data-->
-            <!--android:name="com.google.android.geo.API_KEY"-->
-            <!--android:value="@string/google_maps_key" />-->
-
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="MainActivity" />
+        <activity android:name=".MapsActivity"/>
         <activity android:name=".NearbyListViewActivity" />
         <activity android:name=".QrShowActivity" />
         <activity android:name=".ExhibitShowActivity" />
         <activity android:name=".LoginActivity">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
