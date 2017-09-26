@@ -1,6 +1,5 @@
 package com.example.musedroid.musedroid;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,20 +19,13 @@ import java.util.Arrays;
 
 public class Fragment1 extends Fragment {
     private static final String ALL_MUSEUM = "ALL MUSEUMS";
-    String name, desc;
     ArrayList<Museum> museumArrayList;
     ArrayList<Museum> bundledMuseumsList = new ArrayList<>();
-    ArrayList<Museum> museumSendArrayList = new ArrayList<>();
     Intent intent;
     RecyclerView mRecyclerView;
     MuseumAdapter museumAdapter, allMuseums;
     ProgressBar progressBar;
     GetFirebase getFirebase;
-    private OnFragmentInteractionListener mListener;
-
-    public Fragment1() {
-        // Required empty public constructor
-    }
 
     @Nullable
     @Override
@@ -59,11 +51,11 @@ public class Fragment1 extends Fragment {
         //initialize Museum adapter and give as import an array list
         //call getfirebase object to get the museumAdapter with all museums
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState != null) {
             try {
                 getFirebase = new GetFirebase();
                 museumArrayList = new ArrayList<>();
-                museumAdapter = new MuseumAdapter(museumArrayList);
+                museumAdapter = new MuseumAdapter((ArrayList<Museum>) getArguments().getSerializable(ALL_MUSEUM));
                 //set the adapter with the museum list form firebase
                 progressBar.setVisibility(View.VISIBLE);
                 allMuseums = getFirebase.listViewFromFirebase(museumAdapter);
@@ -136,23 +128,6 @@ public class Fragment1 extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FirebaseHandler.database.goOnline();
@@ -167,10 +142,6 @@ public class Fragment1 extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        for (int i = 0; i < allMuseums.getItemCount(); i++) {
-            museumSendArrayList.add(allMuseums.getItem(i));
-        }
-        mListener.onFragmentInteraction(museumSendArrayList);
         FirebaseHandler.database.goOffline();
     }
 
@@ -178,11 +149,6 @@ public class Fragment1 extends Fragment {
     public void onStop() {
         super.onStop();
         FirebaseHandler.database.goOffline();
-
-    }
-
-    public interface OnFragmentInteractionListener {
-        void onFragmentInteraction(ArrayList<Museum> museumSendArrayList);
     }
 }
 

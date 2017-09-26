@@ -21,7 +21,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 
 
-public class Fragment3 extends Fragment implements Fragment1.OnFragmentInteractionListener {
+public class Fragment3 extends Fragment {
     MapView mMapView;
     ArrayList<MarkerOptions> markerArrayList = new ArrayList<>();
     private GoogleMap googleMap;
@@ -98,14 +98,4 @@ public class Fragment3 extends Fragment implements Fragment1.OnFragmentInteracti
         super.onLowMemory();
         mMapView.onLowMemory();
     }
-
-    @Override
-    public void onFragmentInteraction(ArrayList<Museum> museumSendArrayList) {
-        for (Museum museum : museumSendArrayList) {
-            LatLng museumMarker = new LatLng(Float.parseFloat(museum.lat), Float.parseFloat(museum.lon));
-            MarkerOptions marker = new MarkerOptions().position(museumMarker).title(museum.name).snippet(museum.description);
-            markerArrayList.add(marker);
-        }
-    }
-
 }

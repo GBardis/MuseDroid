@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -20,11 +17,11 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, Fragment1.OnFragmentInteractionListener {
-    static Fragment1 fragOne;
-    static Fragment2 fragTwo;
-    static Fragment3 fragThree;
-    ViewPagerAdapter viewPagerAdapter;
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String ALL_MUSEUMS = "all_museums";
+    MuseumAdapter museumAdapter;
+    ArrayList<Museum> allMuseum = new ArrayList<>();
+    private GetFirebase getFirebase;
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
@@ -34,12 +31,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        fragOne = new Fragment1();
-        fragTwo = new Fragment2();
-        fragThree = new Fragment3();
-
+        sendMuseumsToFragments();
 //        ActionBar actionBar = getSupportActionBar();
 //        if (actionBar != null) {
 //            actionBar.setDisplayHomeAsUpEnabled(true);
@@ -95,7 +87,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
+
     }
+
+    public void sendMuseumsToFragments() {
+        getFirebase = new GetFirebase();
+        museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
+        museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()));
+        museumAdapter.notifyDataSetChanged();
+        for (int i = 0; i < museumAdapter.getItemCount(); i++) {
+            allMuseum.add(museumAdapter.getItem(i));
+        }
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(ALL_MUSEUMS, allMuseum);
+        Fragment1 fragOne = new Fragment1();
+        fragOne.setArguments(bundle);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -117,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         return super.onOptionsItemSelected(item);
     }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -153,39 +163,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
-        }
-    }
-
-    @Override
-    public void onFragmentInteraction(ArrayList<Museum> museumSendArrayList) {
-        viewPagerAdapter.onFragmentInteraction(museumSendArrayList);
-    }
-
-    public static class ViewPagerAdapter extends FragmentPagerAdapter implements Fragment1.OnFragmentInteractionListener {
-
-        public ViewPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if (position == 0) {
-                return fragOne;
-            } else if (position == 1) {
-                return fragTwo;
-            } else if (position == 2) {
-                return fragThree;
-            } else return new Fragment();
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
-
-        @Override
-        public void onFragmentInteraction(ArrayList<Museum> museumSendArrayList) {
-            fragThree.onFragmentInteraction(museumSendArrayList);
         }
     }
 }
