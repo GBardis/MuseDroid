@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         //noinspection SimplifiableIfStatement
         if (id == R.id.go_to_maps) {
-            startActivity(new Intent(this, MapsActivity.class));
+            startActivity(new Intent(MainActivity.this, MapsActivity.class));
             return true;
         }
 
