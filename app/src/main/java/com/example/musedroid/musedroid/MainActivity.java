@@ -137,7 +137,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public static void fragmentDataLoaded(){
-        sendMuseumsToFragments();
+        if(MainActivity.flagGotView == true && MainActivity.flagGotprogressBar==true) {
+            sendMuseumsToFragments();
+        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
