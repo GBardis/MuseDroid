@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        if (actionBar != null) {
 //            actionBar.setDisplayHomeAsUpEnabled(true);
 //        }
+
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -94,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void sendMuseumsToFragments() {
         getFirebase = new GetFirebase();
         museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
-        museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()));
+        museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()),startFragmentPb(),startFragmentView());
 
     }
 
@@ -118,6 +121,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static ProgressBar startFragmentPb(){
+        return ViewPagerAdapter.fragment1.startPb();
+    }
+    public static View startFragmentView(){
+        return ViewPagerAdapter.fragment1.getViewFrag();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")

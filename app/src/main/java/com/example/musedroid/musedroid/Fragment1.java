@@ -24,7 +24,7 @@ public class Fragment1 extends Fragment {
     RecyclerView mRecyclerView;
     MuseumAdapter allMuseums;
     ProgressBar progressBar;
-
+    View fragment;
 
     @Nullable
     @Override
@@ -49,27 +49,36 @@ public class Fragment1 extends Fragment {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //initialize Museum adapter and give as import an array list
         //call getfirebase object to get the museumAdapter with all museums
-
+        fragment = view;
         if (savedInstanceState == null) {
             try {
                 //set the adapter with the museum list form firebase
                 progressBar.setVisibility(View.VISIBLE);
                 allMuseums = MainActivity.museumAdapter;
 
-                mRecyclerView.setAdapter(allMuseums);
+//                mRecyclerView.setAdapter(allMuseums);
 
-                changeActivity(allMuseums);
+//                changeActivity(allMuseums);
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
                 Log.d("Exception", Arrays.toString(ex.getStackTrace()));
             }
         }
+    }
 
+    public ProgressBar startPb() {
+        return progressBar;
+    }
+
+    public View getViewFrag() {
+        return fragment;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         progressBar.setVisibility(View.VISIBLE);
+        MainActivity.startFragmentPb();
+        MainActivity.startFragmentView();
         try {
             if (savedInstanceState != null) {
                 mRecyclerView.getRecycledViewPool().clear();
