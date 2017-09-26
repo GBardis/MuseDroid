@@ -23,20 +23,27 @@ public class Fragment1 extends Fragment {
     Intent intent;
     RecyclerView mRecyclerView;
     MuseumAdapter allMuseums;
-    ProgressBar progressBar;
-    View fragment;
+    public static ProgressBar progressBar;
+    public static View rootView;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_fragment1, container, false);
+        rootView =  inflater.inflate(R.layout.fragment_fragment1, container, false);
+        return  rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         mRecyclerView = view.findViewById(R.id.museumRecycleView);
         progressBar = view.findViewById(R.id.progressBarMuseumListAll);
+        MainActivity.startFragmentPb();
+        MainActivity.startFragmentView();
+
+        MainActivity.fragmentDataLoaded();
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
@@ -49,16 +56,16 @@ public class Fragment1 extends Fragment {
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //initialize Museum adapter and give as import an array list
         //call getfirebase object to get the museumAdapter with all museums
-        fragment = view;
+
         if (savedInstanceState == null) {
             try {
                 //set the adapter with the museum list form firebase
                 progressBar.setVisibility(View.VISIBLE);
                 allMuseums = MainActivity.museumAdapter;
 
-//                mRecyclerView.setAdapter(allMuseums);
+                mRecyclerView.setAdapter(allMuseums);
 
-//                changeActivity(allMuseums);
+               changeActivity(allMuseums);
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
                 Log.d("Exception", Arrays.toString(ex.getStackTrace()));
@@ -67,18 +74,17 @@ public class Fragment1 extends Fragment {
     }
 
     public ProgressBar startPb() {
-        return progressBar;
+        return Fragment1.rootView.findViewById(R.id.progressBarMuseumListAll);
     }
 
     public View getViewFrag() {
-        return fragment;
+        return Fragment1.rootView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         progressBar.setVisibility(View.VISIBLE);
-        MainActivity.startFragmentPb();
-        MainActivity.startFragmentView();
+
         try {
             if (savedInstanceState != null) {
                 mRecyclerView.getRecycledViewPool().clear();

@@ -23,18 +23,21 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private static final String ALL_MUSEUMS = "all_museums";
     public static MuseumAdapter museumAdapter;
     ArrayList<Museum> allMuseum = new ArrayList<>();
-    private GetFirebase getFirebase;
+    public static GetFirebase getFirebase;
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
     public static String name = "george";
     private String[] pageTitle = {"All Museums", "Near by Museums", "Fragment 3"};
+    public static ProgressBar fragmentProgressBar;
+    public static View fragmentView;
+    public static boolean flagGotprogressBar,flagGotView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        sendMuseumsToFragments();
+
 //        ActionBar actionBar = getSupportActionBar();
 //        if (actionBar != null) {
 //            actionBar.setDisplayHomeAsUpEnabled(true);
@@ -94,10 +97,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-    public void sendMuseumsToFragments() {
+    public static void sendMuseumsToFragments() {
         getFirebase = new GetFirebase();
         museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
-        museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()),startFragmentPb(),startFragmentView());
+        museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()),MainActivity.fragmentProgressBar,MainActivity.fragmentView);
 
     }
 
@@ -123,11 +126,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
-    public static ProgressBar startFragmentPb(){
-        return ViewPagerAdapter.fragment1.startPb();
+    public static void startFragmentPb(){
+        MainActivity.fragmentProgressBar= ViewPagerAdapter.fragment1.startPb();
+        MainActivity.flagGotprogressBar = true;
+
     }
-    public static View startFragmentView(){
-        return ViewPagerAdapter.fragment1.getViewFrag();
+    public static void startFragmentView(){
+        MainActivity.fragmentView =  ViewPagerAdapter.fragment1.getViewFrag();
+        MainActivity.flagGotView = true;
+    }
+
+    public static void fragmentDataLoaded(){
+        sendMuseumsToFragments();
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
