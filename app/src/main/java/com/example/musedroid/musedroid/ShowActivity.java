@@ -28,12 +28,10 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
     private static final String DESCRIPTION = "museum description";
     private static final String TITLE = "museum title";
     RatingBar ratingBar;
-    Button qrButton;
+    Button qrButton, goToMaps;
     Museum museum;
-    Button goToMaps;
     Intent intent;
-    String museumName;
-    String museumAddress;
+    String museumAddress, museumName;
     TextView textDescription;
     Intent i;
 

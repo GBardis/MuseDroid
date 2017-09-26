@@ -19,13 +19,12 @@ import java.util.Arrays;
 
 public class Fragment1 extends Fragment {
     private static final String ALL_MUSEUM = "ALL MUSEUMS";
-    ArrayList<Museum> museumArrayList;
     ArrayList<Museum> bundledMuseumsList = new ArrayList<>();
     Intent intent;
     RecyclerView mRecyclerView;
-    MuseumAdapter museumAdapter, allMuseums;
+    MuseumAdapter allMuseums;
     ProgressBar progressBar;
-    GetFirebase getFirebase;
+
 
     @Nullable
     @Override
@@ -53,14 +52,12 @@ public class Fragment1 extends Fragment {
 
         if (savedInstanceState == null) {
             try {
-                getFirebase = new GetFirebase();
-                museumArrayList = new ArrayList<>();
-                museumAdapter = new MuseumAdapter(museumArrayList);
                 //set the adapter with the museum list form firebase
-                //progressBar.setVisibility(View.VISIBLE);
-                allMuseums = getFirebase.listViewFromFirebase(museumAdapter,progressBar,view);
+                progressBar.setVisibility(View.VISIBLE);
+                allMuseums = MainActivity.museumAdapter;
+
                 mRecyclerView.setAdapter(allMuseums);
-                //progressBar.setVisibility(View.GONE);
+
                 changeActivity(allMuseums);
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
@@ -77,8 +74,7 @@ public class Fragment1 extends Fragment {
             if (savedInstanceState != null) {
                 mRecyclerView.getRecycledViewPool().clear();
                 //Restore last state for checked position.
-                museumArrayList = (ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM);
-                allMuseums = new MuseumAdapter(museumArrayList);
+                allMuseums = new MuseumAdapter((ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM));
                 allMuseums.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
                 mRecyclerView.setAdapter(allMuseums);
@@ -88,7 +84,6 @@ public class Fragment1 extends Fragment {
             Log.e("Exception", ex.getMessage());
             Log.d("Exception", Arrays.toString(ex.getStackTrace()));
         }
-
         super.onActivityCreated(savedInstanceState);
     }
 
@@ -150,7 +145,6 @@ public class Fragment1 extends Fragment {
     public void onStop() {
         super.onStop();
         FirebaseHandler.database.goOffline();
-
     }
 }
 

@@ -10,20 +10,18 @@
 
     <TextView
         android:id="@+id/MuseumDescription"
-        android:layout_width="282dp"
+        android:layout_width="0dp"
         android:layout_height="216dp"
         android:layout_marginBottom="16dp"
-        android:layout_marginEnd="53dp"
-        android:layout_marginStart="53dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
         android:text="@string/museumdescription"
         app:layout_constraintBottom_toTopOf="@+id/ratingBar"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
-        tools:layout_constraintRight_creator="1"
-        tools:layout_editor_absoluteX="49dp"
-        tools:layout_editor_absoluteY="17dp" />
+        tools:layout_constraintRight_creator="1" />
 
     <RatingBar
         android:id="@+id/ratingBar"
@@ -78,4 +76,5 @@
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
         tools:layout_constraintTop_creator="1" />
+
 </android.support.constraint.ConstraintLayout>
