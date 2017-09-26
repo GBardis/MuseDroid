@@ -19,13 +19,12 @@ import java.util.Arrays;
 
 public class Fragment1 extends Fragment {
     private static final String ALL_MUSEUM = "ALL MUSEUMS";
-    ArrayList<Museum> museumArrayList;
     ArrayList<Museum> bundledMuseumsList = new ArrayList<>();
     Intent intent;
     RecyclerView mRecyclerView;
-    MuseumAdapter museumAdapter, allMuseums;
+    MuseumAdapter allMuseums;
     ProgressBar progressBar;
-    GetFirebase getFirebase;
+
 
     @Nullable
     @Override
