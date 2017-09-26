@@ -13,7 +13,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+
     <!--Login ,signup strings-->
     <string name="action_sign_in_short">Register</string>
     <string name="email">Email</string>
@@ -55,5 +55,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="prompt_password">prompt_password</string>
     <string name="title_activity_maps_marker">Map</string>
+    <string name="action_settings">action_settings</string>
 </resources>
 
