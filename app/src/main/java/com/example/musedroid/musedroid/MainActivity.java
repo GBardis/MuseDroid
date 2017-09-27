@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +19,7 @@ import android.widget.ProgressBar;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final String ALL_MUSEUMS = "all_museums";
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //change ViewPager page when tab selected
 
+
         tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
@@ -96,6 +99,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
     }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+
+    }
+
+    @Override
+    public void onAttachFragment(Fragment fragment){
+        super.onAttachFragment(fragment);
+        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + viewPager.getCurrentItem());
+        ViewPagerAdapter.fragment1.startPb();
+    }
+
+//    public void callFragment(){
+//        Fragment page = getSupportFragmentManager().findFragmentByTag("android:switcher:" + R.id.view_pager + ":" + viewPager.getCurrentItem());
+//
+//    }
 
     public static void sendMuseumsToFragments() {
         getFirebase = new GetFirebase();
@@ -127,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public static void startFragmentPb(){
-        MainActivity.fragmentProgressBar= ViewPagerAdapter.fragment1.startPb();
+        //MainActivity.fragmentProgressBar= ViewPagerAdapter.fragment1.startPb();
         MainActivity.flagGotprogressBar = true;
 
     }

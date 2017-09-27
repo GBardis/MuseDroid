@@ -61,7 +61,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     int result[] = new int[]{};
     Context context;
     Intent intent;
-    RecyclerView mRecyclerView;
+    RecyclerView mRecyclerNearbyView;
     ProgressBar progressBar;
     private int minLocationUpdateTime = 0;
     private int minLocationUpdateInterval = 0;
@@ -102,16 +102,16 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
         nearbyMuseumList = new ArrayList<>();
         progressBar = view.findViewById(R.id.progressBarNearbyListMuseum);
-        mRecyclerView = view.findViewById(R.id.museumNearbyRecycleView);
+        mRecyclerNearbyView = view.findViewById(R.id.museumNearbyRecycleView);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
-        mRecyclerView.setHasFixedSize(true);
+        mRecyclerNearbyView.setHasFixedSize(true);
         // use a linear layout manager
         //use getActivity instead of this in LinearLayoutManager
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
-        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerNearbyView.setLayoutManager(mLayoutManager);
+        mRecyclerNearbyView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
+        mRecyclerNearbyView.setItemAnimator(new DefaultItemAnimator());
         //initialize Museum adapter and give as import an array list
         //call firebase function after the initialize of the adapter
         if (savedInstanceState == null) {
@@ -145,15 +145,21 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         FirebaseHandler.database.goOffline();
     }
 
-    private void changeActivity(final MuseumAdapter museumAdapter) {
+    private void changeActivityNearbyList(final MuseumAdapter funcMuseumAdapter) {
         try {
-            if (museumAdapter != null) {
-                museumAdapter.setOnItemClickListener(new MuseumAdapter.MyClickListener() {
-
+            if (funcMuseumAdapter != null) {
+//                museumAdapter.setOnItemClickListener(new MuseumAdapter.MyClickListener() {
+//
+//                    @Override
+//                    public void onItemClick(int position, View view) {
+//
+//                    }
+//                });
+                funcMuseumAdapter.setOnItemClickListener(new MuseumAdapter.MyClickListener() {
                     @Override
                     public void onItemClick(int position, View view) {
                         intent = new Intent(view.getContext(), ShowActivity.class);
-                        intent.putExtra("museum", museumAdapter.getItem(position));
+                        intent.putExtra("museum", funcMuseumAdapter.getItem(position));
                         startActivity(intent);
                     }
                 });
@@ -170,7 +176,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         progressBar.setVisibility(View.VISIBLE);
         try {
             if (savedInstanceState != null) {
-                mRecyclerView.getRecycledViewPool().clear();
+                mRecyclerNearbyView.getRecycledViewPool().clear();
                 allMuseumAdapter.clear();
                 onLocationChangeAdapter.clear();
 
@@ -190,9 +196,12 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 onLocationChangeAdapter.notifyDataSetChanged();
                 if (museumArrayList.size() != 0) {
                     progressBar.setVisibility(View.GONE);
-                    mRecyclerView.setAdapter(onLocationChangeAdapter);
-                    changeActivity(onLocationChangeAdapter);
+                    mRecyclerNearbyView.setAdapter(onLocationChangeAdapter);
+                    //changeActivityNearbyList(onLocationChangeAdapter);
                 }
+
+                mRecyclerNearbyView.setAdapter(onLocationChangeAdapter);
+
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
@@ -301,25 +310,22 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         currentLocation = location;
         try {
             nearbyMuseumList.clear();
-            for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
-                nearbyMuseumList.add(allMuseumAdapter.getItem(i));
-            }
             onLocationChangeAdapter.clear();
-            for (Museum museum : nearbyMuseumList) {
-                dest.setLatitude(Double.parseDouble(museum.lat));
-                dest.setLongitude(Double.parseDouble(museum.lon));
-                museum.distance = String.valueOf(location.distanceTo(dest) / 1000);
-                if (Double.parseDouble(museum.distance) < 5) {
-                    onLocationChangeAdapter.add(museum);
+            for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
+                dest.setLatitude(Double.parseDouble(allMuseumAdapter.getItem(i).lat));
+                dest.setLatitude(Double.parseDouble(allMuseumAdapter.getItem(i).lon));
+                allMuseumAdapter.getItem(i).distance = String.valueOf(location.distanceTo(dest) / 1000);
+                if (Double.parseDouble(allMuseumAdapter.getItem(i).distance) < 5) {
+                    onLocationChangeAdapter.add(allMuseumAdapter.getItem(i));
                 }
                 onLocationChangeAdapter.notifyDataSetChanged();
             }
             if (onLocationChangeAdapter != tempMuseumList) {
                 tempMuseumList = onLocationChangeAdapter;
-                mRecyclerView.getRecycledViewPool().clear();
+                mRecyclerNearbyView.getRecycledViewPool().clear();
                 progressBar.setVisibility(View.GONE);
-                mRecyclerView.setAdapter(onLocationChangeAdapter);
-                changeActivity(onLocationChangeAdapter);
+                mRecyclerNearbyView.setAdapter(onLocationChangeAdapter);
+                changeActivityNearbyList(onLocationChangeAdapter);
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
