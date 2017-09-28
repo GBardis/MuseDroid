@@ -115,7 +115,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         //initialize Museum adapter and give as import an array list
         //call firebase function after the initialize of the adapter
         if (savedInstanceState == null) {
-            allMuseumAdapter = MainActivity.museumAdapter;
+            allMuseumAdapter = MainActivity.nearbyMuseumAdapter;
         } else {
             progressBar.setVisibility(View.GONE);
         }
@@ -145,25 +145,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         FirebaseHandler.database.goOffline();
     }
 
-    private void changeActivity(final MuseumAdapter museumAdapter) {
-        try {
-            if (museumAdapter != null) {
-                museumAdapter.setOnItemClickListener(new MuseumAdapter.MyClickListener() {
-
-                    @Override
-                    public void onItemClick(int position, View view) {
-                        intent = new Intent(view.getContext(), ShowActivity.class);
-                        intent.putExtra("museum", museumAdapter.getItem(position));
-                        startActivity(intent);
-                    }
-                });
-            }
-        } catch (Exception ex) {
-            Log.e("Exception", ex.getMessage());
-            Log.d("Exception", Arrays.toString(ex.getStackTrace()));
-        }
-    }
-
     //Restore last state for checked position.
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -174,24 +155,20 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 allMuseumAdapter.clear();
                 onLocationChangeAdapter.clear();
 
-                allMuseumList = (ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM);
-                museumArrayList = (ArrayList<Museum>) savedInstanceState.getSerializable(NEARBY_MUSEUM);
+                allMuseumList = savedInstanceState.getParcelableArrayList(ALL_MUSEUM);
+                museumArrayList = savedInstanceState.getParcelableArrayList(NEARBY_MUSEUM);
 
                 assert allMuseumList != null;
-
-                for (Museum museum : allMuseumList) {
-                    allMuseumAdapter.add(museum);
-                }
+                allMuseumAdapter.addAll(allMuseumList);
 
                 assert museumArrayList != null;
-                for (Museum museum : museumArrayList) {
-                    onLocationChangeAdapter.add(museum);
-                }
+                onLocationChangeAdapter.addAll(museumArrayList);
+
                 onLocationChangeAdapter.notifyDataSetChanged();
                 if (museumArrayList.size() != 0) {
                     progressBar.setVisibility(View.GONE);
                     mRecyclerView.setAdapter(onLocationChangeAdapter);
-                    changeActivity(onLocationChangeAdapter);
+                    // changeActivity(onLocationChangeAdapter);
                 }
             }
         } catch (Exception ex) {
@@ -217,8 +194,8 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
                     bundledAllMuseumList.add(allMuseumAdapter.getItem(i));
                 }
-                outState.putSerializable(ALL_MUSEUM, bundledAllMuseumList);
-                outState.putSerializable(NEARBY_MUSEUM, bundledNearbyMuseumsList);
+                outState.putParcelableArrayList(ALL_MUSEUM, bundledAllMuseumList);
+                outState.putParcelableArrayList(NEARBY_MUSEUM, bundledNearbyMuseumsList);
 
             }
         } catch (Exception ex) {
@@ -300,26 +277,23 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         Location dest = new Location("provider");
         currentLocation = location;
         try {
-            nearbyMuseumList.clear();
+
             for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
-                nearbyMuseumList.add(allMuseumAdapter.getItem(i));
-            }
-            onLocationChangeAdapter.clear();
-            for (Museum museum : nearbyMuseumList) {
-                dest.setLatitude(Double.parseDouble(museum.lat));
-                dest.setLongitude(Double.parseDouble(museum.lon));
-                museum.distance = String.valueOf(location.distanceTo(dest) / 1000);
-                if (Double.parseDouble(museum.distance) < 5) {
-                    onLocationChangeAdapter.add(museum);
+                dest.setLatitude(Double.parseDouble(allMuseumAdapter.getItem(i).lat));
+                dest.setLongitude(Double.parseDouble(allMuseumAdapter.getItem(i).lon));
+                allMuseumAdapter.getItem(i).distance = String.valueOf(location.distanceTo(dest) / 1000);
+                if (Double.parseDouble(allMuseumAdapter.getItem(i).distance) < 5) {
+                    onLocationChangeAdapter.add(allMuseumAdapter.getItem(i));
                 }
                 onLocationChangeAdapter.notifyDataSetChanged();
             }
+
             if (onLocationChangeAdapter != tempMuseumList) {
                 tempMuseumList = onLocationChangeAdapter;
                 mRecyclerView.getRecycledViewPool().clear();
                 progressBar.setVisibility(View.GONE);
                 mRecyclerView.setAdapter(onLocationChangeAdapter);
-                changeActivity(onLocationChangeAdapter);
+                // changeActivity(onLocationChangeAdapter);
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());

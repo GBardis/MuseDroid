@@ -26,7 +26,6 @@ public class Fragment1 extends Fragment {
     public static ProgressBar progressBar;
     public static View rootView;
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -89,7 +88,7 @@ public class Fragment1 extends Fragment {
             if (savedInstanceState != null) {
                 mRecyclerView.getRecycledViewPool().clear();
                 //Restore last state for checked position.
-                allMuseums = new MuseumAdapter((ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM));
+                allMuseums = new MuseumAdapter(savedInstanceState.<Museum>getParcelableArrayList(ALL_MUSEUM));
                 allMuseums.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
                 mRecyclerView.setAdapter(allMuseums);
@@ -130,7 +129,7 @@ public class Fragment1 extends Fragment {
                 for (int i = 0; i < allMuseums.getItemCount(); i++) {
                     bundledMuseumsList.add(allMuseums.getItem(i));
                 }
-                outState.putSerializable(ALL_MUSEUM, bundledMuseumsList);
+                outState.putParcelableArrayList(ALL_MUSEUM, bundledMuseumsList);
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
