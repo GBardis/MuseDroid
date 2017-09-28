@@ -116,6 +116,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         //call firebase function after the initialize of the adapter
         if (savedInstanceState == null) {
             allMuseumAdapter = MainActivity.nearbyMuseumAdapter;
+            mRecyclerView.setAdapter(onLocationChangeAdapter);
         } else {
             progressBar.setVisibility(View.GONE);
         }
@@ -277,7 +278,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         Location dest = new Location("provider");
         currentLocation = location;
         try {
-
+            onLocationChangeAdapter.clear();
             for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
                 dest.setLatitude(Double.parseDouble(allMuseumAdapter.getItem(i).lat));
                 dest.setLongitude(Double.parseDouble(allMuseumAdapter.getItem(i).lon));
@@ -292,8 +293,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 tempMuseumList = onLocationChangeAdapter;
                 mRecyclerView.getRecycledViewPool().clear();
                 progressBar.setVisibility(View.GONE);
-                mRecyclerView.setAdapter(onLocationChangeAdapter);
-                // changeActivity(onLocationChangeAdapter);
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());

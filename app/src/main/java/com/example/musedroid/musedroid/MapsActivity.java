@@ -43,20 +43,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        MuseumAdapter museumAdapter = MainActivity.museumAdapter;
-
-        googleMap.setMyLocationEnabled(true);
-        for (int i = 0; i < museumAdapter.getItemCount(); i++) {
-            LatLng museumMarker = new LatLng(Float.parseFloat(museumAdapter.getItem(i).lat), Float.parseFloat(museumAdapter.getItem(i).lon));
-            MarkerOptions marker = new MarkerOptions().position(museumMarker).title(museumAdapter.getItem(i).name).snippet(museumAdapter.getItem(i).description);
-            // For dropping a marker at a point on the Map
-            googleMap.addMarker(marker);
-        }
         Location currentLocation = Fragment2.currentLocation;
+        if (currentLocation != null) {
+            MuseumAdapter museumAdapter = MainActivity.museumAdapter;
 
-        LatLng currentPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        // For zooming automatically to the location of the marker
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(currentPosition).zoom(12).build();
-        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            googleMap.setMyLocationEnabled(true);
+            for (int i = 0; i < museumAdapter.getItemCount(); i++) {
+                LatLng museumMarker = new LatLng(Float.parseFloat(museumAdapter.getItem(i).lat), Float.parseFloat(museumAdapter.getItem(i).lon));
+                MarkerOptions marker = new MarkerOptions().position(museumMarker).title(museumAdapter.getItem(i).name).snippet(museumAdapter.getItem(i).description);
+                // For dropping a marker at a point on the Map
+                googleMap.addMarker(marker);
+            }
+            currentLocation = Fragment2.currentLocation;
+
+            LatLng currentPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
+            // For zooming automatically to the location of the marker
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(currentPosition).zoom(12).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        } else {
+            LatLng samplePosition = new LatLng(37.983810, 23.727539);
+            // For zooming automatically to the location of the marker
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(samplePosition).zoom(10).build();
+            googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        }
+
     }
 }

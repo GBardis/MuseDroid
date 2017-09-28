@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String[] pageTitle = {"All Museums", "Near by Museums", "Fragment 3"};
 
     public static void sendMuseumsToFragments() {
-        getFirebase = new GetFirebase();
+         getFirebase = new GetFirebase();
         museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
         museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), MainActivity.fragmentProgressBar, MainActivity.fragmentView);
         nearbyMuseumAdapter = new MuseumAdapter((new ArrayList<Museum>()));
@@ -63,12 +63,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-//        ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
-
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
