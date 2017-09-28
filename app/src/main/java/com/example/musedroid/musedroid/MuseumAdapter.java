@@ -16,8 +16,8 @@ import java.util.List;
  */
 
 class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
-    private static MyClickListener myClickListener;
     private List<Museum> museumList;
+
 
     // Provide a suitable constructor (depends on the kind of dataset)
     MuseumAdapter(List<Museum> myDataset) {
@@ -80,6 +80,12 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
         this.notifyItemInserted(getItemCount() - 1);
     }
 
+    public void duplicateAdapter(MuseumAdapter adapter){
+        for(int i =0 ; i < adapter.getItemCount(); i++){
+            this.add(adapter.getItem(i));
+        }
+    }
+
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -91,18 +97,11 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
         return this.museumList.size();
     }
 
-    void setOnItemClickListener(MyClickListener myClickListener) {
-        MuseumAdapter.myClickListener = myClickListener;
-    }
-
-    interface MyClickListener {
-        void onItemClick(int position, View v);
-    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         TextView title, description;
         CardView cv;
@@ -114,13 +113,9 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
             title = view.findViewById(R.id.museum_name);
             description = view.findViewById(R.id.museum_description);
             //museumImage = view.findViewById(R.id.museum_image);
-            view.setOnClickListener(this);
+
         }
 
-        @Override
-        public void onClick(View view) {
-            myClickListener.onItemClick(getAdapterPosition(), view);
-        }
     }
 
 }

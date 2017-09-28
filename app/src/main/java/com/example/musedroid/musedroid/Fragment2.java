@@ -62,7 +62,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     Context context;
     Intent intent;
     RecyclerView mRecyclerView;
-    ProgressBar progressBar;
+    public ProgressBar progressBar;
+    public View view;
+
     private int minLocationUpdateTime = 0;
     private int minLocationUpdateInterval = 0;
 
@@ -71,7 +73,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         //setContentView(R.layout.activity_nearby_list_view);
         context = getActivity().getApplicationContext();
-        View view = inflater.inflate(R.layout.fragment_listview, container, false);
+        view = inflater.inflate(R.layout.fragment_listview, container, false);
+        //progressBar = view.findViewById(R.id.nearByMuseumProgressBar);
+
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
         //onCreatedView code
@@ -101,7 +105,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         super.onViewCreated(view, savedInstanceState);
 
         nearbyMuseumList = new ArrayList<>();
-        progressBar = view.findViewById(R.id.progressBarNearbyListMuseum);
         mRecyclerView = view.findViewById(R.id.museumNearbyRecycleView);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -115,11 +118,21 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         //initialize Museum adapter and give as import an array list
         //call firebase function after the initialize of the adapter
         if (savedInstanceState == null) {
-            allMuseumAdapter = MainActivity.nearbyMuseumAdapter;
+//            if (onLocationChangeAdapter.getItemCount()<=0) {
+//                progressBar.setVisibility(view.VISIBLE);
+//            }
+            allMuseumAdapter = MainActivity.museumAdapter;
             mRecyclerView.setAdapter(onLocationChangeAdapter);
-        } else {
-            progressBar.setVisibility(View.GONE);
         }
+        ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                // do it
+                intent = new Intent(v.getContext(), ShowActivity.class);
+                intent.putExtra("museum", recyclerView.getAdapter().getItemId(position));
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -149,7 +162,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     //Restore last state for checked position.
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        progressBar.setVisibility(View.VISIBLE);
         try {
             if (savedInstanceState != null) {
                 mRecyclerView.getRecycledViewPool().clear();
@@ -167,7 +179,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
                 onLocationChangeAdapter.notifyDataSetChanged();
                 if (museumArrayList.size() != 0) {
-                    progressBar.setVisibility(View.GONE);
                     mRecyclerView.setAdapter(onLocationChangeAdapter);
                     // changeActivity(onLocationChangeAdapter);
                 }
@@ -290,10 +301,15 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             }
 
             if (onLocationChangeAdapter != tempMuseumList) {
+
                 tempMuseumList = onLocationChangeAdapter;
                 mRecyclerView.getRecycledViewPool().clear();
-                progressBar.setVisibility(View.GONE);
             }
+
+
+//            if(onLocationChangeAdapter.getItemCount()>0){
+//                progressBar.setVisibility(view.GONE);
+//            }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
             Log.d("Exception", Arrays.toString(ex.getStackTrace()));

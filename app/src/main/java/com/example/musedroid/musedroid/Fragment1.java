@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +22,6 @@ public class Fragment1 extends Fragment {
     Intent intent;
     RecyclerView mRecyclerView;
     MuseumAdapter allMuseums;
-    public static ProgressBar progressBar;
     public static View rootView;
 
     @Nullable
@@ -38,11 +36,6 @@ public class Fragment1 extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mRecyclerView = view.findViewById(R.id.museumRecycleView);
-        progressBar = view.findViewById(R.id.progressBarMuseumListAll);
-        MainActivity.startFragmentPb();
-        MainActivity.startFragmentView();
-
-        MainActivity.fragmentDataLoaded();
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
@@ -59,40 +52,38 @@ public class Fragment1 extends Fragment {
         if (savedInstanceState == null) {
             try {
                 //set the adapter with the museum list form firebase
-                progressBar.setVisibility(View.VISIBLE);
                 allMuseums = MainActivity.museumAdapter;
 
                 mRecyclerView.setAdapter(allMuseums);
 
-               changeActivity(allMuseums);
+               //changeActivity(allMuseums);
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
                 Log.d("Exception", Arrays.toString(ex.getStackTrace()));
             }
         }
-    }
-
-    public ProgressBar startPb() {
-        return Fragment1.rootView.findViewById(R.id.progressBarMuseumListAll);
-    }
-
-    public View getViewFrag() {
-        return Fragment1.rootView;
+        ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                // do it
+                intent = new Intent(v.getContext(), ShowActivity.class);
+                intent.putExtra("museum", recyclerView.getAdapter().getItemId(position));
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        progressBar.setVisibility(View.VISIBLE);
-
         try {
             if (savedInstanceState != null) {
                 mRecyclerView.getRecycledViewPool().clear();
                 //Restore last state for checked position.
                 allMuseums = new MuseumAdapter(savedInstanceState.<Museum>getParcelableArrayList(ALL_MUSEUM));
                 allMuseums.notifyDataSetChanged();
-                progressBar.setVisibility(View.GONE);
+
                 mRecyclerView.setAdapter(allMuseums);
-                changeActivity(allMuseums);
+                //changeActivity(allMuseums);
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
@@ -102,22 +93,6 @@ public class Fragment1 extends Fragment {
     }
 
 
-    private void changeActivity(final MuseumAdapter museumAdapter) {
-        try {
-            museumAdapter.setOnItemClickListener(new MuseumAdapter.MyClickListener() {
-
-                @Override
-                public void onItemClick(int position, View view) {
-                    intent = new Intent(view.getContext(), ShowActivity.class);
-                    intent.putExtra("museum", museumAdapter.getItem(position));
-                    startActivity(intent);
-                }
-            });
-        } catch (Exception ex) {
-            Log.e("Exception", ex.getMessage());
-            Log.d("Exception", Arrays.toString(ex.getStackTrace()));
-        }
-    }
 
     @Override
     public void onSaveInstanceState(@Nullable Bundle outState) {

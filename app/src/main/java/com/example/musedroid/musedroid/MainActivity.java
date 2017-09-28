@@ -20,49 +20,34 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-    private static final String ALL_MUSEUMS = "all_museums";
-    public static MuseumAdapter museumAdapter, nearbyMuseumAdapter;
+    public static MuseumAdapter museumAdapter;
     public static GetFirebase getFirebase;
-    public static String name = "george";
     public static ProgressBar fragmentProgressBar;
     public static View fragmentView;
-    public static boolean flagGotprogressBar, flagGotView;
-    ArrayList<Museum> allMuseum = new ArrayList<>();
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
     private String[] pageTitle = {"All Museums", "Near by Museums", "Fragment 3"};
+    public ProgressBar progressBar;
 
-    public static void sendMuseumsToFragments() {
-         getFirebase = new GetFirebase();
-        museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
-        museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), MainActivity.fragmentProgressBar, MainActivity.fragmentView);
-        nearbyMuseumAdapter = new MuseumAdapter((new ArrayList<Museum>()));
-        nearbyMuseumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), MainActivity.fragmentProgressBar, MainActivity.fragmentView);
 
-    }
-
-    public static void startFragmentPb() {
-        MainActivity.fragmentProgressBar = ViewPagerAdapter.fragment1.startPb();
-        MainActivity.flagGotprogressBar = true;
-
-    }
-
-    public static void startFragmentView() {
-        MainActivity.fragmentView = ViewPagerAdapter.fragment1.getViewFrag();
-        MainActivity.flagGotView = true;
-    }
-
-    public static void fragmentDataLoaded() {
-        if (MainActivity.flagGotView == true && MainActivity.flagGotprogressBar == true) {
-            sendMuseumsToFragments();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        progressBar = findViewById(R.id.mainProgressBar);
+        progressBar.setVisibility(View.GONE);
+        if (savedInstanceState == null) {
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.getVisibility();
+            getFirebase = new GetFirebase();
+            museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
+            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()),progressBar ,findViewById(android.R.id.content));
+        }
+
+
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
