@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -19,24 +21,48 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final String ALL_MUSEUMS = "all_museums";
-    public static MuseumAdapter museumAdapter;
+    public static MuseumAdapter museumAdapter, nearbyMuseumAdapter;
+    public static GetFirebase getFirebase;
+    public static String name = "george";
+    public static ProgressBar fragmentProgressBar;
+    public static View fragmentView;
+    public static boolean flagGotprogressBar, flagGotView;
     ArrayList<Museum> allMuseum = new ArrayList<>();
-    private GetFirebase getFirebase;
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
-    public static String name = "george";
     private String[] pageTitle = {"All Museums", "Near by Museums", "Fragment 3"};
+
+    public static void sendMuseumsToFragments() {
+         getFirebase = new GetFirebase();
+        museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
+        museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), MainActivity.fragmentProgressBar, MainActivity.fragmentView);
+        nearbyMuseumAdapter = new MuseumAdapter((new ArrayList<Museum>()));
+        nearbyMuseumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), MainActivity.fragmentProgressBar, MainActivity.fragmentView);
+
+    }
+
+    public static void startFragmentPb() {
+        MainActivity.fragmentProgressBar = ViewPagerAdapter.fragment1.startPb();
+        MainActivity.flagGotprogressBar = true;
+
+    }
+
+    public static void startFragmentView() {
+        MainActivity.fragmentView = ViewPagerAdapter.fragment1.getViewFrag();
+        MainActivity.flagGotView = true;
+    }
+
+    public static void fragmentDataLoaded() {
+        if (MainActivity.flagGotView == true && MainActivity.flagGotprogressBar == true) {
+            sendMuseumsToFragments();
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        sendMuseumsToFragments();
-//        ActionBar actionBar = getSupportActionBar();
-//        if (actionBar != null) {
-//            actionBar.setDisplayHomeAsUpEnabled(true);
-//        }
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -88,13 +114,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
-
-    }
-
-    public void sendMuseumsToFragments() {
-        getFirebase = new GetFirebase();
-        museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
-        museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()));
 
     }
 

@@ -23,20 +23,26 @@ public class Fragment1 extends Fragment {
     Intent intent;
     RecyclerView mRecyclerView;
     MuseumAdapter allMuseums;
-    ProgressBar progressBar;
-
+    public static ProgressBar progressBar;
+    public static View rootView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_fragment1, container, false);
+        rootView =  inflater.inflate(R.layout.fragment_fragment1, container, false);
+        return  rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         mRecyclerView = view.findViewById(R.id.museumRecycleView);
         progressBar = view.findViewById(R.id.progressBarMuseumListAll);
+        MainActivity.startFragmentPb();
+        MainActivity.startFragmentView();
+
+        MainActivity.fragmentDataLoaded();
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
         mRecyclerView.setHasFixedSize(true);
@@ -58,23 +64,31 @@ public class Fragment1 extends Fragment {
 
                 mRecyclerView.setAdapter(allMuseums);
 
-                changeActivity(allMuseums);
+               changeActivity(allMuseums);
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
                 Log.d("Exception", Arrays.toString(ex.getStackTrace()));
             }
         }
+    }
 
+    public ProgressBar startPb() {
+        return Fragment1.rootView.findViewById(R.id.progressBarMuseumListAll);
+    }
+
+    public View getViewFrag() {
+        return Fragment1.rootView;
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         progressBar.setVisibility(View.VISIBLE);
+
         try {
             if (savedInstanceState != null) {
                 mRecyclerView.getRecycledViewPool().clear();
                 //Restore last state for checked position.
-                allMuseums = new MuseumAdapter((ArrayList<Museum>) savedInstanceState.getSerializable(ALL_MUSEUM));
+                allMuseums = new MuseumAdapter(savedInstanceState.<Museum>getParcelableArrayList(ALL_MUSEUM));
                 allMuseums.notifyDataSetChanged();
                 progressBar.setVisibility(View.GONE);
                 mRecyclerView.setAdapter(allMuseums);
@@ -115,7 +129,7 @@ public class Fragment1 extends Fragment {
                 for (int i = 0; i < allMuseums.getItemCount(); i++) {
                     bundledMuseumsList.add(allMuseums.getItem(i));
                 }
-                outState.putSerializable(ALL_MUSEUM, bundledMuseumsList);
+                outState.putParcelableArrayList(ALL_MUSEUM, bundledMuseumsList);
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());

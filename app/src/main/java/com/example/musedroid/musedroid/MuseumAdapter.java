@@ -8,18 +8,19 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by gdev on 22/9/2017.
  */
 
-public class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
+class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
     private static MyClickListener myClickListener;
     private List<Museum> museumList;
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public MuseumAdapter(List<Museum> myDataset) {
+    MuseumAdapter(List<Museum> myDataset) {
         museumList = myDataset;
     }
 
@@ -48,7 +49,7 @@ public class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder
         notifyItemInserted(index);
     }
 
-    public void clear() {
+    void clear() {
         int size = this.museumList.size();
         if (size > 0) {
             for (int i = 0; i < size; i++) {
@@ -58,8 +59,15 @@ public class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder
         }
     }
 
-    public Museum getItem(int position) {
+    Museum getItem(int position) {
         return museumList.get(position);
+    }
+
+    void addAll(ArrayList<Museum> museumArrayList) {
+        for (int i = 0; i < museumArrayList.size(); i++) {
+            this.museumList.add(museumArrayList.get(i));
+        }
+        this.notifyItemInserted(getItemCount() - 1);
     }
 
     @Override
@@ -68,8 +76,8 @@ public class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder
     }
 
     public void add(Museum item) {
-        museumList.add(item);
-        notifyItemInserted(getItemCount()-1);
+        this.museumList.add(item);
+        this.notifyItemInserted(getItemCount() - 1);
     }
 
     @Override
@@ -80,27 +88,27 @@ public class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return museumList.size();
+        return this.museumList.size();
     }
 
-    public void setOnItemClickListener(MyClickListener myClickListener) {
-        this.myClickListener = myClickListener;
+    void setOnItemClickListener(MyClickListener myClickListener) {
+        MuseumAdapter.myClickListener = myClickListener;
     }
 
-    public interface MyClickListener {
-        public void onItemClick(int position, View v);
+    interface MyClickListener {
+        void onItemClick(int position, View v);
     }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         // each data item is just a string in this case
         TextView title, description;
         CardView cv;
         ImageView museumImage;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             //cv = itemView.findViewById(R.id.cv);
             title = view.findViewById(R.id.museum_name);
