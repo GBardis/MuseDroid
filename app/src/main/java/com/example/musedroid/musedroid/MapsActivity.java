@@ -44,16 +44,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             return;
         }
         Location currentLocation = Fragment2.currentLocation;
+        MuseumAdapter museumAdapter = MainActivity.museumAdapter;
+        for (int i = 0; i < museumAdapter.getItemCount(); i++) {
+            LatLng museumMarker = new LatLng(Float.parseFloat(museumAdapter.getItem(i).lat), Float.parseFloat(museumAdapter.getItem(i).lon));
+            MarkerOptions marker = new MarkerOptions().position(museumMarker).title(museumAdapter.getItem(i).name).snippet(museumAdapter.getItem(i).description);
+            // For dropping a marker at a point on the Map
+            googleMap.addMarker(marker);
+        }
         if (currentLocation != null) {
-            MuseumAdapter museumAdapter = MainActivity.museumAdapter;
 
             googleMap.setMyLocationEnabled(true);
-            for (int i = 0; i < museumAdapter.getItemCount(); i++) {
-                LatLng museumMarker = new LatLng(Float.parseFloat(museumAdapter.getItem(i).lat), Float.parseFloat(museumAdapter.getItem(i).lon));
-                MarkerOptions marker = new MarkerOptions().position(museumMarker).title(museumAdapter.getItem(i).name).snippet(museumAdapter.getItem(i).description);
-                // For dropping a marker at a point on the Map
-                googleMap.addMarker(marker);
-            }
+
             currentLocation = Fragment2.currentLocation;
 
             LatLng currentPosition = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
