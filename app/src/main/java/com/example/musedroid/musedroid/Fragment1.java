@@ -66,8 +66,9 @@ public class Fragment1 extends Fragment {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 // do it
+                MuseumAdapter adapter  = (MuseumAdapter) recyclerView.getAdapter();
                 intent = new Intent(v.getContext(), ShowActivity.class);
-                intent.putExtra("museum", recyclerView.getAdapter().getItemId(position));
+                intent.putExtra("museum", adapter.getItem(position));
                 startActivity(intent);
             }
         });
