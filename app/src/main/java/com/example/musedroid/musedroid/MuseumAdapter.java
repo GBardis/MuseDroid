@@ -1,15 +1,17 @@
 package com.example.musedroid.musedroid;
 
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.github.ivbaranov.mfb.MaterialFavoriteButton;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by gdev on 22/9/2017.
@@ -39,9 +41,30 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
     public void onBindViewHolder(ViewHolder holder, int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        Museum museum = museumList.get(position);
+        final Museum museum = museumList.get(position);
         holder.title.setText(museum.name);
         holder.description.setText(museum.description);
+
+        if (Objects.equals(museum.name, "Acropolis Museum")) {
+            holder.favoriteButton.setFavorite(true);
+        } else {
+            holder.favoriteButton.setFavorite(false);
+        }
+        holder.favoriteButton.setOnFavoriteChangeListener(
+                new MaterialFavoriteButton.OnFavoriteChangeListener() {
+                    @Override
+                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
+                        FirebaseHandler firebaseHandler = new FirebaseHandler();
+
+                        FirebaseAuth auth = FirebaseAuth.getInstance();
+                        String email = auth.getCurrentUser().getEmail();
+                        firebaseHandler.userFavorite(email);
+
+                        String key = museum.key;
+                        String name = "george";
+                    }
+                });
+
     }
 
     public void addItem(Museum dataObj, int index) {
@@ -80,8 +103,8 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
         this.notifyItemInserted(getItemCount() - 1);
     }
 
-    public void duplicateAdapter(MuseumAdapter adapter){
-        for(int i =0 ; i < adapter.getItemCount(); i++){
+    public void duplicateAdapter(MuseumAdapter adapter) {
+        for (int i = 0; i < adapter.getItemCount(); i++) {
             this.add(adapter.getItem(i));
         }
     }
@@ -104,15 +127,14 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
     static class ViewHolder extends RecyclerView.ViewHolder {
         // each data item is just a string in this case
         TextView title, description;
-        CardView cv;
-        ImageView museumImage;
+        MaterialFavoriteButton favoriteButton;
 
         ViewHolder(View view) {
             super(view);
-            //cv = itemView.findViewById(R.id.cv);
+            favoriteButton = view.findViewById(R.id.museum_image);
             title = view.findViewById(R.id.museum_name);
             description = view.findViewById(R.id.museum_description);
-            //museumImage = view.findViewById(R.id.museum_image);
+
 
         }
 

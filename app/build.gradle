@@ -40,6 +40,7 @@ dependencies {
     compile 'com.google.android.gms:play-services-places:11.2.2'
     compile 'com.google.android.gms:play-services-vision:11.2.2'
     compile 'com.google.android.gms:play-services-maps:11.2.2'
+    compile 'com.github.ivbaranov:materialfavoritebutton:0.1.4'
     testCompile 'junit:junit:4.12'
 }
 apply plugin: 'com.google.gms.google-services'

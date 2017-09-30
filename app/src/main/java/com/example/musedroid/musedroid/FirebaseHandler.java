@@ -16,7 +16,7 @@ import com.google.firebase.database.ValueEventListener;
  */
 
 public class FirebaseHandler extends AppCompatActivity {
-    public static boolean flag=false;
+    public static boolean flag = false;
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference mDatabase = database.getReference();
 
@@ -29,7 +29,7 @@ public class FirebaseHandler extends AppCompatActivity {
         mDatabase.child("museums").child(museumId).setValue(museum);
     }
 
-    public void getMuseums(final MuseumAdapter adapter, final ProgressBar progressBar,final View view) {
+    public void getMuseums(final MuseumAdapter adapter, final ProgressBar progressBar, final View view) {
 
 
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -52,7 +52,7 @@ public class FirebaseHandler extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 //It is important for the adapter to works to use museumAdapter.notifyDataSetChanged(); after
                 //firebase add all museum inside the list , triggers adapter to see the data changes
-                if (flag==false){
+                if (flag == false) {
                     flag = true;
                 }
                 adapter.add(dataSnapshot.getValue(Museum.class));
@@ -77,5 +77,15 @@ public class FirebaseHandler extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+
+    public void userFavorite(String email) {
+//        User user = new User(email);
+//        User.Favorites userFavorite = new User.Favorites("Plaka");
+//
+//        //String Key = mDatabase.child("users").push().getKey();
+//       // mDatabase.child("users").child(Key).setValue(user);
+//        mDatabase.child("users").child("-KvInOAFDirtgC0QOV8G").child("favorites").setValue(userFavorite);
+
     }
 }
