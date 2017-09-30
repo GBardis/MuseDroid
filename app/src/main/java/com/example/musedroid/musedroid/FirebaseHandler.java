@@ -29,7 +29,8 @@ public class FirebaseHandler extends AppCompatActivity {
         mDatabase.child("museums").child(museumId).setValue(museum);
     }
 
-    public void getMuseums(final MuseumAdapter adapter, final ProgressBar progressBar,final View view) {
+    public void getMuseums(
+            final MuseumAdapter adapter, final ProgressBar progressBar,final View view) {
 
 
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {

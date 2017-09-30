@@ -18,4 +18,6 @@ public class GetFirebase extends AppCompatActivity {
         firebaseHandler.getMuseums(adapter,progressBar,view);
         return adapter;
     }
+
+
 }
