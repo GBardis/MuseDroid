@@ -8,18 +8,20 @@ import android.widget.TextView;
 
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by gdev on 22/9/2017.
  */
 
 class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
+    public static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static DatabaseReference mDatabase = database.getReference();
     private List<Museum> museumList;
-
 
     // Provide a suitable constructor (depends on the kind of dataset)
     MuseumAdapter(List<Museum> myDataset) {
@@ -38,30 +40,71 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        final FirebaseAuth auth = FirebaseAuth.getInstance();
+        final FirebaseHandler firebaseHandler = new FirebaseHandler();
+        GetFirebase getFirebase = new GetFirebase();
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         final Museum museum = museumList.get(position);
         holder.title.setText(museum.name);
         holder.description.setText(museum.description);
-
-        if (Objects.equals(museum.name, "Acropolis Museum")) {
-            holder.favoriteButton.setFavorite(true);
-        } else {
-            holder.favoriteButton.setFavorite(false);
-        }
+//        ObservableUserFavoriteList.ObservableList userFavorites = new ObservableUserFavoriteList.ObservableList<Museum>();
+//
+//        userFavorites = getFirebase.userFavoriteListFromFirebase(auth.getCurrentUser().getUid(), new ObservableUserFavoriteList.ObservableList<Museum>());
+//        for (int i = 0; i < userFavorites.getItemCount(); i++) {
+//            if (userFavorites.getItem(i).equals(museum.name)) {
+//                holder.favoriteButton.setFavorite(true);
+//            } else {
+//                holder.favoriteButton.setFavorite(false);
+//            }
+//        }
+        //final ObservableUserFavoriteList.ObservableList userFavorites = new ObservableUserFavoriteList.ObservableList();
+//        final ArrayList<User> favMuseum = new ArrayList<>();
+//        mDatabase.child("users").child(auth.getCurrentUser().getUid()).child("favorites").addChildEventListener(new ChildEventListener() {
+//
+//            @Override
+//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+//                favMuseum.add(dataSnapshot.getValue(User.class));
+//
+//           }
+//
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onChildRemoved(DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//        for (int i = 0; i < favMuseum.size(); i++) {
+//            if (Objects.equals(favMuseum.get(i).name, museum.name)) {
+//                holder.favoriteButton.setFavorite(true);
+//            } else {
+//                holder.favoriteButton.setFavorite(false);
+//            }
+//        }
         holder.favoriteButton.setOnFavoriteChangeListener(
                 new MaterialFavoriteButton.OnFavoriteChangeListener() {
                     @Override
                     public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
-                        FirebaseHandler firebaseHandler = new FirebaseHandler();
 
-                        FirebaseAuth auth = FirebaseAuth.getInstance();
-                        String email = auth.getCurrentUser().getEmail();
-                        firebaseHandler.userFavorite(email);
 
-                        String key = museum.key;
-                        String name = "george";
+                        String userId = auth.getCurrentUser().getUid();
+                        String favoriteMuseum = museum.name;
+                        firebaseHandler.userFavorite(userId, favoriteMuseum);
                     }
                 });
 

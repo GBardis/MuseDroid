@@ -20,18 +20,7 @@ public class FirebaseHandler extends AppCompatActivity {
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference mDatabase = database.getReference();
 
-
-    // TODO: Start using the Places API.
-
-    // function that creates nosql entries from museum object
-    public void createMuseum(String museumId, Museum museum) {
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mDatabase.child("museums").child(museumId).setValue(museum);
-    }
-
     public void getMuseums(final MuseumAdapter adapter, final ProgressBar progressBar, final View view) {
-
-
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -79,13 +68,44 @@ public class FirebaseHandler extends AppCompatActivity {
         });
     }
 
-    public void userFavorite(String email) {
+    public void userFavorite(String userId, String favoriteMuseum) {
 //        User user = new User(email);
-//        User.Favorites userFavorite = new User.Favorites("Plaka");
-//
-//        //String Key = mDatabase.child("users").push().getKey();
-//       // mDatabase.child("users").child(Key).setValue(user);
-//        mDatabase.child("users").child("-KvInOAFDirtgC0QOV8G").child("favorites").setValue(userFavorite);
+        User.Favorites userFavorite = new User.Favorites(favoriteMuseum);
+
+        //String Key = mDatabase.child("users").push().getKey();
+        // mDatabase.child("users").child(Key).setValue(user);
+        mDatabase.child("users").child(userId).child("favorites").push().setValue(userFavorite);
+    }
+
+    public void getAllFavorites(final String userId,final ObservableUserFavoriteList.ObservableList listfav){
+        mDatabase.child("users").child(userId).child("favorites").addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                listfav.add(dataSnapshot.getValue(User.class));
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
+
 }

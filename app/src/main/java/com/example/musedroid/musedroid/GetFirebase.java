@@ -15,7 +15,13 @@ public class GetFirebase extends AppCompatActivity {
 
     public MuseumAdapter listViewFromFirebase(MuseumAdapter adapter, ProgressBar progressBar, View view) {
 
-        firebaseHandler.getMuseums(adapter,progressBar,view);
+        firebaseHandler.getMuseums(adapter, progressBar, view);
         return adapter;
+    }
+
+    public ObservableUserFavoriteList.ObservableList userFavoriteListFromFirebase(String userId, ObservableUserFavoriteList.ObservableList userFavorites) {
+
+        firebaseHandler.getAllFavorites(userId, userFavorites);
+        return userFavorites;
     }
 }
