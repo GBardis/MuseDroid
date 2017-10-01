@@ -66,7 +66,9 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
 
                 if (museumKey != null && museumKey.equals(museum.name)) {
                     //triggers the favorite button to show the that this museum is favorite
+                    holder.favoriteButton.setFavorite(true, false);
                     holder.favoriteButton.setFavorite(true);
+
                 } else {
                     //triggers the favorite button to show the that this museum is not favorite
                     holder.favoriteButton.setFavorite(false);
