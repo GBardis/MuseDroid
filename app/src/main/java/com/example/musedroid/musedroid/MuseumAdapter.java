@@ -8,8 +8,11 @@ import android.widget.TextView;
 
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +23,11 @@ import java.util.List;
 
 class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
-    public static DatabaseReference mDatabase = database.getReference();
+    private static DatabaseReference mDatabase = database.getReference();
+    private static FirebaseHandler firebaseHandler = new FirebaseHandler();
+    private ValueEventListener followListener;
     private List<Museum> museumList;
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
 
     // Provide a suitable constructor (depends on the kind of dataset)
     MuseumAdapter(List<Museum> myDataset) {
@@ -41,73 +47,56 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final FirebaseAuth auth = FirebaseAuth.getInstance();
-        final FirebaseHandler firebaseHandler = new FirebaseHandler();
-        GetFirebase getFirebase = new GetFirebase();
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         final Museum museum = museumList.get(position);
         holder.title.setText(museum.name);
         holder.description.setText(museum.description);
-//        ObservableUserFavoriteList.ObservableList userFavorites = new ObservableUserFavoriteList.ObservableList<Museum>();
-//
-//        userFavorites = getFirebase.userFavoriteListFromFirebase(auth.getCurrentUser().getUid(), new ObservableUserFavoriteList.ObservableList<Museum>());
-//        for (int i = 0; i < userFavorites.getItemCount(); i++) {
-//            if (userFavorites.getItem(i).equals(museum.name)) {
-//                holder.favoriteButton.setFavorite(true);
-//            } else {
-//                holder.favoriteButton.setFavorite(false);
-//            }
-//        }
-        //final ObservableUserFavoriteList.ObservableList userFavorites = new ObservableUserFavoriteList.ObservableList();
-//        final ArrayList<User> favMuseum = new ArrayList<>();
-//        mDatabase.child("users").child(auth.getCurrentUser().getUid()).child("favorites").addChildEventListener(new ChildEventListener() {
-//
-//            @Override
-//            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-//                favMuseum.add(dataSnapshot.getValue(User.class));
-//
-//           }
-//
-//            @Override
-//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//        for (int i = 0; i < favMuseum.size(); i++) {
-//            if (Objects.equals(favMuseum.get(i).name, museum.name)) {
-//                holder.favoriteButton.setFavorite(true);
-//            } else {
-//                holder.favoriteButton.setFavorite(false);
-//            }
-//        }
+
+        // Firebase listener that check if a user has any favorite museums
+        mDatabase.child("user-favorites").child(auth.getCurrentUser().getUid());
+        followListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                //firebase query that find's if the museum that recycle view is building
+                //It is also favorite of the currentUser
+                String museumKey = (String) dataSnapshot.child("user-favorites")
+                        .child(auth.getCurrentUser().getUid()).child(museum.key)
+                        .child("mName").getValue();
+
+                if (museumKey != null && museumKey.equals(museum.name)) {
+                    //triggers the favorite button to show the that this museum is favorite
+                    holder.favoriteButton.setFavorite(true);
+                } else {
+                    //triggers the favorite button to show the that this museum is not favorite
+                    holder.favoriteButton.setFavorite(false);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+        //Close firebase listener
+        mDatabase.addValueEventListener(followListener);
+        //Favorite button listener that responds to user action and save or delete userFavorites to firebase
         holder.favoriteButton.setOnFavoriteChangeListener(
                 new MaterialFavoriteButton.OnFavoriteChangeListener() {
                     @Override
                     public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
 
-
-                        String userId = auth.getCurrentUser().getUid();
-                        String favoriteMuseum = museum.name;
-                        firebaseHandler.userFavorite(userId, favoriteMuseum);
+                        if (favorite && !buttonView.isFavorite()) {
+                            //firebase call to save the user favorite museum
+                            String userId = auth.getCurrentUser().getUid();
+                            firebaseHandler.userFavorite(userId, museum, true);
+                        } else {
+                            //firebase call to delete user favorites museum
+                            String userId = auth.getCurrentUser().getUid();
+                            firebaseHandler.userFavorite(userId, museum, favorite);
+                        }
                     }
                 });
-
     }
 
     public void addItem(Museum dataObj, int index) {
@@ -146,12 +135,6 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
         this.notifyItemInserted(getItemCount() - 1);
     }
 
-    public void duplicateAdapter(MuseumAdapter adapter) {
-        for (int i = 0; i < adapter.getItemCount(); i++) {
-            this.add(adapter.getItem(i));
-        }
-    }
-
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
@@ -163,6 +146,13 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
         return this.museumList.size();
     }
 
+    @Override
+    public void onViewDetachedFromWindow(ViewHolder holder) {
+        // Remove firebase base listener
+        DatabaseReference followRef = mDatabase.child("user-favorites").child(auth.getCurrentUser().getUid());
+        followRef.removeEventListener(followListener); //Removes the listener
+        super.onViewDetachedFromWindow(holder);
+    }
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
@@ -177,11 +167,7 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
             favoriteButton = view.findViewById(R.id.museum_image);
             title = view.findViewById(R.id.museum_name);
             description = view.findViewById(R.id.museum_description);
-
-
         }
-
     }
-
 }
 

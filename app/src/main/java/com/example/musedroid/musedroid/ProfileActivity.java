@@ -48,10 +48,10 @@ public class ProfileActivity extends AppCompatActivity {
             }
         };
 
-        btnChangeEmail =  findViewById(R.id.change_email_button);
-        btnChangePassword =  findViewById(R.id.change_password_button);
-        changeEmail =  findViewById(R.id.changeEmail);
-        changePassword =  findViewById(R.id.changePass);
+        btnChangeEmail = findViewById(R.id.change_email_button);
+        btnChangePassword = findViewById(R.id.change_password_button);
+        changeEmail = findViewById(R.id.changeEmail);
+        changePassword = findViewById(R.id.changePass);
         sendEmail = findViewById(R.id.send);
         remove = findViewById(R.id.remove);
 

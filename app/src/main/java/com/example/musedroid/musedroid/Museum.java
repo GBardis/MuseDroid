@@ -6,6 +6,11 @@ package com.example.musedroid.musedroid;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.firebase.database.Exclude;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class Museum implements Parcelable {
     public static final Creator<Museum> CREATOR = new Creator<Museum>() {
         @Override
@@ -49,6 +54,19 @@ public class Museum implements Parcelable {
         placeId = in.readString();
         distance = in.readString();
     }
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("mKey", key);
+        result.put("mName", name);
+        result.put("description", description);
+        result.put("lat", lat);
+        result.put("lon", lon);
+        result.put("placeId", placeId);
+
+        return result;
+    }
+
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {

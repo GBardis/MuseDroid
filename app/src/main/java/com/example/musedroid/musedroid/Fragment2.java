@@ -45,6 +45,8 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     private static final String ALL_MUSEUM = "allMuseums";
     public static Location currentLocation;
     private final int permissionCode = 100;
+    public ProgressBar progressBar;
+    public View view;
     MuseumAdapter tempMuseumList = new MuseumAdapter(new ArrayList<Museum>());
     MuseumAdapter onLocationChangeAdapter = new MuseumAdapter(new ArrayList<Museum>());
     MuseumAdapter allMuseumAdapter = new MuseumAdapter(new ArrayList<Museum>());
@@ -62,9 +64,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     Context context;
     Intent intent;
     RecyclerView mRecyclerView;
-    public ProgressBar progressBar;
-    public View view;
-
     private int minLocationUpdateTime = 0;
     private int minLocationUpdateInterval = 0;
 
@@ -125,7 +124,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 // do it
-                MuseumAdapter adapter  = (MuseumAdapter) recyclerView.getAdapter();
+                MuseumAdapter adapter = (MuseumAdapter) recyclerView.getAdapter();
                 intent = new Intent(v.getContext(), ShowActivity.class);
                 intent.putExtra("museum", adapter.getItem(position));
                 startActivity(intent);

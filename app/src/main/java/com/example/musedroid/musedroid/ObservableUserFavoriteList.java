@@ -11,6 +11,8 @@ import io.reactivex.subjects.PublishSubject;
  */
 
 public class ObservableUserFavoriteList {
+
+
     public static class ObservableList<Museum> {
 
         protected List<Museum> list;

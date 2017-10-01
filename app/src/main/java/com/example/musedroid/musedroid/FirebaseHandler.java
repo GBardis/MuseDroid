@@ -2,6 +2,7 @@ package com.example.musedroid.musedroid;
 
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 
 import com.google.firebase.database.ChildEventListener;
@@ -11,6 +12,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by gdev-laptop on 4/8/2017.
  */
@@ -19,6 +23,7 @@ public class FirebaseHandler extends AppCompatActivity {
     public static boolean flag = false;
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference mDatabase = database.getReference();
+    private ArrayAdapter userFavorites;
 
     public void getMuseums(final MuseumAdapter adapter, final ProgressBar progressBar, final View view) {
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -36,7 +41,6 @@ public class FirebaseHandler extends AppCompatActivity {
             }
         });
         mDatabase.child("museums").addChildEventListener(new ChildEventListener() {
-
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 //It is important for the adapter to works to use museumAdapter.notifyDataSetChanged(); after
@@ -44,7 +48,10 @@ public class FirebaseHandler extends AppCompatActivity {
                 if (flag == false) {
                     flag = true;
                 }
-                adapter.add(dataSnapshot.getValue(Museum.class));
+                Museum museum = dataSnapshot.getValue(Museum.class);
+                assert museum != null;
+                museum.key = dataSnapshot.getKey();
+                adapter.add(museum);
                 adapter.notifyDataSetChanged();
             }
 
@@ -68,44 +75,15 @@ public class FirebaseHandler extends AppCompatActivity {
         });
     }
 
-    public void userFavorite(String userId, String favoriteMuseum) {
-//        User user = new User(email);
-        User.Favorites userFavorite = new User.Favorites(favoriteMuseum);
+    public void userFavorite(String userId, Museum museum, boolean isfav) {
+        Map<String, Object> museumValues = museum.toMap();
+        Map<String, Object> childUpdates = new HashMap<>();
 
-        //String Key = mDatabase.child("users").push().getKey();
-        // mDatabase.child("users").child(Key).setValue(user);
-        mDatabase.child("users").child(userId).child("favorites").push().setValue(userFavorite);
+        if (isfav) {
+            childUpdates.put("/user-favorites/" + userId + "/" + museum.key, museumValues);
+            mDatabase.updateChildren(childUpdates);
+        } else {
+            mDatabase.child("user-favorites").child(userId).child(museum.key).removeValue();
+        }
     }
-
-    public void getAllFavorites(final String userId,final ObservableUserFavoriteList.ObservableList listfav){
-        mDatabase.child("users").child(userId).child("favorites").addChildEventListener(new ChildEventListener() {
-
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                listfav.add(dataSnapshot.getValue(User.class));
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
-    }
-
 }

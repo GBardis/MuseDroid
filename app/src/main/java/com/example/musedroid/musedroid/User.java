@@ -18,16 +18,4 @@ public class User {
         this.name = name;
         this.email = email;
     }
-
-    public static class Favorites {
-        String name;
-
-        public Favorites(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
 }

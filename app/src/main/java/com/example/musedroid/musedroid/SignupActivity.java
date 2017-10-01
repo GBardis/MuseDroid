@@ -25,6 +25,7 @@ public class SignupActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private FirebaseAuth auth;
     private DatabaseReference mDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +102,7 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
     }
+
     private void onAuthSuccess(FirebaseUser user) {
         String username = usernameFromEmail(user.getEmail());
 
@@ -111,6 +113,7 @@ public class SignupActivity extends AppCompatActivity {
         startActivity(new Intent(SignupActivity.this, MainActivity.class));
         finish();
     }
+
     private String usernameFromEmail(String email) {
         if (email.contains("@")) {
             return email.split("@")[0];
@@ -124,6 +127,7 @@ public class SignupActivity extends AppCompatActivity {
 
         mDatabase.child("users").child(userId).setValue(user);
     }
+
     @Override
     protected void onResume() {
         super.onResume();
