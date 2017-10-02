@@ -70,17 +70,16 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
         museumDetails = findViewById(R.id.museum_details);
 
         museum = i.getParcelableExtra("museum");
-        getPhotos(museum.placeId);
-        if (savedInstanceState == null) {
-            if (i != null) {
-                try {
-                    getPlace(museum.placeId);
-                    museumDetails.setText(museum.description);
 
-                } catch (Exception ex) {
-                    Log.e("Exception", ex.getMessage());
-                    Log.d("Exception", Arrays.toString(ex.getStackTrace()));
-                }
+        if (savedInstanceState == null) {
+            try {
+                getPlace(museum.placeId);
+                getPhotos(museum.placeId);
+                museumDetails.setText(museum.description);
+
+            } catch (Exception ex) {
+                Log.e("Exception", ex.getMessage());
+                Log.d("Exception", Arrays.toString(ex.getStackTrace()));
             }
         }
         /*else
@@ -129,11 +128,6 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
 
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        museumIm = null;
-    }
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
@@ -147,9 +141,8 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 museumIm.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] bytes = stream.toByteArray();
-                savedInstanceState.putByteArray(MUSEUM_BITMAP,bytes);
+                savedInstanceState.putByteArray(MUSEUM_BITMAP, bytes);
 
-                savedInstanceState.putParcelable(MUSEUM_BITMAP, museumIm);
                 savedInstanceState.putString(MUSEUM_WEB, museum.website);
 
             } catch (Exception ex) {
@@ -171,10 +164,10 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
                 museumDetails.setText(savedInstanceState.getString(DESCRIPTION));
                 //Decompress Bitmap and Restore Image
                 byte[] bytes = savedInstanceState.getByteArray(MUSEUM_BITMAP);
-                assert bytes != null;
+//                assert bytes != null;
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-
-               museumImage.setImageBitmap(bmp);
+                museumIm = bmp;
+                museumImage.setImageBitmap(bmp);
                 setTitle(savedInstanceState.getString(TITLE));
                 //Restore Rating
                 rating = savedInstanceState.getFloat(RATING);
