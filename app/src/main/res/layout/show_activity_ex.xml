@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.musedroid.musedroid.ShowActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginTop="59dp"
+        app:layout_constraintTop_toBottomOf="@+id/museumImage" />
+
+    <android.support.v7.widget.AppCompatImageView
+        android:id="@+id/museumImage"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_marginBottom="0dp"
+        android:layout_marginTop="16dp"
+
+
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <ImageButton
+        android:id="@+id/qrScannerImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="26dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="16dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="0.3"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/goToMaps"
+        app:srcCompat="@mipmap/ic_qr_search"
+        app:layout_constraintTop_toTopOf="@+id/goToMaps"
+        android:layout_marginTop="8dp" />
+
+    <ImageButton
+        android:id="@+id/browseImage"
+        android:layout_width="96dp"
+        android:layout_height="78dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="28dp"
+        android:layout_marginStart="8dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toRightOf="@+id/goToMaps"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@mipmap/ic_browse"
+        app:layout_constraintTop_toTopOf="@+id/goToMaps"
+        android:layout_marginTop="8dp" />
+
+    <ImageButton
+        android:id="@+id/goToMaps"
+        android:layout_width="86dp"
+        android:layout_height="79dp"
+        android:layout_marginBottom="16dp"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:srcCompat="@drawable/ic_shortcut_place"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@+id/museumDetails"
+        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.506" />
+
+    <TextView
+        android:id="@+id/museumDetails"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:visibility="visible"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ratingBar" />
+</android.support.constraint.ConstraintLayout>

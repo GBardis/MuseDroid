@@ -8,7 +8,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
     crisl
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -41,9 +40,9 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-        <!--<meta-data-->
-        <!--android:name="com.google.android.geo.API_KEY"-->
-        <!--android:value="@string/google_maps_key" />-->
+        <!-- <meta-data -->
+        <!-- android:name="com.google.android.geo.API_KEY" -->
+        <!-- android:value="@string/google_maps_key" /> -->
 
         <activity android:name=".NearbyListViewActivity" />
         <activity android:name=".QrShowActivity" />
@@ -72,7 +71,8 @@
             </intent-filter>
         </service>
 
+        <activity android:name=".TestActivity" />
+        <activity android:name=".MuseumDetails"></activity>
     </application>
+
 </manifest>
-
-

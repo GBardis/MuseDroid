@@ -67,7 +67,7 @@ public class Fragment1 extends Fragment {
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 // do it
                 MuseumAdapter adapter  = (MuseumAdapter) recyclerView.getAdapter();
-                intent = new Intent(v.getContext(), ShowActivity.class);
+                intent = new Intent(v.getContext(), MuseumDetails.class);
                 intent.putExtra("museum", adapter.getItem(position));
                 startActivity(intent);
             }
