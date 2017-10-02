@@ -66,13 +66,10 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
         goToMaps = findViewById(R.id.goToMaps1);
         museumDetails = findViewById(R.id.museum_details);
 
-
+        museum = i.getParcelableExtra("museum");
         if (savedInstanceState == null) {
             if (i != null) {
                 try {
-
-                    museum = i.getParcelableExtra("museum");
-
                     getPhotos(museum.placeId);
 
                     getPlace(museum.placeId);
@@ -137,7 +134,7 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
             // Restore state members from saved instance
             try {
                 museumDetails.setText(savedInstanceState.getString(DESCRIPTION));
-                museumIm = (Bitmap) savedInstanceState.getParcelable(MUSEUM_BITMAP);
+                museumIm = savedInstanceState.getParcelable(MUSEUM_BITMAP);
                 museumImage.setImageBitmap(museumIm);
                 setTitle(savedInstanceState.getString(TITLE));
                 ratingBar = findViewById(R.id.ratingBar1);
@@ -150,6 +147,7 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
         }
     }
 
+    //TODO: check all google place photo clients for photoMetadata.release(); must be called else app has data leak
     private void getPlace(final String placeId) {
         mGoogleApiClient.connect();
         Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
@@ -213,8 +211,7 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
                             museumImage.setImageBitmap(placePhotoResult.getBitmap());
                         }
                     });
-                    //  }
-                    // setAdapter(images);
+                    photoMetadata.release();
                 } else {
                     Log.e("ShowActivity ", "No photos returned");
                 }
