@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.Settings:
                 if (auth.getCurrentUser() != null) {
-                    startActivity(new Intent(MainActivity.this, SettingsActivity.class));
+                    startActivity(new Intent(MainActivity.this, UserSettingActivity.class));
                 }
                 break;
         }
