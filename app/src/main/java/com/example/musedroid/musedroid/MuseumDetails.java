@@ -166,7 +166,7 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
              /*   savedInstanceState.getParcelable(MUSEUM_BITMAP);*/
 
                 setTitle(savedInstanceState.getString(TITLE));
-                ratingBar = findViewById(R.id.ratingBar);
+                ratingBar = findViewById(R.id.ratingBar1);
                 ratingBar.setNumStars(5);
                 ratingBar.setRating(savedInstanceState.getFloat(RATING));
             } catch (Exception ex) {
