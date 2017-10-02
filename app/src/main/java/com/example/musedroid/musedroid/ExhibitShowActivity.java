@@ -2,8 +2,10 @@ package com.example.musedroid.musedroid;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.widget.TextView;
 
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +32,7 @@ public class ExhibitShowActivity extends AppCompatActivity {
         exhibitId = intent.getStringExtra("exhibitId");
         if (savedInstanceState == null) {
             getExhibitById(exhibitId);
+            showUserSettings();
         }
     }
 
@@ -72,9 +75,9 @@ public class ExhibitShowActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 exhibit = dataSnapshot.getValue(Exhibit.class);
                 try {
-                    exhibitDescription = (TextView) findViewById(R.id.exhibitDescription);
+                    exhibitDescription = findViewById(R.id.exhibitDescription);
                     exhibitDescription.setText(exhibit.description);
-                    exhibitName = (TextView) findViewById(R.id.exhibitName);
+                    exhibitName = findViewById(R.id.exhibitName);
                     exhibitName.setText(exhibit.name);
                 } catch (Exception ex) {
 
@@ -90,6 +93,22 @@ public class ExhibitShowActivity extends AppCompatActivity {
         });
     }
 
+    private void showUserSettings() {
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+
+
+                sharedPrefs.getString("prefUsername", "NULL");
+
+
+                sharedPrefs.getBoolean("prefSendReport", false);
+
+       sharedPrefs.getString("prefSyncFrequency", "NULL");
+
+        TextView settingsTextView = findViewById(R.id.textView2);
+
+        settingsTextView.setText(sharedPrefs.getString("prefAppLanguage", "NULL"));
+    }
 
 }
 

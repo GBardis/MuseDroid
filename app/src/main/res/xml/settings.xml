@@ -15,11 +15,11 @@
             android:title="@string/pref_send_report" />
 
         <ListPreference
-            android:entries="@array/syncFrequency"
-            android:entryValues="@array/syncFrequencyValues"
-            android:key="prefSyncFrequency"
-            android:summary="@string/pref_sync_frequency_summary"
-            android:title="@string/pref_sync_frequency" />
+            android:entries="@array/languangeArray"
+            android:entryValues="@array/languangeValues"
+            android:key="prefAppLanguage"
+            android:summary="App language summary"
+            android:title="App Languange" />
     </PreferenceCategory>
 
 </PreferenceScreen>

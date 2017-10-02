@@ -2,8 +2,6 @@ package com.example.musedroid.musedroid;
 
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
-import android.preference.PreferenceFragment;
-import android.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +13,7 @@ public class UserSettingActivity extends PreferenceActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new UserSettingFragment()).commit();
+        addPreferencesFromResource(R.xml.settings);
     }
 
 
@@ -32,20 +30,5 @@ public class UserSettingActivity extends PreferenceActivity {
                 finish();
             }
         });
-    }
-
-    public static class UserSettingFragment extends PreferenceFragment {
-        @Override
-        public void onCreate(final Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            PreferenceManager.setDefaultValues(getActivity(),
-                    R.xml.settings, false);
-
-            // Load the preferences from an XML resource
-            addPreferencesFromResource(R.xml.settings);
-
-
-        }
-
     }
 }
