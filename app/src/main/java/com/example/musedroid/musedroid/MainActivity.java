@@ -24,13 +24,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static GetFirebase getFirebase;
     public static ProgressBar fragmentProgressBar;
     public static View fragmentView;
+    public ProgressBar progressBar;
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
     private String[] pageTitle = {"All Museums", "Near by Museums", "Fragment 3"};
-    public ProgressBar progressBar;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +42,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             progressBar.getVisibility();
             getFirebase = new GetFirebase();
             museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
-            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()),progressBar ,findViewById(android.R.id.content));
+            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, findViewById(android.R.id.content));
         }
-
 
 
         viewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -145,6 +142,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (auth.getCurrentUser() != null) {
                     auth.signOut();
                     startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                }
+                break;
+            case R.id.Settings:
+                if (auth.getCurrentUser() != null) {
+                    startActivity(new Intent(MainActivity.this, SettingsActivity.class));
                 }
                 break;
         }

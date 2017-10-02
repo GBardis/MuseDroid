@@ -15,6 +15,10 @@
             android:icon="@drawable/ic_info_black_48dp"
             android:title="@string/info" />
         <item
+            android:id="@+id/Settings"
+            android:icon="@drawable/ic_settings_black_48dp"
+            android:title="@string/settings" />
+        <item
             android:id="@+id/Logout"
             android:icon="@drawable/ic_exit_to_app_black_48dp"
             android:title="@string/logout" />
