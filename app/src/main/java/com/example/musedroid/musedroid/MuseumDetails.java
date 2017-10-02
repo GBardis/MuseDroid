@@ -32,12 +32,15 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
     private static final String DESCRIPTION = "museum description";
     private static final String TITLE = "museum title";
     private static final String MUSEUM_BITMAP = "Museum Image";
+    private static final String MUSEUM_WEB = "Museum Website";
     RatingBar ratingBar;
     Museum museum;
     Intent intent;
     String museumAddress, museumName;
     Intent i;
     Bitmap museumIm;
+    Float rating;
+
 
     AppCompatImageView museumImage;
     AppCompatImageView goToMaps;
@@ -66,11 +69,11 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
         goToMaps = findViewById(R.id.goToMaps1);
         museumDetails = findViewById(R.id.museum_details);
 
-
+        museum = i.getParcelableExtra("museum");
         if (savedInstanceState == null) {
             if (i != null) {
                 try {
-                    museum = i.getParcelableExtra("museum");
+
                     getPhotos(museum.placeId);
                     getPlace(museum.placeId);
                     museumDetails.setText(museum.description);
@@ -82,7 +85,7 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
                 }
             }
         }
-        else
+        /*else
         {   try {
             museumIm = (Bitmap) savedInstanceState.getParcelable(MUSEUM_BITMAP);
             museumImage.setImageBitmap(museumIm);
@@ -93,7 +96,7 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
         }
 
         }
-
+*/
         qrScannerImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,6 +118,17 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
             }
         });
 
+
+        browseImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse(museum.website);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
     @Override
@@ -122,10 +136,11 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
         // Save custom values into the bundle
         if (savedInstanceState != null) {
             try {
-                savedInstanceState.putFloat(RATING, rating);
+                savedInstanceState.putFloat(RATING,rating);
                 savedInstanceState.putString(DESCRIPTION, museum.description);
                 savedInstanceState.putString(TITLE, museum.name);
                 savedInstanceState.putParcelable(MUSEUM_BITMAP, museumIm);
+                savedInstanceState.putString(MUSEUM_WEB,museum.website);
 
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
@@ -145,12 +160,19 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
             // Restore state members from saved instance
             try {
                 museumDetails.setText(savedInstanceState.getString(DESCRIPTION));
-                museumIm = (Bitmap) savedInstanceState.getParcelable(MUSEUM_BITMAP);
+                //Restore Image
+                museumIm = savedInstanceState.getParcelable(MUSEUM_BITMAP);
                 museumImage.setImageBitmap(museumIm);
                 setTitle(savedInstanceState.getString(TITLE));
-                ratingBar = findViewById(R.id.ratingBar1);
+                //Restore Rating
+                rating = savedInstanceState.getFloat(RATING);
                 ratingBar.setNumStars(5);
-                ratingBar.setRating(savedInstanceState.getFloat(RATING));
+                ratingBar.setRating(rating);
+
+                /*browseImage = findViewById(R.id.browseImage1);*/
+                museum.getWebsite();
+
+
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
                 Log.d("Exception", Arrays.toString(ex.getStackTrace()));
@@ -158,6 +180,7 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
         }
     }
 
+    //TODO: check all google place photo clients for photoMetadata.release(); must be called else app has data leak
     private void getPlace(final String placeId) {
         mGoogleApiClient.connect();
         Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
@@ -168,9 +191,11 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
                     public void onResult(PlaceBuffer places) {
                         if (places.getStatus().isSuccess() && places.getCount() > 0) {
                             final Place myPlace = places.get(0);
-                            final float rating = myPlace.getRating();
+//                            final float rating = myPlace.getRating();
+                            rating = myPlace.getRating();
                             museum.setAddress(String.valueOf(myPlace.getAddress()));
                             museum.setWebsite(String.valueOf(myPlace.getWebsiteUri()));
+
                             ratingBar = findViewById(R.id.ratingBar1);
                             ratingBar.setNumStars(5);
                             ratingBar.setRating(rating);
@@ -221,8 +246,7 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
                             museumImage.setImageBitmap(placePhotoResult.getBitmap());
                         }
                     });
-                    //  }
-                    // setAdapter(images);
+                    photoMetadata.release();
                 } else {
                     Log.e("ShowActivity ", "No photos returned");
                 }
