@@ -52,8 +52,8 @@ public class ExhibitShowActivity extends AppCompatActivity {
             savedInstanceState.getString(DESCRIPTION, exhibit.description);
             savedInstanceState.getString(TITLE, exhibit.name);
             try {
-                exhibitName = (TextView) findViewById(R.id.exhibitName);
-                exhibitDescription = (TextView) findViewById(R.id.exhibitDescription);
+                exhibitName = findViewById(R.id.exhibitName);
+                exhibitDescription = findViewById(R.id.exhibitDescription);
                 exhibitDescription.setText(exhibit.description);
                 exhibitName.setText(exhibit.name);
             } catch (Exception ex) {

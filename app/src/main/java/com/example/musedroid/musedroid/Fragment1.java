@@ -93,8 +93,6 @@ public class Fragment1 extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-
-
     @Override
     public void onSaveInstanceState(@Nullable Bundle outState) {
         // Always call the superclass so it can save the view hierarchy state

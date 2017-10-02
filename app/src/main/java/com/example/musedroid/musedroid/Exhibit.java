@@ -33,7 +33,6 @@ public class Exhibit implements Parcelable {
         this.name = name;
         this.description = description;
         this.musuemId = musuemId;
-
     }
 
     protected Exhibit(Parcel in) {

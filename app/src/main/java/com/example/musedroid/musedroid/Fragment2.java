@@ -45,6 +45,8 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     private static final String ALL_MUSEUM = "allMuseums";
     public static Location currentLocation;
     private final int permissionCode = 100;
+    public ProgressBar progressBar;
+    public View view;
     MuseumAdapter tempMuseumList = new MuseumAdapter(new ArrayList<Museum>());
     MuseumAdapter onLocationChangeAdapter = new MuseumAdapter(new ArrayList<Museum>());
     MuseumAdapter allMuseumAdapter = new MuseumAdapter(new ArrayList<Museum>());
@@ -62,9 +64,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     Context context;
     Intent intent;
     RecyclerView mRecyclerView;
-    public ProgressBar progressBar;
-    public View view;
-
     private int minLocationUpdateTime = 0;
     private int minLocationUpdateInterval = 0;
 
@@ -118,9 +117,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         //initialize Museum adapter and give as import an array list
         //call firebase function after the initialize of the adapter
         if (savedInstanceState == null) {
-//            if (onLocationChangeAdapter.getItemCount()<=0) {
-//                progressBar.setVisibility(view.VISIBLE);
-//            }
             allMuseumAdapter = MainActivity.museumAdapter;
             mRecyclerView.setAdapter(onLocationChangeAdapter);
         }
@@ -128,7 +124,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 // do it
-                MuseumAdapter adapter  = (MuseumAdapter) recyclerView.getAdapter();
+                MuseumAdapter adapter = (MuseumAdapter) recyclerView.getAdapter();
                 intent = new Intent(v.getContext(), ShowActivity.class);
                 intent.putExtra("museum", adapter.getItem(position));
                 startActivity(intent);
@@ -181,7 +177,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 onLocationChangeAdapter.notifyDataSetChanged();
                 if (museumArrayList.size() != 0) {
                     mRecyclerView.setAdapter(onLocationChangeAdapter);
-                    // changeActivity(onLocationChangeAdapter);
                 }
             }
         } catch (Exception ex) {
@@ -307,10 +302,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 mRecyclerView.getRecycledViewPool().clear();
             }
 
-
-//            if(onLocationChangeAdapter.getItemCount()>0){
-//                progressBar.setVisibility(view.GONE);
-//            }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
             Log.d("Exception", Arrays.toString(ex.getStackTrace()));

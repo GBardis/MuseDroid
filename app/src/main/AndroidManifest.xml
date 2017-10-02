@@ -25,7 +25,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".ShowActivity" />
-        <activity android:name=".ListViewActivity" />
 
         <uses-feature
             android:glEsVersion="0x00020000"
@@ -44,7 +43,6 @@
         <!-- android:name="com.google.android.geo.API_KEY" -->
         <!-- android:value="@string/google_maps_key" /> -->
 
-        <activity android:name=".NearbyListViewActivity" />
         <activity android:name=".QrShowActivity" />
         <activity android:name=".ExhibitShowActivity" />
         <activity android:name=".LoginActivity">
@@ -58,7 +56,6 @@
         <activity android:name=".ResetPasswordActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".MapsActivity" />
-        <activity android:name=".DesActivity" />
 
         <service android:name=".PushNotificationService">
             <intent-filter>
