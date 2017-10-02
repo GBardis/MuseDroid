@@ -3,16 +3,12 @@ package com.example.musedroid.musedroid;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -29,35 +25,32 @@ import com.google.android.gms.location.places.Places;
 
 import java.util.Arrays;
 
-import static android.R.attr.bitmap;
 import static android.R.attr.rating;
 
 public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String RATING = "Museum rating";
     private static final String DESCRIPTION = "museum description";
     private static final String TITLE = "museum title";
-    private static final String MUSEUM_BITMAP ="Museum Image";
+    private static final String MUSEUM_BITMAP = "Museum Image";
     RatingBar ratingBar;
     Museum museum;
     Intent intent;
     String museumAddress, museumName;
     Intent i;
-
+    Bitmap museumIm;
 
     AppCompatImageView museumImage;
     AppCompatImageView goToMaps;
     AppCompatImageView browseImage;
     AppCompatImageView qrScannerImage;
     TextView museumDetails;
-    private Bitmap[] images;
-
 
     private GoogleApiClient mGoogleApiClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_museum_details);
-
 
         Intent i = getIntent();
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -65,8 +58,6 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(this, this)
                 .build();
-
-
 
         ratingBar = findViewById(R.id.ratingBar1);
         museumImage = findViewById(R.id.museumImage1);
@@ -88,17 +79,12 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
                     museumDetails.setText(museum.description);
 
 
-
-
                 } catch (Exception ex) {
                     Log.e("Exception", ex.getMessage());
                     Log.d("Exception", Arrays.toString(ex.getStackTrace()));
                 }
             }
         }
-
-
-
 
         qrScannerImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,22 +109,15 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
 
     }
 
-
-
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         // Save custom values into the bundle
         if (savedInstanceState != null) {
             try {
-
-
-
                 savedInstanceState.putFloat(RATING, rating);
                 savedInstanceState.putString(DESCRIPTION, museum.description);
                 savedInstanceState.putString(TITLE, museum.name);
-
-
-
+                savedInstanceState.putParcelable(MUSEUM_BITMAP, museumIm);
 
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
@@ -149,7 +128,6 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
     }
 
 
-
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         // Always call the superclass so it can restore the view hierarchy
@@ -158,13 +136,9 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
 
             // Restore state members from saved instance
             try {
-
-                museum =i.getParcelableExtra("museum");
-
-                getPhotos(museum.placeId);
                 museumDetails.setText(savedInstanceState.getString(DESCRIPTION));
-             /*   savedInstanceState.getParcelable(MUSEUM_BITMAP);*/
-
+                museumIm = (Bitmap) savedInstanceState.getParcelable(MUSEUM_BITMAP);
+                museumImage.setImageBitmap(museumIm);
                 setTitle(savedInstanceState.getString(TITLE));
                 ratingBar = findViewById(R.id.ratingBar1);
                 ratingBar.setNumStars(5);
@@ -210,14 +184,12 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
                             Log.e(TAG, "Place not found");
                         }
                         places.release();
-//                        mGoogleApiClient.disconnect();
+                        //mGoogleApiClient.disconnect();
                     }
                 });
 
 
     }
-
-
 
 
     private void getPhotos(final String placeId) {
@@ -237,17 +209,8 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
                         @Override
                         public void onResult(PlacePhotoResult placePhotoResult) {
                             //  images[finalI] = placePhotoResult.getBitmap();
+                            museumIm = placePhotoResult.getBitmap();
                             museumImage.setImageBitmap(placePhotoResult.getBitmap());
-/*
-
-                            Bitmap bitmap = placePhotoResult.getBitmap();
-                            i.getParcelableExtra("museum");
-                            museum.photo = bitmap;
-*/
-
-
-
-
                         }
                     });
                     //  }
