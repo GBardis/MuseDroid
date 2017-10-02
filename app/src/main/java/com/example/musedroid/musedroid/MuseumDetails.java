@@ -70,11 +70,8 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
         if (savedInstanceState == null) {
             if (i != null) {
                 try {
-
                     museum = i.getParcelableExtra("museum");
-
                     getPhotos(museum.placeId);
-
                     getPlace(museum.placeId);
                     museumDetails.setText(museum.description);
 
@@ -84,6 +81,17 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
                     Log.d("Exception", Arrays.toString(ex.getStackTrace()));
                 }
             }
+        }
+        else
+        {   try {
+            museumIm = (Bitmap) savedInstanceState.getParcelable(MUSEUM_BITMAP);
+            museumImage.setImageBitmap(museumIm);
+        }catch(Exception ex){
+            Log.e("Exception", ex.getMessage());
+            Log.d("Exception", Arrays.toString(ex.getStackTrace()));
+
+        }
+
         }
 
         qrScannerImage.setOnClickListener(new View.OnClickListener() {
