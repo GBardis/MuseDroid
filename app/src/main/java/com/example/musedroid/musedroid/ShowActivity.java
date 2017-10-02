@@ -8,12 +8,10 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatImageView;
-import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -78,13 +76,12 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
 //        imagesViewPager =findViewById(R.id.imagesViewPager);
 
         museumDetails = findViewById(R.id.museumDetails);
-     toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
 
         goToMaps = findViewById(R.id.goToMaps);
 
 
         //qrButton = findViewById(R.id.qrButton);
-
 
 
 //        textDescription = findViewById(R.id.MuseumDescription);
@@ -99,7 +96,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                     museumDetails.setText(museum.description);
 //                    textDescription.setText(museum.description);
 
-                setSupportActionBar(toolbar);
+                    setSupportActionBar(toolbar);
                     //retrieve an instance of ActionBar
                     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                     getSupportActionBar().setHomeButtonEnabled(true);
@@ -231,7 +228,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                             Log.e(TAG, "Place not found");
                         }
                         places.release();
-                       // mGoogleApiClient.disconnect();
+                        mGoogleApiClient.disconnect();
                     }
                 });
 
@@ -239,7 +236,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     private void getPhotos(final String placeId) {
-
+        mGoogleApiClient.connect();
         Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, placeId).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
             @Override
             public void onResult(final PlacePhotoMetadataResult placePhotoMetadataResult) {
@@ -265,6 +262,8 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                 }
             }
         });
+
+        mGoogleApiClient.disconnect();
     }
 
     @Override

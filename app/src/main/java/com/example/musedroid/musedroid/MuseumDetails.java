@@ -2,6 +2,7 @@ package com.example.musedroid.musedroid;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,9 +24,8 @@ import com.google.android.gms.location.places.PlacePhotoMetadataResult;
 import com.google.android.gms.location.places.PlacePhotoResult;
 import com.google.android.gms.location.places.Places;
 
+import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
-
-import static android.R.attr.rating;
 
 public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String RATING = "Museum rating";
@@ -70,14 +70,12 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
         museumDetails = findViewById(R.id.museum_details);
 
         museum = i.getParcelableExtra("museum");
+        getPhotos(museum.placeId);
         if (savedInstanceState == null) {
             if (i != null) {
                 try {
-
-                    getPhotos(museum.placeId);
                     getPlace(museum.placeId);
                     museumDetails.setText(museum.description);
-
 
                 } catch (Exception ex) {
                     Log.e("Exception", ex.getMessage());
@@ -132,15 +130,27 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+        museumIm = null;
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         // Save custom values into the bundle
         if (savedInstanceState != null) {
             try {
-                savedInstanceState.putFloat(RATING,rating);
+                savedInstanceState.putFloat(RATING, rating);
                 savedInstanceState.putString(DESCRIPTION, museum.description);
                 savedInstanceState.putString(TITLE, museum.name);
+                //compress bitmap to pass it into byteArray
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                museumIm.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] bytes = stream.toByteArray();
+                savedInstanceState.putByteArray(MUSEUM_BITMAP,bytes);
+
                 savedInstanceState.putParcelable(MUSEUM_BITMAP, museumIm);
-                savedInstanceState.putString(MUSEUM_WEB,museum.website);
+                savedInstanceState.putString(MUSEUM_WEB, museum.website);
 
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
@@ -156,20 +166,21 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
-
             // Restore state members from saved instance
             try {
                 museumDetails.setText(savedInstanceState.getString(DESCRIPTION));
-                //Restore Image
-                museumIm = savedInstanceState.getParcelable(MUSEUM_BITMAP);
-                museumImage.setImageBitmap(museumIm);
+                //Decompress Bitmap and Restore Image
+                byte[] bytes = savedInstanceState.getByteArray(MUSEUM_BITMAP);
+                assert bytes != null;
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+               museumImage.setImageBitmap(bmp);
                 setTitle(savedInstanceState.getString(TITLE));
                 //Restore Rating
                 rating = savedInstanceState.getFloat(RATING);
                 ratingBar.setNumStars(5);
                 ratingBar.setRating(rating);
 
-                /*browseImage = findViewById(R.id.browseImage1);*/
                 museum.getWebsite();
 
 
