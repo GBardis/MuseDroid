@@ -111,6 +111,7 @@ public class QrShowActivity extends AppCompatActivity {
                             qrInfo.setText(barcodes.valueAt(0).displayValue);
                             intent = new Intent(QrShowActivity.this, ExhibitShowActivity.class);
                             intent.putExtra("exhibitId", barcodes.valueAt(0).displayValue);
+                            intent.putExtra("language","gr");
                             startActivity(intent);
                             finish();
                         }

@@ -2,17 +2,19 @@ package com.example.musedroid.musedroid;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
 import android.widget.TextView;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ExhibitShowActivity extends AppCompatActivity {
     private static final String DESCRIPTION = "exhibit_description";
@@ -21,7 +23,11 @@ public class ExhibitShowActivity extends AppCompatActivity {
     TextView exhibitName, exhibitDescription;
     Intent intent;
     Context context;
-    String exhibitId;
+    public static String exhibitId,language;
+    public ExhibitFields exhibitFields;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference mDatabase = database.getReference();
+    static List<ExhibitFields> exhibitFieldsList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +35,16 @@ public class ExhibitShowActivity extends AppCompatActivity {
         setContentView(R.layout.activity_exhibit_show);
         context = this;
         intent = getIntent();
-        exhibitId = intent.getStringExtra("exhibitId");
+        ExhibitShowActivity.exhibitId = intent.getStringExtra("exhibitId");
+        ExhibitShowActivity.language = intent.getStringExtra("language");
+        //exhibitFieldsList = new ArrayList<ExhibitFields>();
         if (savedInstanceState == null) {
-            getExhibitById(exhibitId);
-            showUserSettings();
+            getExhibitFields();
         }
+
+
     }
+
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
@@ -55,8 +65,8 @@ public class ExhibitShowActivity extends AppCompatActivity {
             savedInstanceState.getString(DESCRIPTION, exhibit.description);
             savedInstanceState.getString(TITLE, exhibit.name);
             try {
-                exhibitName = findViewById(R.id.exhibitName);
-                exhibitDescription = findViewById(R.id.exhibitDescription);
+                exhibitName = (TextView) findViewById(R.id.exhibitName);
+                exhibitDescription = (TextView) findViewById(R.id.exhibitDescription);
                 exhibitDescription.setText(exhibit.description);
                 exhibitName.setText(exhibit.name);
             } catch (Exception ex) {
@@ -67,23 +77,38 @@ public class ExhibitShowActivity extends AppCompatActivity {
         }
     }
 
-    public void getExhibitById(final String id) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference mDatabase = database.getReference();
-        mDatabase.child("exhibits").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+    public void getExhibitFields() {
+        mDatabase.child("exhibitFields").orderByChild("exhibit").equalTo(ExhibitShowActivity.exhibitId).addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                exhibit = dataSnapshot.getValue(Exhibit.class);
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 try {
-                    exhibitDescription = findViewById(R.id.exhibitDescription);
-                    exhibitDescription.setText(exhibit.description);
-                    exhibitName = findViewById(R.id.exhibitName);
-                    exhibitName.setText(exhibit.name);
-                } catch (Exception ex) {
+                    exhibitFields = dataSnapshot.getValue(ExhibitFields.class);
+                    //exhibitFieldsList.add(exhibitFields);
+                    if (exhibitFields.exhibit.equals(ExhibitShowActivity.exhibitId )&& exhibitFields.language.equals(ExhibitShowActivity.language)){
+                        exhibitDescription = (TextView) findViewById(R.id.exhibitDescription);
+                        exhibitDescription.setText(exhibitFields.description);
+                        exhibitName = (TextView) findViewById(R.id.exhibitName);
+                        exhibitName.setText(exhibitFields.name);
+                    }
+                }catch (Exception ex){
 
-                    intent = getIntent();
-                    Exhibit exhibit = intent.getParcelableExtra("Exhibit");
                 }
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
             }
 
             @Override
@@ -92,24 +117,13 @@ public class ExhibitShowActivity extends AppCompatActivity {
             }
         });
     }
-
-    private void showUserSettings() {
-        SharedPreferences sharedPrefs = PreferenceManager
-                .getDefaultSharedPreferences(this);
-
-
-                sharedPrefs.getString("prefUsername", "NULL");
-
-
-                sharedPrefs.getBoolean("prefSendReport", false);
-
-       sharedPrefs.getString("prefSyncFrequency", "NULL");
-
-        TextView settingsTextView = findViewById(R.id.textView2);
-
-        settingsTextView.setText(sharedPrefs.getString("prefAppLanguage", "NULL"));
-    }
-
 }
 
 
+/*
+
+-Kr1FksV0GyAinNNyAMH
+-Kr1Gw1XjksufLliUNtG
+-Kr1GzDWx43NEE-HVQjT
+-KuQMWjbTHacLTuebHgi
+ */
