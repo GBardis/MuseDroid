@@ -2,8 +2,10 @@ package com.example.musedroid.musedroid;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -11,9 +13,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ExhibitShowActivity extends AppCompatActivity {
@@ -28,6 +28,7 @@ public class ExhibitShowActivity extends AppCompatActivity {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabase = database.getReference();
     static List<ExhibitFields> exhibitFieldsList;
+    public String userLanguage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,7 @@ public class ExhibitShowActivity extends AppCompatActivity {
         //exhibitFieldsList = new ArrayList<ExhibitFields>();
         if (savedInstanceState == null) {
             getExhibitFields();
+            userLanguage = showUserSettings();
         }
 
 
@@ -84,7 +86,7 @@ public class ExhibitShowActivity extends AppCompatActivity {
                 try {
                     exhibitFields = dataSnapshot.getValue(ExhibitFields.class);
                     //exhibitFieldsList.add(exhibitFields);
-                    if (exhibitFields.exhibit.equals(ExhibitShowActivity.exhibitId )&& exhibitFields.language.equals(ExhibitShowActivity.language)){
+                    if (exhibitFields.exhibit.equals(ExhibitShowActivity.exhibitId )&& exhibitFields.language.equals(userLanguage.toLowerCase())){
                         exhibitDescription = (TextView) findViewById(R.id.exhibitDescription);
                         exhibitDescription.setText(exhibitFields.description);
                         exhibitName = (TextView) findViewById(R.id.exhibitName);
@@ -117,6 +119,16 @@ public class ExhibitShowActivity extends AppCompatActivity {
             }
         });
     }
+
+    private String showUserSettings() {
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        sharedPrefs.getString("prefUsername", "NULL");
+        sharedPrefs.getBoolean("prefSendReport", false);
+        sharedPrefs.getString("prefSyncFrequency", "NULL");
+        return sharedPrefs.getString("prefAppLanguage", "NULL");
+    }
+
 }
 
 
