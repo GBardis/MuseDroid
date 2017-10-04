@@ -70,6 +70,7 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
         museumDetails = findViewById(R.id.museum_details);
 
         museum = i.getParcelableExtra("museum");
+        museumName = museum.name;
 
         if (savedInstanceState == null) {
             try {
@@ -104,7 +105,6 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
             }
         });
 
-
         goToMaps.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,7 +115,6 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
             }
         });
 
-
         browseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,7 +123,6 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
                 startActivity(intent);
             }
         });
-
 
     }
 
@@ -176,7 +174,6 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
 
                 museum.getWebsite();
 
-
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
                 Log.d("Exception", Arrays.toString(ex.getStackTrace()));
@@ -197,7 +194,7 @@ public class MuseumDetails extends AppCompatActivity implements GoogleApiClient.
                             final Place myPlace = places.get(0);
 //                            final float rating = myPlace.getRating();
                             rating = myPlace.getRating();
-                            museum.setAddress(String.valueOf(myPlace.getAddress()));
+                            museumAddress = museum.setAddress(String.valueOf(myPlace.getAddress()));
                             museum.setWebsite(String.valueOf(myPlace.getWebsiteUri()));
 
                             ratingBar = findViewById(R.id.ratingBar1);

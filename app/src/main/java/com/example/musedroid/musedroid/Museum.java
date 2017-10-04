@@ -48,8 +48,9 @@ public class Museum implements Parcelable {
         return website;
     }
 
-    public void setAddress(String address) {
+    public String setAddress(String address) {
         this.address = address;
+        return address;
     }
 
     public Bitmap getPhoto() {
