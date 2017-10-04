@@ -81,6 +81,9 @@ public class UserSettingActivity extends PreferenceActivity implements SharedPre
                     editor.putString("prefAppLanguage", Locale.getDefault().getLanguage());
                     editor.apply();
                 }
+                break;
+            default:
+            break;
         }
     }
 }
