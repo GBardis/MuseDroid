@@ -14,21 +14,19 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.List;
-
 public class ExhibitShowActivity extends AppCompatActivity {
     private static final String DESCRIPTION = "exhibit_description";
     private static final String TITLE = "exhibit_title";
+    private static final String USER_LANG = "user language";
     public static Exhibit exhibit;
+    public static String exhibitId, language;
+    public ExhibitFields exhibitFields;
+    public String userLanguage;
     TextView exhibitName, exhibitDescription;
     Intent intent;
     Context context;
-    public static String exhibitId,language;
-    public ExhibitFields exhibitFields;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabase = database.getReference();
-    static List<ExhibitFields> exhibitFieldsList;
-    public String userLanguage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,37 +36,36 @@ public class ExhibitShowActivity extends AppCompatActivity {
         intent = getIntent();
         ExhibitShowActivity.exhibitId = intent.getStringExtra("exhibitId");
         ExhibitShowActivity.language = intent.getStringExtra("language");
-        //exhibitFieldsList = new ArrayList<ExhibitFields>();
+
         if (savedInstanceState == null) {
             getExhibitFields();
-            userLanguage = showUserSettings();
+            userLanguage = userSettingsLang();
         }
-
-
     }
-
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         // Save custom values into the bundle
         if (savedInstanceState != null) {
+            savedInstanceState.putString(USER_LANG, userLanguage);
             savedInstanceState.putString(DESCRIPTION, exhibit.description);
             savedInstanceState.putString(TITLE, exhibit.name);
         }
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    //This function restores restore ArrayList after orientation and set it into listview
+    //This function restores  Exhibit settings after orientation
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         // Always call the superclass so it can restore the view hierarchy
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
+            userLanguage = savedInstanceState.getString(USER_LANG);
             savedInstanceState.getString(DESCRIPTION, exhibit.description);
             savedInstanceState.getString(TITLE, exhibit.name);
             try {
-                exhibitName = (TextView) findViewById(R.id.exhibitName);
-                exhibitDescription = (TextView) findViewById(R.id.exhibitDescription);
+                exhibitName = findViewById(R.id.exhibitName);
+                exhibitDescription = findViewById(R.id.exhibitDescription);
                 exhibitDescription.setText(exhibit.description);
                 exhibitName.setText(exhibit.name);
             } catch (Exception ex) {
@@ -86,13 +83,14 @@ public class ExhibitShowActivity extends AppCompatActivity {
                 try {
                     exhibitFields = dataSnapshot.getValue(ExhibitFields.class);
                     //exhibitFieldsList.add(exhibitFields);
-                    if (exhibitFields.exhibit.equals(ExhibitShowActivity.exhibitId )&& exhibitFields.language.equals(userLanguage.toLowerCase())){
-                        exhibitDescription = (TextView) findViewById(R.id.exhibitDescription);
+                    assert exhibitFields != null;
+                    if (exhibitFields.exhibit.equals(ExhibitShowActivity.exhibitId) && exhibitFields.language.equals(userLanguage.toLowerCase())) {
+                        exhibitDescription = findViewById(R.id.exhibitDescription);
                         exhibitDescription.setText(exhibitFields.description);
-                        exhibitName = (TextView) findViewById(R.id.exhibitName);
+                        exhibitName = findViewById(R.id.exhibitName);
                         exhibitName.setText(exhibitFields.name);
                     }
-                }catch (Exception ex){
+                } catch (Exception ex) {
 
                 }
 
@@ -120,15 +118,12 @@ public class ExhibitShowActivity extends AppCompatActivity {
         });
     }
 
-    private String showUserSettings() {
+    private String userSettingsLang() {
+        //get user settings language
         SharedPreferences sharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this);
-        sharedPrefs.getString("prefUsername", "NULL");
-        sharedPrefs.getBoolean("prefSendReport", false);
-        sharedPrefs.getString("prefSyncFrequency", "NULL");
         return sharedPrefs.getString("prefAppLanguage", "NULL");
     }
-
 }
 
 

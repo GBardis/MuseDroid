@@ -17,7 +17,6 @@
         <ListPreference
             android:entries="@array/languangeArray"
             android:entryValues="@array/languangeValues"
-            android:defaultValue="en"
             android:key="prefAppLanguage"
             android:summary="App language summary"
             android:title="App Languange" />

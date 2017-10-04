@@ -1,6 +1,7 @@
 package com.example.musedroid.musedroid;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -9,6 +10,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +20,7 @@ import android.widget.ProgressBar;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static MuseumAdapter museumAdapter;
@@ -34,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        setUserLanguage();
         progressBar = findViewById(R.id.mainProgressBar);
         progressBar.setVisibility(View.GONE);
         if (savedInstanceState == null) {
@@ -99,6 +102,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    //set language in preferences manager equals to locale of the current phone
+    private void setUserLanguage() {
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        //Check phone shareprefenrences if it is null set it to locale else set it equals to user
+        // checked preference
+        String appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
+        if (appLanguage.equals("NULL")) {
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            editor.putString("prefAppLanguage", Locale.getDefault().getLanguage());
+            editor.apply();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -134,18 +151,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int id = item.getItemId();
         switch (id) {
             case R.id.Profile:
+                item.setCheckable(false);
                 if (auth.getCurrentUser() != null) {
+                    item.setChecked(false);
                     startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+                    item.setChecked(false);
                 }
                 break;
             case R.id.Logout:
+                item.setCheckable(false);
                 if (auth.getCurrentUser() != null) {
                     auth.signOut();
+                    item.setChecked(false);
                     startActivity(new Intent(MainActivity.this, ProfileActivity.class));
                 }
                 break;
             case R.id.Settings:
+                item.setCheckable(false);
                 if (auth.getCurrentUser() != null) {
+
                     startActivity(new Intent(MainActivity.this, UserSettingActivity.class));
                 }
                 break;
@@ -154,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
     @Override
     public void onBackPressed() {

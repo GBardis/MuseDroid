@@ -1,19 +1,34 @@
 package com.example.musedroid.musedroid;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-public class UserSettingActivity extends PreferenceActivity {
+import java.util.Arrays;
+import java.util.Locale;
+
+
+public class UserSettingActivity extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener {
+    public static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static DatabaseReference mDatabase = database.getReference();
+    private FirebaseAuth auth = FirebaseAuth.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
+
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
 
 
@@ -30,5 +45,42 @@ public class UserSettingActivity extends PreferenceActivity {
                 finish();
             }
         });
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPrefs, String s) {
+        switch (s) {
+            case "prefUsername":
+                // Set username from firebase if username does not exist it will set the username to null
+                if (!sharedPrefs.getString("prefUsername", "NULL").equals("NULL")) {
+                    try {
+                        //get username from preferences , email and uid  from firebase
+                        String userEmail = auth.getCurrentUser().getEmail();
+                        String uId = auth.getCurrentUser().getUid();
+
+                        String username = sharedPrefs.getString("prefUsername", "NULL");
+                        //save new user settings in firebase
+                        User user = new User(username, userEmail);
+                        mDatabase.child("users").child(uId).setValue(user);
+
+                    } catch (NullPointerException ex) {
+                        sharedPrefs.getString("prefUsername", "NULL");
+                        Log.e("NullPointerException", ex.getMessage());
+                        Log.e("NullPointerException", Arrays.toString(ex.getStackTrace()));
+                    }
+                }
+                break;
+            case "prefAppLanguage":
+                //change language app if a language is selected in dropdown select else
+                if (!sharedPrefs.getString("prefAppLanguage", "NULL").equals("NULL")) {
+                    //set the language of the as user wants
+                    sharedPrefs.getString("prefAppLanguage", sharedPrefs.getString("prefAppLanguage", "NULL"));
+                } else {
+                    //set the language from system locale
+                    SharedPreferences.Editor editor = sharedPrefs.edit();
+                    editor.putString("prefAppLanguage", Locale.getDefault().getLanguage());
+                    editor.apply();
+                }
+        }
     }
 }
