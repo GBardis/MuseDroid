@@ -2,10 +2,10 @@
 <resources>
     <string-array name="languangeArray">
         <item name="1">Greek</item>
-        <item name="7">English</item>
+        <item name="2">English</item>
     </string-array>
     <string-array name="languangeValues">
-        <item name="gr">GR</item>
-        <item name="en">EN</item>
+        <item name="1">gr</item>
+        <item name="1">en</item>
     </string-array>
 </resources>
