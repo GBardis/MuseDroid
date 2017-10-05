@@ -33,6 +33,7 @@ public class FirebaseHandler extends AppCompatActivity {
                     progressBar.setVisibility(view.GONE);
                     flag = false;
                 }
+                Fragment2.createGeoFences(adapter);
             }
 
             @Override

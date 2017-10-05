@@ -39,6 +39,8 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ import java.util.Arrays;
 import java.util.List;
 
 
-public class Fragment2 extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener , OnCompleteListener<Void> {
+public class Fragment2 extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnCompleteListener<Void> {
     public static final int REQUEST_LOCATION = 001;
     private static final String NEARBY_MUSEUM = "NearByMuseum";
     private static final String ALL_MUSEUM = "allMuseums";
@@ -74,8 +76,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     private int minLocationUpdateTime = 0;
     private int minLocationUpdateInterval = 0;
     private GeofencingClient mGeofencingClient;
-    public List<Geofence> mGeofenceList = new ArrayList<Geofence>();
+    public static List<Geofence> mGeofenceList = new ArrayList<Geofence>();
     private PendingIntent mGeofencePendingIntent;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -144,17 +147,63 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         });
     }
 
-    public void createGeoFences(MuseumAdapter adapter){
+    public void addGeofences(GeofencingClient mGeofencingClient) {
+        if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        try {
+            mGeofencingClient.addGeofences(getGeofencingRequest(mGeofenceList), getGeofencePendingIntent())
+                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            // Geofences added
+                            // ...
+                        }
+                    })
+                    .addOnFailureListener(getActivity(), new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Failed to add geofences
+                            // ...
+                        }
+                    });
+        }catch(Exception ex){
+
+        }
+    }
+
+    public static void createGeoFences(MuseumAdapter adapter){
         for(int i = 0; i<adapter.getItemCount();i++) {
             Geofence geofence = new Geofence.Builder()
                     .setRequestId(adapter.getItem(i).key) // Geofence ID
                     .setCircularRegion(Double.parseDouble(adapter.getItem(i).lat), Double.parseDouble(adapter.getItem(i).lon), 100) // defining fence region
                     .setExpirationDuration(Geofence.NEVER_EXPIRE) // expiring date
                     // Transition types that it should look for
-                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |  Geofence.GEOFENCE_TRANSITION_EXIT)
                     .build();
-            mGeofenceList.add(geofence);
+            try {
+                mGeofenceList.add(geofence);
+            }catch(Exception ex){
+
+            }
         }
+        getGeofencingRequest(mGeofenceList);
+        //call pending intent!
+    }
+
+    private static GeofencingRequest getGeofencingRequest(List<Geofence> mGeofenceList) {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        builder.addGeofences(Fragment2.mGeofenceList);
+        return builder.build();
+
     }
 
     private PendingIntent getGeofencePendingIntent() {
@@ -171,12 +220,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     }
 
 
-    private GeofencingRequest getGeofencingRequest() {
-        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-        builder.addGeofences(mGeofenceList);
-        return builder.build();
-    }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
