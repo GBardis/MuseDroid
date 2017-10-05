@@ -76,7 +76,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     private int minLocationUpdateTime = 0;
     private int minLocationUpdateInterval = 0;
     private GeofencingClient mGeofencingClient;
-    public static List<Geofence> mGeofenceList = new ArrayList<Geofence>();
+    public List<Geofence> mGeofenceList = new ArrayList<Geofence>();
     private PendingIntent mGeofencePendingIntent;
 
     @Nullable
@@ -100,7 +100,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         mGeofencingClient = LocationServices.getGeofencingClient(getActivity().getApplicationContext());
 
 
-
         //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             new ShowGpsSuccessToast().execute();
@@ -108,7 +107,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             try {
                 mEnableGps();
             } catch (Exception ex) {
-                int s = 1;
+
             }
         }
         return view;
@@ -131,10 +130,25 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //initialize Museum adapter and give as import an array list
         //call firebase function after the initialize of the adapter
+
         if (savedInstanceState == null) {
             allMuseumAdapter = MainActivity.museumAdapter;
             mRecyclerView.setAdapter(onLocationChangeAdapter);
         }
+        onLocationChangeAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                int i = 0;
+            }
+
+            @Override
+            public void onItemRangeChanged(int positionStart, int itemCount) {
+                super.onItemRangeChanged(positionStart, itemCount);
+                int i = 0;
+            }
+        });
+
         ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
@@ -174,36 +188,56 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                             // ...
                         }
                     });
-        }catch(Exception ex){
+        } catch (Exception ex) {
 
         }
     }
 
-    public static void createGeoFences(MuseumAdapter adapter){
-        for(int i = 0; i<adapter.getItemCount();i++) {
-            Geofence geofence = new Geofence.Builder()
-                    .setRequestId(adapter.getItem(i).key) // Geofence ID
-                    .setCircularRegion(Double.parseDouble(adapter.getItem(i).lat), Double.parseDouble(adapter.getItem(i).lon), 100) // defining fence region
-                    .setExpirationDuration(Geofence.NEVER_EXPIRE) // expiring date
-                    // Transition types that it should look for
-                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |  Geofence.GEOFENCE_TRANSITION_EXIT)
-                    .build();
-            try {
-                mGeofenceList.add(geofence);
-            }catch(Exception ex){
+    public void createGeoFences(MuseumAdapter adapter) {
+        for (int i = 0; i < adapter.getItemCount(); i++) {
+            if (areEqual(mGeofenceList,adapter) != true) {
+                //removeAllFences(mGeofenceList);
+                Geofence geofence = new Geofence.Builder()
+                        .setRequestId(adapter.getItem(i).key) // Geofence ID
+                        .setCircularRegion(Double.parseDouble(adapter.getItem(i).lat), Double.parseDouble(adapter.getItem(i).lon), 100) // defining fence region
+                        .setExpirationDuration(Geofence.NEVER_EXPIRE) // expiring date
+                        // Transition types that it should look for
+                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
+                        .build();
+                try {
+                    mGeofenceList.add(geofence);
+                } catch (Exception ex) {
 
+                }
             }
         }
         getGeofencingRequest(mGeofenceList);
         //call pending intent!
+        getGeofencePendingIntent();
     }
 
-    private static GeofencingRequest getGeofencingRequest(List<Geofence> mGeofenceList) {
+
+
+    public boolean areEqual(List<Geofence> list,MuseumAdapter adapter){
+        if (list.size() != adapter.getItemCount()){
+            return false;
+        }
+        for(Geofence geofence : list){
+            for(int i =0 ; i<adapter.getItemCount();i++){
+                if (adapter.getItem(i) != geofence){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @NonNull
+    private GeofencingRequest getGeofencingRequest(List<Geofence> mGeofenceList) {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-        builder.addGeofences(Fragment2.mGeofenceList);
+        builder.addGeofences(mGeofenceList);
         return builder.build();
-
     }
 
     private PendingIntent getGeofencePendingIntent() {
@@ -211,15 +245,13 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         if (mGeofencePendingIntent != null) {
             return mGeofencePendingIntent;
         }
-        Intent intent = new Intent(getActivity().getApplicationContext(),GeofenceTransitionsIntentService.class);
+        Intent intent = new Intent(getActivity().getApplicationContext(), GeofenceTransitionsIntentService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
         mGeofencePendingIntent = PendingIntent.getService(getActivity().getApplicationContext(), 0, intent, PendingIntent.
                 FLAG_UPDATE_CURRENT);
         return mGeofencePendingIntent;
     }
-
-
 
 
     @Override
@@ -383,8 +415,11 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 if (Double.parseDouble(allMuseumAdapter.getItem(i).distance) < 5) {
                     onLocationChangeAdapter.add(allMuseumAdapter.getItem(i));
                 }
+
                 onLocationChangeAdapter.notifyDataSetChanged();
+
             }
+            createGeoFences(onLocationChangeAdapter);
 
             if (onLocationChangeAdapter != tempMuseumList) {
 
@@ -446,7 +481,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             Toast.makeText(getActivity().getApplicationContext(), "GPS ENABLED", Toast.LENGTH_LONG).show();
         }
     }
-
 
 
 }

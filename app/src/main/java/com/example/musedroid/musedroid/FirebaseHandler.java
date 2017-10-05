@@ -19,7 +19,7 @@ import java.util.Map;
  * Created by gdev-laptop on 4/8/2017.
  */
 
-public class FirebaseHandler extends AppCompatActivity {
+public class FirebaseHandler extends AppCompatActivity{
     public static boolean flag = false;
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference mDatabase = database.getReference();
@@ -33,7 +33,7 @@ public class FirebaseHandler extends AppCompatActivity {
                     progressBar.setVisibility(view.GONE);
                     flag = false;
                 }
-                Fragment2.createGeoFences(adapter);
+                //Fragment2.createGeoFences(adapter);
             }
 
             @Override
@@ -87,4 +87,5 @@ public class FirebaseHandler extends AppCompatActivity {
             mDatabase.child("user-favorites").child(userId).child(museum.key).removeValue();
         }
     }
+
 }
