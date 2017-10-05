@@ -1,5 +1,6 @@
 package com.example.musedroid.musedroid;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -29,17 +30,23 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
-public class Fragment2 extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class Fragment2 extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener , OnCompleteListener<Void> {
     public static final int REQUEST_LOCATION = 001;
     private static final String NEARBY_MUSEUM = "NearByMuseum";
     private static final String ALL_MUSEUM = "allMuseums";
@@ -66,7 +73,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     RecyclerView mRecyclerView;
     private int minLocationUpdateTime = 0;
     private int minLocationUpdateInterval = 0;
-
+    private GeofencingClient mGeofencingClient;
+    public List<Geofence> mGeofenceList = new ArrayList<Geofence>();
+    private PendingIntent mGeofencePendingIntent;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -85,6 +94,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         } else if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             getUpdates();
         }
+        mGeofencingClient = LocationServices.getGeofencingClient(getActivity().getApplicationContext());
+
+
 
         //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -130,6 +142,40 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 startActivity(intent);
             }
         });
+    }
+
+    public void createGeoFences(MuseumAdapter adapter){
+        for(int i = 0; i<adapter.getItemCount();i++) {
+            Geofence geofence = new Geofence.Builder()
+                    .setRequestId(adapter.getItem(i).key) // Geofence ID
+                    .setCircularRegion(Double.parseDouble(adapter.getItem(i).lat), Double.parseDouble(adapter.getItem(i).lon), 100) // defining fence region
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE) // expiring date
+                    // Transition types that it should look for
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT)
+                    .build();
+            mGeofenceList.add(geofence);
+        }
+    }
+
+    private PendingIntent getGeofencePendingIntent() {
+        // Reuse the PendingIntent if we already have it.
+        if (mGeofencePendingIntent != null) {
+            return mGeofencePendingIntent;
+        }
+        Intent intent = new Intent(getActivity().getApplicationContext(),GeofenceTransitionsIntentService.class);
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
+        // calling addGeofences() and removeGeofences().
+        mGeofencePendingIntent = PendingIntent.getService(getActivity().getApplicationContext(), 0, intent, PendingIntent.
+                FLAG_UPDATE_CURRENT);
+        return mGeofencePendingIntent;
+    }
+
+
+    private GeofencingRequest getGeofencingRequest() {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        builder.addGeofences(mGeofenceList);
+        return builder.build();
     }
 
     @Override
@@ -338,6 +384,11 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
     }
 
+    @Override
+    public void onComplete(@NonNull Task<Void> task) {
+
+    }
+
 
     private class ShowGpsSuccessToast extends AsyncTask<Void, Void, Void> {
 
@@ -351,4 +402,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             Toast.makeText(getActivity().getApplicationContext(), "GPS ENABLED", Toast.LENGTH_LONG).show();
         }
     }
+
+
+
 }

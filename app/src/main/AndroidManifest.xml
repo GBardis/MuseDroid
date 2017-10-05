@@ -67,6 +67,8 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+        <service android:name=".GeofenceTransitionsIntentService"/>
+
 
         <activity android:name=".UserSettingActivity"></activity>
     </application>
