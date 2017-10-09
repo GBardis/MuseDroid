@@ -99,9 +99,6 @@ public class QrShowActivity extends AppCompatActivity {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
 
                 if (barcodes.size() != 0 && foundFlag == false) {
-//                    getExibitById("-Kr1FksV0GyAinNNyAMH");
-//                    while(exhibit == null) {
-//                    }
 
                     // Vibrate for 500 milliseconds
                     v.vibrate(500);
@@ -111,7 +108,6 @@ public class QrShowActivity extends AppCompatActivity {
                             qrInfo.setText(barcodes.valueAt(0).displayValue);
                             intent = new Intent(QrShowActivity.this, ExhibitShowActivity.class);
                             intent.putExtra("exhibitId", barcodes.valueAt(0).displayValue);
-                            intent.putExtra("language","gr");
                             startActivity(intent);
                             finish();
                         }

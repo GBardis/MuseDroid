@@ -26,6 +26,7 @@ public class Museum implements Parcelable {
     String key;
     String name;
     String description;
+    String shortDescription;
     String lat;
     String lon;
     String placeId;
@@ -35,10 +36,11 @@ public class Museum implements Parcelable {
 
     }
 
-    public Museum(String name, String description, String lat, String lon, String placeId, String distance, String key) {
+    public Museum(String name, String description, String shortDescription, String lat, String lon, String placeId, String distance, String key) {
         this.key = key;
         this.name = name;
         this.description = description;
+        this.shortDescription = shortDescription;
         this.lat = lat;
         this.lon = lon;
         this.placeId = placeId;
@@ -49,11 +51,13 @@ public class Museum implements Parcelable {
         key = in.readString();
         name = in.readString();
         description = in.readString();
+        shortDescription = in.readString();
         lat = in.readString();
         lon = in.readString();
         placeId = in.readString();
         distance = in.readString();
     }
+
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
@@ -73,6 +77,7 @@ public class Museum implements Parcelable {
         dest.writeString(key);
         dest.writeString(name);
         dest.writeString(description);
+        dest.writeString(shortDescription);
         dest.writeString(lat);
         dest.writeString(lon);
         dest.writeString(placeId);

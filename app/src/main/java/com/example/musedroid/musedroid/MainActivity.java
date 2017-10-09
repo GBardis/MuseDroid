@@ -22,11 +22,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener {
     public static MuseumAdapter museumAdapter;
     public static GetFirebase getFirebase;
-    public static ProgressBar fragmentProgressBar;
-    public static View fragmentView;
+    public static String appLanguage;
     public ProgressBar progressBar;
     private ViewPager viewPager;
     private DrawerLayout drawer;
@@ -37,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
         setUserLanguage();
         progressBar = findViewById(R.id.mainProgressBar);
         progressBar.setVisibility(View.GONE);
@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             progressBar.getVisibility();
             getFirebase = new GetFirebase();
             museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
-            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, findViewById(android.R.id.content));
+            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage);
         }
 
 
@@ -108,11 +108,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .getDefaultSharedPreferences(this);
         //Check phone shareprefenrences if it is null set it to locale else set it equals to user
         // checked preference
-        String appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
+        appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
         if (appLanguage.equals("NULL")) {
             SharedPreferences.Editor editor = sharedPrefs.edit();
             editor.putString("prefAppLanguage", Locale.getDefault().getLanguage());
             editor.apply();
+            appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
         }
     }
 
@@ -188,5 +189,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        appLanguage = sharedPreferences.getString("prefAppLanguage", sharedPreferences.getString("prefAppLanguage", "NULL"));
+        museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage);
     }
 }

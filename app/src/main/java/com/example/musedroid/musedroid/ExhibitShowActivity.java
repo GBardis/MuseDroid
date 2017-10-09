@@ -35,7 +35,6 @@ public class ExhibitShowActivity extends AppCompatActivity {
         context = this;
         intent = getIntent();
         ExhibitShowActivity.exhibitId = intent.getStringExtra("exhibitId");
-        ExhibitShowActivity.language = intent.getStringExtra("language");
 
         if (savedInstanceState == null) {
             getExhibitFields();
@@ -125,12 +124,3 @@ public class ExhibitShowActivity extends AppCompatActivity {
         return sharedPrefs.getString("prefAppLanguage", "NULL");
     }
 }
-
-
-/*
-
--Kr1FksV0GyAinNNyAMH
--Kr1Gw1XjksufLliUNtG
--Kr1GzDWx43NEE-HVQjT
--KuQMWjbTHacLTuebHgi
- */

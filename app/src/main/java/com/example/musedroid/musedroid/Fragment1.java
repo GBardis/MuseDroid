@@ -1,9 +1,11 @@
 package com.example.musedroid.musedroid;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,23 +20,39 @@ import java.util.Arrays;
 
 public class Fragment1 extends Fragment {
     private static final String ALL_MUSEUM = "ALL MUSEUMS";
+    public static View rootView;
     ArrayList<Museum> bundledMuseumsList = new ArrayList<>();
     Intent intent;
     RecyclerView mRecyclerView;
     MuseumAdapter allMuseums;
-    public static View rootView;
+    String appLanguage = MainActivity.appLanguage;
+    String tempLang = MainActivity.appLanguage;
+
+
+    SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        public void onSharedPreferenceChanged(SharedPreferences sharedPrefs, String key) {
+            // listener implementation
+
+            if (key.equals("prefAppLanguage")) {
+                appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
+            }
+
+        }
+    };
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        rootView =  inflater.inflate(R.layout.fragment_fragment1, container, false);
-        return  rootView;
+        rootView = inflater.inflate(R.layout.fragment_fragment1, container, false);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        prefs.registerOnSharedPreferenceChangeListener(listener);
+        return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        appLanguage = MainActivity.appLanguage;
         mRecyclerView = view.findViewById(R.id.museumRecycleView);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -49,14 +67,15 @@ public class Fragment1 extends Fragment {
         //initialize Museum adapter and give as import an array list
         //call getfirebase object to get the museumAdapter with all museums
 
-        if (savedInstanceState == null) {
+        if ((savedInstanceState == null)) {
+
             try {
                 //set the adapter with the museum list form firebase
-                allMuseums = MainActivity.museumAdapter;
+                allMuseums = FirebaseHandler.getMuseumAdapter();
 
                 mRecyclerView.setAdapter(allMuseums);
 
-               //changeActivity(allMuseums);
+                //changeActivity(allMuseums);
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
                 Log.d("Exception", Arrays.toString(ex.getStackTrace()));
@@ -66,7 +85,7 @@ public class Fragment1 extends Fragment {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 // do it
-                MuseumAdapter adapter  = (MuseumAdapter) recyclerView.getAdapter();
+                MuseumAdapter adapter = (MuseumAdapter) recyclerView.getAdapter();
                 intent = new Intent(v.getContext(), ShowActivity.class);
                 intent.putExtra("museum", adapter.getItem(position));
                 startActivity(intent);
@@ -75,7 +94,7 @@ public class Fragment1 extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState) {
         try {
             if (savedInstanceState != null) {
                 mRecyclerView.getRecycledViewPool().clear();
@@ -90,25 +109,31 @@ public class Fragment1 extends Fragment {
             Log.e("Exception", ex.getMessage());
             Log.d("Exception", Arrays.toString(ex.getStackTrace()));
         }
+        // Always call the superclass so it can save the view hierarchy state
         super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onSaveInstanceState(@Nullable Bundle outState) {
+        if (tempLang.equals(appLanguage)) {
+            tempLang = appLanguage;
+            try {
+                if (outState != null) {
+                    bundledMuseumsList.clear();
+                    for (int i = 0; i < allMuseums.getItemCount(); i++) {
+                        bundledMuseumsList.add(allMuseums.getItem(i));
+                    }
+                    outState.putParcelableArrayList(ALL_MUSEUM, bundledMuseumsList);
+                }
+            } catch (Exception ex) {
+                Log.e("Exception", ex.getMessage());
+                Log.d("Exception", Arrays.toString(ex.getStackTrace()));
+            }
+        } else {
+            outState = null;
+        }
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(outState);
-        try {
-            if (outState != null) {
-                bundledMuseumsList.clear();
-                for (int i = 0; i < allMuseums.getItemCount(); i++) {
-                    bundledMuseumsList.add(allMuseums.getItem(i));
-                }
-                outState.putParcelableArrayList(ALL_MUSEUM, bundledMuseumsList);
-            }
-        } catch (Exception ex) {
-            Log.e("Exception", ex.getMessage());
-            Log.d("Exception", Arrays.toString(ex.getStackTrace()));
-        }
     }
 
     @Override
@@ -135,4 +160,6 @@ public class Fragment1 extends Fragment {
         FirebaseHandler.database.goOffline();
     }
 }
+
+
 

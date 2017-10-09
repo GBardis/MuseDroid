@@ -1,7 +1,6 @@
 package com.example.musedroid.musedroid;
 
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.ProgressBar;
 
 /**
@@ -13,9 +12,9 @@ public class GetFirebase extends AppCompatActivity {
     private FirebaseHandler firebaseHandler = new FirebaseHandler();
 
 
-    public MuseumAdapter listViewFromFirebase(MuseumAdapter adapter, ProgressBar progressBar, View view) {
+    public MuseumAdapter listViewFromFirebase(MuseumAdapter adapter, ProgressBar progressBar, String appLanguage) {
 
-        firebaseHandler.getMuseums(adapter, progressBar, view);
+        firebaseHandler.getMuseums(adapter, progressBar, appLanguage);
         return adapter;
     }
 }

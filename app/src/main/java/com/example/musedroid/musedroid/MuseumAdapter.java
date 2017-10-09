@@ -51,7 +51,7 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
         // - replace the contents of the view with that element
         final Museum museum = museumList.get(position);
         holder.title.setText(museum.name);
-        holder.description.setText(museum.description);
+        holder.description.setText(museum.shortDescription);
 
         // Firebase listener that check if a user has any favorite museums
         mDatabase.child("user-favorites").child(auth.getCurrentUser().getUid());
