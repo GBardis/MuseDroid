@@ -76,7 +76,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     private int minLocationUpdateTime = 0;
     private int minLocationUpdateInterval = 0;
     private GeofencingClient mGeofencingClient;
-    public List<Geofence> mGeofenceList = new ArrayList<Geofence>();
+    public List<Geofence> mGeofenceList = new ArrayList<>();
     private PendingIntent mGeofencePendingIntent;
 
     @Nullable
@@ -178,7 +178,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                         @Override
                         public void onSuccess(Void aVoid) {
                             // Geofences added
-                            // ...
+                            //
                         }
                     })
                     .addOnFailureListener(getActivity(), new OnFailureListener() {
@@ -195,7 +195,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
     public void createGeoFences(MuseumAdapter adapter) {
         for (int i = 0; i < adapter.getItemCount(); i++) {
-            if (areEqual(mGeofenceList,adapter) != true) {
+            if (areEqual(mGeofenceList, adapter) != true) {
                 //removeAllFences(mGeofenceList);
                 Geofence geofence = new Geofence.Builder()
                         .setRequestId(adapter.getItem(i).key) // Geofence ID
@@ -211,20 +211,20 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 }
             }
         }
-        getGeofencingRequest(mGeofenceList);
+        //getGeofencingRequest(mGeofenceList);
         //call pending intent!
-        getGeofencePendingIntent();
+        //getGeofencePendingIntent();
+        addGeofences(mGeofencingClient);
     }
 
 
-
-    public boolean areEqual(List<Geofence> list,MuseumAdapter adapter){
-        if (list.size() != adapter.getItemCount()){
+    public boolean areEqual(List<Geofence> list, MuseumAdapter adapter) {
+        if (list.size() != adapter.getItemCount()) {
             return false;
         }
-        for(Geofence geofence : list){
-            for(int i =0 ; i<adapter.getItemCount();i++){
-                if (adapter.getItem(i) != geofence){
+        for (Geofence geofence : list) {
+            for (int i = 0; i < adapter.getItemCount(); i++) {
+                if (adapter.getItem(i) != geofence) {
                     return false;
                 }
             }
