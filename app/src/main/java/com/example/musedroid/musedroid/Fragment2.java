@@ -198,7 +198,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             if (areEqual(mGeofenceList, adapter) != true) {
                 //removeAllFences(mGeofenceList);
                 Geofence geofence = new Geofence.Builder()
-                        .setRequestId(adapter.getItem(i).key) // Geofence ID
+                        .setRequestId(adapter.getItem(i).name) // Geofence ID
                         .setCircularRegion(Double.parseDouble(adapter.getItem(i).lat), Double.parseDouble(adapter.getItem(i).lon), 100) // defining fence region
                         .setExpirationDuration(Geofence.NEVER_EXPIRE) // expiring date
                         // Transition types that it should look for
