@@ -1,9 +1,6 @@
 package com.example.musedroid.musedroid;
 
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ProgressBar;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -25,20 +22,18 @@ public class FirebaseHandler extends AppCompatActivity  {
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference mDatabase = database.getReference();
     public  static MuseumAdapter museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
-    private ArrayAdapter userFavorites;
-
     public static   MuseumAdapter getMuseumAdapter(){
         return  museumAdapter;
     }
 
 
-    public void getMuseums(final MuseumAdapter adapter, final ProgressBar progressBar, final String appLanguage) {
+    public void getMuseums(final MuseumAdapter adapter, final String appLanguage) {
         museumAdapter.clear();
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (flag) {
-                    progressBar.setVisibility(View.GONE);
+//                    progressBar.setVisibility(View.GONE);
                     flag = false;
                 }
             }

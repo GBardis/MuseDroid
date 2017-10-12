@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             progressBar.getVisibility();
             getFirebase = new GetFirebase();
             museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
-            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage);
+            //museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage);
         }
 
 
@@ -192,8 +192,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        appLanguage = sharedPreferences.getString("prefAppLanguage", sharedPreferences.getString("prefAppLanguage", "NULL"));
-        museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage);
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+//        if (key.equals("prefAppLanguage")) {
+//            appLanguage = sharedPreferences.getString("prefAppLanguage", sharedPreferences.getString("prefAppLanguage", "NULL"));
+//            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage);
+//        }
     }
 }

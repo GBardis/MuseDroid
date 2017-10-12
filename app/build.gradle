@@ -14,6 +14,11 @@ android {
             applicationId "com.example.musedroid.musedroid"
         }
     }
+    dataBinding {
+        enabled = true
+    }
+
+
     buildTypes {
         release {
             minifyEnabled false

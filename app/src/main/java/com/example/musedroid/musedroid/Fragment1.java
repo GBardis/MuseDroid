@@ -24,17 +24,23 @@ public class Fragment1 extends Fragment {
     ArrayList<Museum> bundledMuseumsList = new ArrayList<>();
     Intent intent;
     RecyclerView mRecyclerView;
-    MuseumAdapter allMuseums;
+    MuseumAdapter allMuseums, changeLangMuseum;
     String appLanguage = MainActivity.appLanguage;
     String tempLang = MainActivity.appLanguage;
-
-
+    FirebaseHandler firebaseHandler = new FirebaseHandler();
+    boolean count = true;
     SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         public void onSharedPreferenceChanged(SharedPreferences sharedPrefs, String key) {
             // listener implementation
 
-            if (key.equals("prefAppLanguage")) {
+
+            if (key.equals("prefAppLanguage") && count) {
                 appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
+                firebaseHandler.getMuseums(new MuseumAdapter(new ArrayList<Museum>()), appLanguage);
+                changeLangMuseum = FirebaseHandler.getMuseumAdapter();
+
+                mRecyclerView.setAdapter(allMuseums);
+                count =false;
             }
 
         }
@@ -68,7 +74,7 @@ public class Fragment1 extends Fragment {
         //call getfirebase object to get the museumAdapter with all museums
 
         if ((savedInstanceState == null)) {
-
+            firebaseHandler.getMuseums(new MuseumAdapter(new ArrayList<Museum>()), appLanguage);
             try {
                 //set the adapter with the museum list form firebase
                 allMuseums = FirebaseHandler.getMuseumAdapter();
@@ -96,14 +102,20 @@ public class Fragment1 extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         try {
-            if (savedInstanceState != null) {
+            if (savedInstanceState != null && tempLang.equals(appLanguage)) {
                 mRecyclerView.getRecycledViewPool().clear();
+
                 //Restore last state for checked position.
                 allMuseums = new MuseumAdapter(savedInstanceState.<Museum>getParcelableArrayList(ALL_MUSEUM));
                 allMuseums.notifyDataSetChanged();
 
                 mRecyclerView.setAdapter(allMuseums);
                 //changeActivity(allMuseums);
+            } else {
+                changeLangMuseum = new MuseumAdapter(savedInstanceState.<Museum>getParcelableArrayList(ALL_MUSEUM));
+                changeLangMuseum.notifyDataSetChanged();
+
+                mRecyclerView.setAdapter(changeLangMuseum);
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
@@ -130,7 +142,12 @@ public class Fragment1 extends Fragment {
                 Log.d("Exception", Arrays.toString(ex.getStackTrace()));
             }
         } else {
-            outState = null;
+
+            bundledMuseumsList.clear();
+            for (int i = 0; i < changeLangMuseum.getItemCount(); i++) {
+                bundledMuseumsList.add(changeLangMuseum.getItem(i));
+            }
+            outState.putParcelableArrayList(ALL_MUSEUM, bundledMuseumsList);
         }
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(outState);
@@ -145,6 +162,12 @@ public class Fragment1 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        if (!tempLang.equals(appLanguage)) {
+
+//            changeLangMuseum.notifyDataSetChanged();
+
+            mRecyclerView.setAdapter(changeLangMuseum);
+        }
         FirebaseHandler.database.goOnline();
     }
 
@@ -160,6 +183,7 @@ public class Fragment1 extends Fragment {
         FirebaseHandler.database.goOffline();
     }
 }
+
 
 
 
