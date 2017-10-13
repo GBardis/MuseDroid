@@ -29,6 +29,7 @@ public class FirebaseHandler extends AppCompatActivity  {
 
     public void getMuseums(final MuseumAdapter adapter, final String appLanguage) {
         museumAdapter.clear();
+
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

@@ -3,6 +3,7 @@ package com.example.musedroid.musedroid;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
@@ -22,7 +23,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, SharedPreferences.OnSharedPreferenceChangeListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static MuseumAdapter museumAdapter;
     public static GetFirebase getFirebase;
     public static String appLanguage;
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
+
         setUserLanguage();
         progressBar = findViewById(R.id.mainProgressBar);
         progressBar.setVisibility(View.GONE);
@@ -141,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         //to prevent current item select over and over
         if (item.isChecked()) {
@@ -189,13 +190,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-//        if (key.equals("prefAppLanguage")) {
-//            appLanguage = sharedPreferences.getString("prefAppLanguage", sharedPreferences.getString("prefAppLanguage", "NULL"));
-//            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage);
-//        }
     }
 }

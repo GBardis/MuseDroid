@@ -25,40 +25,22 @@ public class Fragment1 extends Fragment {
     Intent intent;
     RecyclerView mRecyclerView;
     MuseumAdapter allMuseums, changeLangMuseum;
-    String appLanguage = MainActivity.appLanguage;
-    String tempLang = MainActivity.appLanguage;
+    String appLanguage;
+    String tempLang;
     FirebaseHandler firebaseHandler = new FirebaseHandler();
-    boolean count = true;
-    SharedPreferences.OnSharedPreferenceChangeListener listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-        public void onSharedPreferenceChanged(SharedPreferences sharedPrefs, String key) {
-            // listener implementation
-
-
-            if (key.equals("prefAppLanguage") && count) {
-                appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
-                firebaseHandler.getMuseums(new MuseumAdapter(new ArrayList<Museum>()), appLanguage);
-                changeLangMuseum = FirebaseHandler.getMuseumAdapter();
-
-                mRecyclerView.setAdapter(allMuseums);
-                count =false;
-            }
-
-        }
-    };
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_fragment1, container, false);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        prefs.registerOnSharedPreferenceChangeListener(listener);
         return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        appLanguage = MainActivity.appLanguage;
+        appLanguage = getAppLanguage();
+        tempLang = appLanguage;
         mRecyclerView = view.findViewById(R.id.museumRecycleView);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -101,8 +83,10 @@ public class Fragment1 extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        appLanguage = getAppLanguage();
         try {
             if (savedInstanceState != null && tempLang.equals(appLanguage)) {
+                tempLang = appLanguage;
                 mRecyclerView.getRecycledViewPool().clear();
 
                 //Restore last state for checked position.
@@ -110,8 +94,10 @@ public class Fragment1 extends Fragment {
                 allMuseums.notifyDataSetChanged();
 
                 mRecyclerView.setAdapter(allMuseums);
-                //changeActivity(allMuseums);
+
             } else {
+                tempLang = appLanguage;
+                assert savedInstanceState != null;
                 changeLangMuseum = new MuseumAdapter(savedInstanceState.<Museum>getParcelableArrayList(ALL_MUSEUM));
                 changeLangMuseum.notifyDataSetChanged();
 
@@ -127,28 +113,29 @@ public class Fragment1 extends Fragment {
 
     @Override
     public void onSaveInstanceState(@Nullable Bundle outState) {
-        if (tempLang.equals(appLanguage)) {
-            tempLang = appLanguage;
-            try {
-                if (outState != null) {
-                    bundledMuseumsList.clear();
-                    for (int i = 0; i < allMuseums.getItemCount(); i++) {
-                        bundledMuseumsList.add(allMuseums.getItem(i));
-                    }
-                    outState.putParcelableArrayList(ALL_MUSEUM, bundledMuseumsList);
+        // appLanguage = getAppLanguage();
+        try {
+            if (outState != null && tempLang.equals(appLanguage)) {
+                tempLang = appLanguage;
+                bundledMuseumsList.clear();
+                for (int i = 0; i < allMuseums.getItemCount(); i++) {
+                    bundledMuseumsList.add(allMuseums.getItem(i));
                 }
-            } catch (Exception ex) {
-                Log.e("Exception", ex.getMessage());
-                Log.d("Exception", Arrays.toString(ex.getStackTrace()));
+                outState.putParcelableArrayList(ALL_MUSEUM, bundledMuseumsList);
+            } else {
+                tempLang = appLanguage;
+                bundledMuseumsList.clear();
+                for (int i = 0; i < changeLangMuseum.getItemCount(); i++) {
+                    bundledMuseumsList.add(changeLangMuseum.getItem(i));
+                }
+                assert outState != null;
+                outState.putParcelableArrayList(ALL_MUSEUM, bundledMuseumsList);
             }
-        } else {
-
-            bundledMuseumsList.clear();
-            for (int i = 0; i < changeLangMuseum.getItemCount(); i++) {
-                bundledMuseumsList.add(changeLangMuseum.getItem(i));
-            }
-            outState.putParcelableArrayList(ALL_MUSEUM, bundledMuseumsList);
+        } catch (Exception ex) {
+            Log.e("Exception", ex.getMessage());
+            Log.d("Exception", Arrays.toString(ex.getStackTrace()));
         }
+
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(outState);
     }
@@ -162,10 +149,11 @@ public class Fragment1 extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        appLanguage = getAppLanguage();
         if (!tempLang.equals(appLanguage)) {
-
-//            changeLangMuseum.notifyDataSetChanged();
-
+            firebaseHandler.getMuseums(new MuseumAdapter(new ArrayList<Museum>()), appLanguage);
+            changeLangMuseum = FirebaseHandler.getMuseumAdapter();
+            changeLangMuseum.notifyDataSetChanged();
             mRecyclerView.setAdapter(changeLangMuseum);
         }
         FirebaseHandler.database.goOnline();
@@ -181,6 +169,14 @@ public class Fragment1 extends Fragment {
     public void onStop() {
         super.onStop();
         FirebaseHandler.database.goOffline();
+    }
+
+    private String getAppLanguage() {
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(getActivity());
+
+        return sharedPrefs.getString("prefAppLanguage", "NULL");
+
     }
 }
 
