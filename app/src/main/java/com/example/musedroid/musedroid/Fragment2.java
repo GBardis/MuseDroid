@@ -3,6 +3,7 @@ package com.example.musedroid.musedroid;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -13,6 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -66,6 +68,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     RecyclerView mRecyclerView;
     private int minLocationUpdateTime = 0;
     private int minLocationUpdateInterval = 0;
+    String appLanguage;
+    String tempLang;
+    FirebaseHandler firebaseHandler = new FirebaseHandler();
 
     @Nullable
     @Override
@@ -102,7 +107,8 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        appLanguage = getAppLanguage();
+        tempLang = appLanguage;
         nearbyMuseumList = new ArrayList<>();
         mRecyclerView = view.findViewById(R.id.museumNearbyRecycleView);
         // use this setting to improve performance if you know that changes
@@ -117,7 +123,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         //initialize Museum adapter and give as import an array list
         //call firebase function after the initialize of the adapter
         if (savedInstanceState == null) {
-            allMuseumAdapter = MainActivity.museumAdapter;
+            allMuseumAdapter = FirebaseHandler.getMuseumAdapter();
             mRecyclerView.setAdapter(onLocationChangeAdapter);
         }
         ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
@@ -141,6 +147,14 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public void onResume() {
         super.onResume();
+        appLanguage = getAppLanguage();
+        if (!tempLang.equals(appLanguage)) {
+            allMuseumAdapter.clear();
+            firebaseHandler.getMuseums(new MuseumAdapter(new ArrayList<Museum>()), appLanguage);
+            allMuseumAdapter = FirebaseHandler.getMuseumAdapter();
+            allMuseumAdapter.notifyDataSetChanged();
+            mRecyclerView.setAdapter(allMuseumAdapter);
+        }
         FirebaseHandler.database.goOnline();
     }
 
@@ -156,11 +170,20 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         FirebaseHandler.database.goOffline();
     }
 
+    private String getAppLanguage() {
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(getActivity());
+
+        return sharedPrefs.getString("prefAppLanguage", "NULL");
+
+    }
+
     //Restore last state for checked position.
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        appLanguage = getAppLanguage();
         try {
-            if (savedInstanceState != null) {
+            if (savedInstanceState != null && tempLang.equals(appLanguage)) {
                 mRecyclerView.getRecycledViewPool().clear();
                 allMuseumAdapter.clear();
                 onLocationChangeAdapter.clear();
@@ -191,7 +214,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public void onSaveInstanceState(Bundle outState) {
         try {
-            if (outState != null) {
+            if (outState != null && tempLang.equals(appLanguage)) {
                 bundledNearbyMuseumsList.clear();
 
                 for (int i = 0; i < onLocationChangeAdapter.getItemCount(); i++) {

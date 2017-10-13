@@ -113,7 +113,7 @@ public class Fragment1 extends Fragment {
 
     @Override
     public void onSaveInstanceState(@Nullable Bundle outState) {
-        // appLanguage = getAppLanguage();
+
         try {
             if (outState != null && tempLang.equals(appLanguage)) {
                 tempLang = appLanguage;
