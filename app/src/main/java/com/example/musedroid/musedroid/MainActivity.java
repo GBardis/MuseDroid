@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static MuseumAdapter museumAdapter;
     public static GetFirebase getFirebase;
     public static String appLanguage;
+    public static String tempLang;
     public ProgressBar progressBar;
     private ViewPager viewPager;
     private DrawerLayout drawer;
@@ -37,22 +38,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        appLanguage = getAppLanguage();
 
         setUserLanguage();
         progressBar = findViewById(R.id.mainProgressBar);
         progressBar.setVisibility(View.GONE);
         if (savedInstanceState == null) {
+            tempLang = appLanguage;
             progressBar.setVisibility(View.VISIBLE);
-            progressBar.getVisibility();
             getFirebase = new GetFirebase();
-            museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
-            //museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage);
+
+            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage, findViewById(android.R.id.content));
+            museumAdapter.notifyDataSetChanged();
+        } else if (!tempLang.equals(appLanguage)) {
+            museumAdapter.clear();
+            progressBar.setVisibility(View.VISIBLE);
+            getFirebase = new GetFirebase();
+
+            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage, findViewById(android.R.id.content));
+            museumAdapter.notifyDataSetChanged();
         }
 
 
-        viewPager = (ViewPager) findViewById(R.id.view_pager);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
+        viewPager = findViewById(R.id.view_pager);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        drawer = findViewById(R.id.drawerLayout);
         setSupportActionBar(toolbar);
 
         //create default navigation drawer toggle
@@ -62,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
 
         //setting Tab layout (number of Tabs = number of ViewPager pages)
-        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
+        tabLayout = findViewById(R.id.tab_layout);
         for (int i = 0; i < 3; i++) {
             tabLayout.addTab(tabLayout.newTab().setText(pageTitle[i]));
         }
@@ -101,6 +111,34 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        appLanguage = getAppLanguage();
+
+        if (!tempLang.equals(appLanguage)) {
+            progressBar.setVisibility(View.GONE);
+            progressBar.setVisibility(View.VISIBLE);
+            tempLang = appLanguage;
+            getFirebase = new GetFirebase();
+            museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
+            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage, findViewById(android.R.id.content));
+            FirebaseHandler.database.goOnline();
+        }
+    }
+
+    private String getAppLanguage() {
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(this);
+        if (sharedPrefs.getString("prefAppLanguage", "NULL").equals("gr")) {
+            tempLang = "en";
+            return sharedPrefs.getString("prefAppLanguage", "NULL");
+        } else {
+            tempLang = "gr";
+            return "en";
+        }
     }
 
     //set language in preferences manager equals to locale of the current phone

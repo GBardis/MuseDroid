@@ -1,6 +1,8 @@
 package com.example.musedroid.musedroid;
 
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -9,7 +11,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,24 +18,19 @@ import java.util.Map;
  * Created by gdev-laptop on 4/8/2017.
  */
 
-public class FirebaseHandler extends AppCompatActivity  {
+public class FirebaseHandler extends AppCompatActivity {
     public static boolean flag = false;
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference mDatabase = database.getReference();
-    public  static MuseumAdapter museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
-    public static   MuseumAdapter getMuseumAdapter(){
-        return  museumAdapter;
-    }
 
-
-    public void getMuseums(final MuseumAdapter adapter, final String appLanguage) {
-        museumAdapter.clear();
+    public void getMuseums(final MuseumAdapter adapter, final ProgressBar progressBar, final String appLanguage, final View view) {
+        adapter.clear();
 
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (flag) {
-//                    progressBar.setVisibility(View.GONE);
+                    progressBar.setVisibility(view.GONE);
                     flag = false;
                 }
             }
@@ -68,9 +64,8 @@ public class FirebaseHandler extends AppCompatActivity  {
                             museum.description = museumFields.description;
                             museum.name = museumFields.name;
                             museum.shortDescription = museumFields.shortDescription;
-                            museumAdapter.add(museum);
-                            //adapter.notifyDataSetChanged();
-                            museumAdapter.notifyDataSetChanged();
+                            adapter.add(museum);
+                            adapter.notifyDataSetChanged();
                         }
                     }
 

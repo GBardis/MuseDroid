@@ -66,11 +66,10 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     Context context;
     Intent intent;
     RecyclerView mRecyclerView;
-    private int minLocationUpdateTime = 0;
-    private int minLocationUpdateInterval = 0;
     String appLanguage;
     String tempLang;
-    FirebaseHandler firebaseHandler = new FirebaseHandler();
+    private int minLocationUpdateTime = 0;
+    private int minLocationUpdateInterval = 0;
 
     @Nullable
     @Override
@@ -108,7 +107,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         appLanguage = getAppLanguage();
-        tempLang = appLanguage;
+        tempLang = MainActivity.tempLang;
         nearbyMuseumList = new ArrayList<>();
         mRecyclerView = view.findViewById(R.id.museumNearbyRecycleView);
         // use this setting to improve performance if you know that changes
@@ -123,7 +122,8 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         //initialize Museum adapter and give as import an array list
         //call firebase function after the initialize of the adapter
         if (savedInstanceState == null) {
-            allMuseumAdapter = FirebaseHandler.getMuseumAdapter();
+            allMuseumAdapter = MainActivity.museumAdapter;
+            allMuseumAdapter.notifyDataSetChanged();
             mRecyclerView.setAdapter(onLocationChangeAdapter);
         }
         ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
@@ -149,9 +149,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         super.onResume();
         appLanguage = getAppLanguage();
         if (!tempLang.equals(appLanguage)) {
-            allMuseumAdapter.clear();
-            firebaseHandler.getMuseums(new MuseumAdapter(new ArrayList<Museum>()), appLanguage);
-            allMuseumAdapter = FirebaseHandler.getMuseumAdapter();
+            allMuseumAdapter = MainActivity.museumAdapter;
             allMuseumAdapter.notifyDataSetChanged();
             mRecyclerView.setAdapter(allMuseumAdapter);
         }
@@ -201,10 +199,18 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 if (museumArrayList.size() != 0) {
                     mRecyclerView.setAdapter(onLocationChangeAdapter);
                 }
+            } else {
+                tempLang = appLanguage;
+                assert savedInstanceState != null;
+                allMuseumAdapter = MainActivity.museumAdapter;
+                allMuseumAdapter.notifyDataSetChanged();
+
+                mRecyclerView.setAdapter(allMuseumAdapter);
+                getUpdates();
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
-            Log.d("Exception", Arrays.toString(ex.getStackTrace()));
+            Log.e("Exception", Arrays.toString(ex.getStackTrace()));
 
         }
         super.onActivityCreated(savedInstanceState);
@@ -216,11 +222,11 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         try {
             if (outState != null && tempLang.equals(appLanguage)) {
                 bundledNearbyMuseumsList.clear();
+                bundledAllMuseumList.clear();
 
                 for (int i = 0; i < onLocationChangeAdapter.getItemCount(); i++) {
                     bundledNearbyMuseumsList.add(onLocationChangeAdapter.getItem(i));
                 }
-                bundledAllMuseumList.clear();
 
                 for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
                     bundledAllMuseumList.add(allMuseumAdapter.getItem(i));
@@ -228,10 +234,24 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 outState.putParcelableArrayList(ALL_MUSEUM, bundledAllMuseumList);
                 outState.putParcelableArrayList(NEARBY_MUSEUM, bundledNearbyMuseumsList);
 
+            } else {
+                bundledNearbyMuseumsList.clear();
+                bundledAllMuseumList.clear();
+
+                for (int i = 0; i < onLocationChangeAdapter.getItemCount(); i++) {
+                    bundledNearbyMuseumsList.add(onLocationChangeAdapter.getItem(i));
+                }
+
+                for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
+                    bundledAllMuseumList.add(allMuseumAdapter.getItem(i));
+                }
+                assert outState != null;
+                outState.putParcelableArrayList(ALL_MUSEUM, bundledAllMuseumList);
+                outState.putParcelableArrayList(NEARBY_MUSEUM, bundledNearbyMuseumsList);
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
-            Log.d("Exception", Arrays.toString(ex.getStackTrace()));
+            Log.e("Exception", Arrays.toString(ex.getStackTrace()));
         }
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(outState);
@@ -327,7 +347,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
-            Log.d("Exception", Arrays.toString(ex.getStackTrace()));
+            Log.e("Exception", Arrays.toString(ex.getStackTrace()));
         }
     }
 
