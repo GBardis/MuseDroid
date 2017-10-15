@@ -122,9 +122,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         //initialize Museum adapter and give as import an array list
         //call firebase function after the initialize of the adapter
         if (savedInstanceState == null) {
-            allMuseumAdapter = MainActivity.museumAdapter;
-            allMuseumAdapter.notifyDataSetChanged();
-            mRecyclerView.setAdapter(onLocationChangeAdapter);
+            getFirebaseUpdates();
         }
         ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
@@ -149,9 +147,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         super.onResume();
         appLanguage = getAppLanguage();
         if (!tempLang.equals(appLanguage)) {
-            allMuseumAdapter = MainActivity.museumAdapter;
-            allMuseumAdapter.notifyDataSetChanged();
-            mRecyclerView.setAdapter(allMuseumAdapter);
+            getFirebaseUpdates();
         }
         FirebaseHandler.database.goOnline();
     }
@@ -200,12 +196,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                     mRecyclerView.setAdapter(onLocationChangeAdapter);
                 }
             } else {
-                tempLang = appLanguage;
-                assert savedInstanceState != null;
-                allMuseumAdapter = MainActivity.museumAdapter;
-                allMuseumAdapter.notifyDataSetChanged();
-
-                mRecyclerView.setAdapter(allMuseumAdapter);
+                getFirebaseUpdates();
                 getUpdates();
             }
         } catch (Exception ex) {
@@ -221,33 +212,11 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     public void onSaveInstanceState(Bundle outState) {
         try {
             if (outState != null && tempLang.equals(appLanguage)) {
-                bundledNearbyMuseumsList.clear();
-                bundledAllMuseumList.clear();
-
-                for (int i = 0; i < onLocationChangeAdapter.getItemCount(); i++) {
-                    bundledNearbyMuseumsList.add(onLocationChangeAdapter.getItem(i));
-                }
-
-                for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
-                    bundledAllMuseumList.add(allMuseumAdapter.getItem(i));
-                }
-                outState.putParcelableArrayList(ALL_MUSEUM, bundledAllMuseumList);
-                outState.putParcelableArrayList(NEARBY_MUSEUM, bundledNearbyMuseumsList);
+                restoreMuseumAdapter(outState);
 
             } else {
-                bundledNearbyMuseumsList.clear();
-                bundledAllMuseumList.clear();
-
-                for (int i = 0; i < onLocationChangeAdapter.getItemCount(); i++) {
-                    bundledNearbyMuseumsList.add(onLocationChangeAdapter.getItem(i));
-                }
-
-                for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
-                    bundledAllMuseumList.add(allMuseumAdapter.getItem(i));
-                }
-                assert outState != null;
-                outState.putParcelableArrayList(ALL_MUSEUM, bundledAllMuseumList);
-                outState.putParcelableArrayList(NEARBY_MUSEUM, bundledNearbyMuseumsList);
+                tempLang = appLanguage;
+                restoreMuseumAdapter(outState);
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
@@ -255,6 +224,29 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         }
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(outState);
+    }
+
+    private Bundle restoreMuseumAdapter(Bundle outState) {
+        bundledNearbyMuseumsList.clear();
+        bundledAllMuseumList.clear();
+
+        for (int i = 0; i < onLocationChangeAdapter.getItemCount(); i++) {
+            bundledNearbyMuseumsList.add(onLocationChangeAdapter.getItem(i));
+        }
+
+        for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
+            bundledAllMuseumList.add(allMuseumAdapter.getItem(i));
+        }
+        assert outState != null;
+        outState.putParcelableArrayList(ALL_MUSEUM, bundledAllMuseumList);
+        outState.putParcelableArrayList(NEARBY_MUSEUM, bundledNearbyMuseumsList);
+        return outState;
+    }
+
+    private void getFirebaseUpdates() {
+        allMuseumAdapter = MainActivity.museumAdapter;
+        allMuseumAdapter.notifyDataSetChanged();
+        mRecyclerView.setAdapter(allMuseumAdapter);
     }
 
     public void askForPermission() {

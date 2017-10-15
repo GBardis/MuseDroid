@@ -44,19 +44,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         progressBar = findViewById(R.id.mainProgressBar);
         progressBar.setVisibility(View.GONE);
         if (savedInstanceState == null) {
-            tempLang = appLanguage;
-            progressBar.setVisibility(View.VISIBLE);
-            getFirebase = new GetFirebase();
-
-            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage, findViewById(android.R.id.content));
-            museumAdapter.notifyDataSetChanged();
+            getFirebaseUpdates();
         } else if (!tempLang.equals(appLanguage)) {
-            museumAdapter.clear();
-            progressBar.setVisibility(View.VISIBLE);
-            getFirebase = new GetFirebase();
-
-            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage, findViewById(android.R.id.content));
-            museumAdapter.notifyDataSetChanged();
+            getFirebaseUpdates();
         }
 
 
@@ -113,6 +103,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    private void getFirebaseUpdates() {
+        progressBar.setVisibility(View.VISIBLE);
+        getFirebase = new GetFirebase();
+        museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage, findViewById(android.R.id.content));
+        museumAdapter.notifyDataSetChanged();
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -120,11 +117,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         if (!tempLang.equals(appLanguage)) {
             progressBar.setVisibility(View.GONE);
-            progressBar.setVisibility(View.VISIBLE);
-            tempLang = appLanguage;
-            getFirebase = new GetFirebase();
-            museumAdapter = new MuseumAdapter(new ArrayList<Museum>());
-            museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage, findViewById(android.R.id.content));
+            getFirebaseUpdates();
             FirebaseHandler.database.goOnline();
         }
     }
