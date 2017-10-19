@@ -1,5 +1,6 @@
 package com.example.musedroid.musedroid;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
@@ -27,7 +28,6 @@ public class UserSettingActivity extends PreferenceActivity implements SharedPre
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
-
         PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
     }
 
@@ -75,15 +75,27 @@ public class UserSettingActivity extends PreferenceActivity implements SharedPre
                 if (!sharedPrefs.getString("prefAppLanguage", "NULL").equals("NULL")) {
                     //set the language of the as user wants
                     sharedPrefs.getString("prefAppLanguage", sharedPrefs.getString("prefAppLanguage", "NULL"));
+                    updateViews(sharedPrefs.getString("prefAppLanguage", "NULL"));
+                    this.recreate();
                 } else {
                     //set the language from system locale
                     SharedPreferences.Editor editor = sharedPrefs.edit();
                     editor.putString("prefAppLanguage", Locale.getDefault().getLanguage());
                     editor.apply();
+                    updateViews(sharedPrefs.getString("prefAppLanguage", "NULL"));
                 }
                 break;
             default:
-            break;
+                break;
         }
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleHelper.onAttach(base));
+    }
+
+    private void updateViews(String language) {
+        LocaleHelper.setLocale(this, language);
     }
 }

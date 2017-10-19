@@ -17,6 +17,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
+            android:configChanges="layoutDirection|locale"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -68,7 +69,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".UserSettingActivity"></activity>
+        <activity android:name=".UserSettingActivity" />
     </application>
 
 </manifest>

@@ -41,15 +41,15 @@
         android:layout_height="59dp"
         android:layout_marginBottom="14dp"
         android:text="@string/scan_exhibit"
-        app:layout_constraintBottom_toTopOf="@+id/button3"
-        app:layout_constraintLeft_toLeftOf="@+id/button3"
-        app:layout_constraintRight_toRightOf="@+id/button3"
+        app:layout_constraintBottom_toTopOf="@+id/scanNfc"
+        app:layout_constraintLeft_toLeftOf="@+id/scanNfc"
+        app:layout_constraintRight_toRightOf="@+id/scanNfc"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/scanNfc"
         android:layout_width="118dp"
         android:layout_height="0dp"
         android:layout_marginBottom="77dp"
@@ -71,7 +71,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button3"
+        app:layout_constraintTop_toBottomOf="@+id/scanNfc"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"

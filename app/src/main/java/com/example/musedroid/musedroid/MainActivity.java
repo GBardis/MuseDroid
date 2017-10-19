@@ -1,7 +1,9 @@
 package com.example.musedroid.musedroid;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -29,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static String appLanguage;
     public static String tempLang;
     public ProgressBar progressBar;
+    NavigationView navigationView;
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
@@ -37,8 +40,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
         appLanguage = getAppLanguage();
+        setContentView(R.layout.activity_main);
+
 
         setUserLanguage();
         progressBar = findViewById(R.id.mainProgressBar);
@@ -71,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         //handling navigation view item event
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -100,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             }
         });
-
     }
 
     private void getFirebaseUpdates() {
@@ -114,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         appLanguage = getAppLanguage();
-
+        updateViews(appLanguage);
         if (!tempLang.equals(appLanguage)) {
             progressBar.setVisibility(View.GONE);
             getFirebaseUpdates();
@@ -125,14 +128,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private String getAppLanguage() {
         SharedPreferences sharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(this);
-        if (sharedPrefs.getString("prefAppLanguage", "NULL").equals("gr")) {
+        if (sharedPrefs.getString("prefAppLanguage", "NULL").equals("el")) {
             tempLang = "en";
+            updateViews(sharedPrefs.getString("prefAppLanguage", "NULL"));
             return sharedPrefs.getString("prefAppLanguage", "NULL");
         } else {
-            tempLang = "gr";
+            tempLang = "el";
+            updateViews("en");
             return "en";
         }
     }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleHelper.onAttach(base));
+    }
+
+    private void updateViews(String language) {
+        LocaleHelper.setLocale(this, language);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+
+        this.setContentView(R.layout.activity_main);
+        NavigationView navigationView = (NavigationView) this.findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(MainActivity.this);
+
+    }
+
 
     //set language in preferences manager equals to locale of the current phone
     private void setUserLanguage() {
@@ -141,11 +167,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Check phone shareprefenrences if it is null set it to locale else set it equals to user
         // checked preference
         appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
+        updateViews(appLanguage);
         if (appLanguage.equals("NULL")) {
             SharedPreferences.Editor editor = sharedPrefs.edit();
             editor.putString("prefAppLanguage", Locale.getDefault().getLanguage());
             editor.apply();
             appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
+            updateViews(appLanguage);
         }
     }
 
@@ -202,7 +230,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.Settings:
                 item.setCheckable(false);
                 if (auth.getCurrentUser() != null) {
-
                     startActivity(new Intent(MainActivity.this, UserSettingActivity.class));
                 }
                 break;

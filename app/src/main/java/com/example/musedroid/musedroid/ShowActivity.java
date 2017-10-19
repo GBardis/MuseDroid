@@ -1,10 +1,14 @@
 package com.example.musedroid.musedroid;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,28 +27,28 @@ import java.util.Arrays;
 import static android.R.attr.rating;
 
 
-public class ShowActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class ShowActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String RATING = "Museum rating";
     private static final String DESCRIPTION = "museum description";
     private static final String TITLE = "museum title";
     RatingBar ratingBar;
-    Button qrButton, goToMaps;
+    Button qrButton, goToMaps,scanNfc;
     Museum museum;
     Intent intent;
     String museumAddress, museumName;
     TextView textDescription;
     Intent i;
-
     private GoogleApiClient mGoogleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show);
-
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
         i = getIntent();
 
         mGoogleApiClient = new GoogleApiClient
+
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
@@ -52,7 +56,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                 .build();
 
         qrButton = findViewById(R.id.qrButton);
-
+        scanNfc = findViewById(R.id.scanNfc);
         goToMaps = findViewById(R.id.goToMaps);
 
         textDescription = findViewById(R.id.MuseumDescription);
@@ -90,6 +94,20 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
                 startActivity(intent);
             }
         });
+
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(LocaleHelper.onAttach(base));
+    }
+
+    private void updateViews(String language) {
+        Context context = LocaleHelper.setLocale(this, language);
+        Resources resources = context.getResources();
+        qrButton.setText(resources.getString(R.string.scan_exhibit));
+        scanNfc.setText(resources.getString(R.string.nfc_exhibit));
+
     }
 
     //This function convert adapter to arrayList and serialize it into a bundle, so that can be restore
@@ -138,7 +156,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
         mGoogleApiClient.connect();
         Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
                 .setResultCallback(new ResultCallback<PlaceBuffer>() {
-                    public static final String TAG = "TAG";
+                    static final String TAG = "TAG";
 
                     @Override
                     public void onResult(PlaceBuffer places) {
@@ -163,5 +181,14 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals("prefAppLanguage")) {
+            //set the language of the as user wants
+            updateViews( sharedPreferences.getString("prefAppLanguage", "NULL"));
+
+        }
     }
 }

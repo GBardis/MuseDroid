@@ -19,7 +19,7 @@
             android:entryValues="@array/languangeValues"
             android:key="prefAppLanguage"
             android:summary="App language summary"
-            android:title="App Languange" />
+            android:title="@string/pref_sync_language" />
     </PreferenceCategory>
 
 </PreferenceScreen>

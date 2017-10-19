@@ -47,12 +47,12 @@
         android:layout_marginStart="15dp"
         android:text="@string/scan_exhibit"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/button3"
+        app:layout_constraintLeft_toRightOf="@+id/scanNfc"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/scanNfc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="18dp"
@@ -67,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/gotomaps"
-        app:layout_constraintBaseline_toBaselineOf="@+id/button3"
+        app:layout_constraintBaseline_toBaselineOf="@+id/scanNfc"
         app:layout_constraintLeft_toLeftOf="@+id/ratingBar"
         app:layout_constraintRight_toLeftOf="@+id/ratingBar"
         tools:layout_constraintBaseline_creator="1"
