@@ -12,7 +12,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,6 +26,21 @@ public class FirebaseHandler extends AppCompatActivity{
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference mDatabase = database.getReference();
     private ArrayAdapter userFavorites;
+    boolean flagFull=false;
+    private static boolean signalFull;
+    private static List<AdapterFullListener> adapterFullListeners = new ArrayList<AdapterFullListener>();
+    public static boolean getSignalFull(){ return signalFull;}
+    private boolean runOnce = false;
+    public static void setSignalFull(boolean bool){
+        signalFull = bool;
+        for (AdapterFullListener adapterFullListener : adapterFullListeners){
+            adapterFullListener.OnAdapterFull();
+        }
+    }
+
+    public static void addAdapterFullListener(AdapterFullListener adapterFullListener){
+        adapterFullListeners.add(adapterFullListener);
+    }
 
     public void getMuseums(final MuseumAdapter adapter, final ProgressBar progressBar, final View view) {
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -33,7 +50,11 @@ public class FirebaseHandler extends AppCompatActivity{
                     progressBar.setVisibility(view.GONE);
                     flag = false;
                 }
-                //Fragment2.createGeoFences(adapter);
+                if (runOnce == false) {
+                    //Fire the adapterFull event!
+                    setSignalFull(true);
+                    runOnce = true;
+                }
             }
 
             @Override
@@ -49,6 +70,7 @@ public class FirebaseHandler extends AppCompatActivity{
                 if (flag == false) {
                     flag = true;
                 }
+
                 Museum museum = dataSnapshot.getValue(Museum.class);
                 assert museum != null;
                 museum.key = dataSnapshot.getKey();
