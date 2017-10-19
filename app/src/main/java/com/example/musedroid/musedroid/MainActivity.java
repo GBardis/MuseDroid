@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -76,6 +77,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //handling navigation view item event
         navigationView = (NavigationView) findViewById(R.id.nav_view);
+
+
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
 
@@ -117,6 +120,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onResume() {
         super.onResume();
         appLanguage = getAppLanguage();
+        Context context = LocaleHelper.setLocale(this, Locale.getDefault().getLanguage());
+        Resources resources = context.getResources();
+
+        int id;
+        int itemCount = navigationView.getMenu().size();
+        MenuItem item;
+        for (int i = 0; i < itemCount; i++) {
+            item = navigationView.getMenu().getItem(i);
+            id = item.getItemId();
+            switch (id) {
+                case R.id.Profile:
+                    item.setTitle(resources.getString(R.string.profile));
+                    break;
+                case R.id.Logout:
+                    item.setTitle(resources.getString(R.string.logout));
+                    break;
+                case R.id.Settings:
+                    item.setTitle(resources.getString(R.string.settings));
+                    break;
+            }
+        }
         updateViews(appLanguage);
         if (!tempLang.equals(appLanguage)) {
             progressBar.setVisibility(View.GONE);
@@ -146,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private void updateViews(String language) {
         LocaleHelper.setLocale(this, language);
+
     }
 
     @Override
