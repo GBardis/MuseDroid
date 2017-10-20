@@ -87,9 +87,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //setting Tab layout (number of Tabs = number of ViewPager pages)
         tabLayout = findViewById(R.id.tab_layout);
-        for (int i = 0; i < 3; i++) {
-            tabLayout.addTab(tabLayout.newTab().setText(pageTitle[i]));
-        }
+
 
         //this will run when the adapter is full from firebase!
         FirebaseHandler.addAdapterFullListener(new AdapterFullListener() {
@@ -105,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         //handling navigation view item event
-        navigationView =findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
 
 
         assert navigationView != null;
@@ -157,7 +155,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Context context = LocaleHelper.setLocale(this, Locale.getDefault().getLanguage());
         Resources resources = context.getResources();
         //change nav drawer layout based on language
-
+        tabLayout.removeAllTabs();
+        tabLayout.addTab(tabLayout.newTab().setText(resources.getString(R.string.tab_layout_all_museums)));
+        tabLayout.addTab(tabLayout.newTab().setText(resources.getString(R.string.tab_layout_near_by_museum)));
+        tabLayout.addTab(tabLayout.newTab().setText(resources.getString(R.string.tab_layout_visited)));
         int id;
         int itemCount = navigationView.getMenu().size();
         MenuItem item;
@@ -173,6 +174,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     break;
                 case R.id.Settings:
                     item.setTitle(resources.getString(R.string.settings));
+                    break;
+                case R.id.Info:
+                    item.setTitle(resources.getString(R.string.info));
                     break;
             }
         }
@@ -206,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     // If app language is changed  this function is called to changed default locale
     private void updateViews(String language) {
         LocaleHelper.setLocale(this, language);
-
     }
 
     // recreate view if app config is changed

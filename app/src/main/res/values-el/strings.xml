@@ -26,7 +26,7 @@
     <string name="hint_name">Πλήρες όνομα</string>
     <string name="hint_new_email">Νεο Email</string>
     <string name="hint_password">Κωδικός</string>
-    <string name="info">Πηροφορίες</string>
+    <string name="info">Πληροφορίες</string>
     <string name="lbl_forgot_password">Ξεχασες τον κωδικό</string>
     <string name="logout">Αποσύνδεση</string>
     <string name="nearby_museums">Κοντινα μουσεία</string>
@@ -49,4 +49,8 @@
     <string name="naviconmuseum"></string>
     <string name="musedroid" translatable="false"></string>
     <string name="minimum_password"></string>
+    <!-- tab layout -->
+    <string name="tab_layout_all_museums">Μουσεία</string>
+    <string name="tab_layout_near_by_museum">Κοντινά Μουσεία</string>
+    <string name="tab_layout_visited">Eπισκέφθηκε</string>
 </resources>

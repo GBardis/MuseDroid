@@ -54,7 +54,8 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder>{
         holder.description.setText(museum.shortDescription);
 
         // Firebase listener that check if a user has any favorite museums
-        mDatabase.child("user-favorites").child(auth.getCurrentUser().getUid());
+        String uId = auth.getCurrentUser().getUid();
+        mDatabase.child("user-favorites").child(uId);
         followListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -62,9 +63,9 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder>{
                 //It is also favorite of the currentUser
                 String museumKey = (String) dataSnapshot.child("user-favorites")
                         .child(auth.getCurrentUser().getUid()).child(museum.key)
-                        .child("mName").getValue();
+                        .child("mKey").getValue();
 
-                if (museumKey != null && museumKey.equals(museum.name)) {
+                if (museumKey != null && museumKey.equals(museum.key)) {
                     //triggers the favorite button to show the that this museum is favorite
                     holder.favoriteButton.setFavorite(true, false);
 
@@ -98,6 +99,7 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder>{
                         }
                     }
                 });
+//        mDatabase.removeEventListener(followListener);
     }
 
     public void addItem(Museum dataObj, int index) {

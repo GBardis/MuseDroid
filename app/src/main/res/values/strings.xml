@@ -107,6 +107,9 @@
 
     <string name="pref_user_profile">User Profile</string>
     <string name="pref_update_setting">Update Settings</string>
-    <!--<string name="settings">Settings</string>-->
+    <!-- tab layout -->
+    <string name="tab_layout_all_museums">All Museums</string>
+    <string name="tab_layout_near_by_museum">NearBy Museums</string>
+    <string name="tab_layout_visited">Visited</string>
 </resources>
 
