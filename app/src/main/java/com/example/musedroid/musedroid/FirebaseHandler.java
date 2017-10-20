@@ -70,7 +70,8 @@ public class FirebaseHandler extends AppCompatActivity {
                 //It is important for the adapter to works to use museumAdapter.notifyDataSetChanged(); after
                 //firebase add all museum inside the list , triggers adapter to see the data changes\
                 final Museum museum = dataSnapshot.getValue(Museum.class);
-
+                adapter.add(museum);
+                adapter.notifyDataSetChanged();
                 assert museum != null;
                 museum.key = dataSnapshot.getKey();
                 //Get all Museum Exhibit based on language of the app
@@ -82,11 +83,18 @@ public class FirebaseHandler extends AppCompatActivity {
                         MuseumFields museumFields = dataSnapshot.getValue(MuseumFields.class);
                         assert museumFields != null;
                         if (museumFields.museum.equals(museum.key) && museumFields.language.equals(userLanguage.toLowerCase())) {
-                            museum.description = museumFields.description;
-                            museum.name = museumFields.name;
-                            museum.shortDescription = museumFields.shortDescription;
-                            adapter.add(museum);
+//                            museum.description = museumFields.description;
+//                            museum.name = museumFields.name;
+//                            museum.shortDescription = museumFields.shortDescription;
+                            for(int i =0 ; i<adapter.getItemCount();i++){
+                                if (adapter.getItem(i).key.equals(dataSnapshot.child("museum").getValue())){
+                                    adapter.getItem(i).name = museumFields.name;
+                                    adapter.getItem(i).description = museumFields.description;
+                                    adapter.getItem(i).shortDescription = museumFields.shortDescription;
+                                }
+                            }
                             adapter.notifyDataSetChanged();
+
                         }
                     }
 

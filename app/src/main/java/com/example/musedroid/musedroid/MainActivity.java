@@ -1,6 +1,4 @@
 package com.example.musedroid.musedroid;
-
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,7 +22,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -32,7 +29,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.List;
@@ -98,10 +94,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void OnAdapterFull() {
                 //adapter is now full! start geofence creation chain!
-                if (!runOnce) {
+                //if (!runOnce) {
                     createGeoFences(museumAdapter);
                     runOnce = true;
-                }
+                //}
             }
         });
 
