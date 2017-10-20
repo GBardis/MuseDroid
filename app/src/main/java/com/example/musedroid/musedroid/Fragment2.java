@@ -36,12 +36,14 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 
-public class Fragment2 extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class Fragment2 extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnCompleteListener<Void> {
     public static final int REQUEST_LOCATION = 001;
     private static final String NEARBY_MUSEUM = "NearByMuseum";
     private static final String ALL_MUSEUM = "allMuseums";
@@ -71,6 +73,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     private int minLocationUpdateTime = 0;
     private int minLocationUpdateInterval = 0;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -90,6 +93,8 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             getUpdates();
         }
 
+
+
         //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             new ShowGpsSuccessToast().execute();
@@ -97,7 +102,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             try {
                 mEnableGps();
             } catch (Exception ex) {
-                int s = 1;
+
             }
         }
         return view;
@@ -121,9 +126,24 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         //initialize Museum adapter and give as import an array list
         //call firebase function after the initialize of the adapter
+
         if (savedInstanceState == null) {
             getFirebaseUpdates();
         }
+        onLocationChangeAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onChanged() {
+                super.onChanged();
+                int i = 0;
+            }
+
+            @Override
+            public void onItemRangeChanged(int positionStart, int itemCount) {
+                super.onItemRangeChanged(positionStart, itemCount);
+                int i = 0;
+            }
+        });
+
         ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
@@ -135,6 +155,18 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             }
         });
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -328,8 +360,11 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 if (Double.parseDouble(allMuseumAdapter.getItem(i).distance) < 5) {
                     onLocationChangeAdapter.add(allMuseumAdapter.getItem(i));
                 }
+
                 onLocationChangeAdapter.notifyDataSetChanged();
+
             }
+
 
             if (onLocationChangeAdapter != tempMuseumList) {
 
@@ -373,6 +408,11 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
     }
 
+    @Override
+    public void onComplete(@NonNull Task<Void> task) {
+
+    }
+
 
     private class ShowGpsSuccessToast extends AsyncTask<Void, Void, Void> {
 
@@ -386,4 +426,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             Toast.makeText(getActivity().getApplicationContext(), "GPS ENABLED", Toast.LENGTH_LONG).show();
         }
     }
+
+
 }

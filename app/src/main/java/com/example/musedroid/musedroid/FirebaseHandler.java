@@ -2,6 +2,7 @@ package com.example.musedroid.musedroid;
 
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 
 import com.google.firebase.database.ChildEventListener;
@@ -11,7 +12,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -23,6 +26,24 @@ public class FirebaseHandler extends AppCompatActivity {
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     public static DatabaseReference mDatabase = database.getReference();
 
+    private static boolean signalFull;
+    private static List<AdapterFullListener> adapterFullListeners = new ArrayList<AdapterFullListener>();
+
+    public static boolean getSignalFull() {
+        return signalFull;
+    }
+
+    public static void setSignalFull(boolean bool) {
+        signalFull = bool;
+        for (AdapterFullListener adapterFullListener : adapterFullListeners) {
+            adapterFullListener.OnAdapterFull();
+        }
+    }
+
+    public static void addAdapterFullListener(AdapterFullListener adapterFullListener) {
+        adapterFullListeners.add(adapterFullListener);
+    }
+
     public void getMuseums(final MuseumAdapter adapter, final ProgressBar progressBar, final String appLanguage, final View view) {
         adapter.clear();
 
@@ -33,6 +54,8 @@ public class FirebaseHandler extends AppCompatActivity {
                     progressBar.setVisibility(view.GONE);
                     flag = false;
                 }
+                //Fire the adapterFull event!
+                setSignalFull(true);
             }
 
             @Override
@@ -45,11 +68,9 @@ public class FirebaseHandler extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
                 //It is important for the adapter to works to use museumAdapter.notifyDataSetChanged(); after
-                //firebase add all museum inside the list , triggers adapter to see the data changes
-                if (!flag) {
-                    flag = true;
-                }
+                //firebase add all museum inside the list , triggers adapter to see the data changes\
                 final Museum museum = dataSnapshot.getValue(Museum.class);
+
                 assert museum != null;
                 museum.key = dataSnapshot.getKey();
                 //Get all Museum Exhibit based on language of the app
@@ -124,4 +145,5 @@ public class FirebaseHandler extends AppCompatActivity {
             mDatabase.child("user-favorites").child(userId).child(museum.key).removeValue();
         }
     }
+
 }
