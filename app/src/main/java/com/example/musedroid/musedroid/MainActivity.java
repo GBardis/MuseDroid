@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private GeofencingClient mGeofencingClient;
     public List<Geofence> mGeofenceList = new ArrayList<>();
     private PendingIntent mGeofencePendingIntent;
+    private boolean runOnce = false;
     Context context;
 
 
@@ -89,7 +90,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void OnAdapterFull() {
                //adapter is now full! start geofence creation chain!
-                createGeoFences(museumAdapter);
+                if (!runOnce) {
+                    createGeoFences(museumAdapter);
+                    runOnce=true;
+                }
             }
         });
 
