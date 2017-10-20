@@ -78,7 +78,7 @@ public class Fragment1 extends Fragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         appLanguage = getAppLanguage();
         try {
             if (savedInstanceState != null && tempLang.equals(appLanguage)) {
@@ -120,7 +120,7 @@ public class Fragment1 extends Fragment {
         super.onSaveInstanceState(outState);
     }
 
-    private Bundle restoreMuseumAdapter(Bundle outState) {
+    private Bundle restoreMuseumAdapter(@Nullable Bundle outState) {
         bundledMuseumsList.clear();
         for (int i = 0; i < allMuseums.getItemCount(); i++) {
             bundledMuseumsList.add(allMuseums.getItem(i));

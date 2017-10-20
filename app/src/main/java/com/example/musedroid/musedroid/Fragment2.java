@@ -241,7 +241,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
     //Save the state of activity for checked position
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@Nullable Bundle outState) {
         try {
             if (outState != null && tempLang.equals(appLanguage)) {
                 restoreMuseumAdapter(outState);

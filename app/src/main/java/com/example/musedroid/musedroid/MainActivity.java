@@ -1,11 +1,12 @@
 package com.example.musedroid.musedroid;
+
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.app.PendingIntent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -18,10 +19,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -29,9 +32,11 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
-import java.util.Locale;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -40,18 +45,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static String appLanguage;
     public static String tempLang;
     public ProgressBar progressBar;
+    public List<Geofence> mGeofenceList = new ArrayList<>();
     NavigationView navigationView;
+    Context context;
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
     private String[] pageTitle = {"All Museums", "Near by Museums", "Fragment 3"};
     //Geofencing
     private GeofencingClient mGeofencingClient;
-    public List<Geofence> mGeofenceList = new ArrayList<>();
     private PendingIntent mGeofencePendingIntent;
     private boolean runOnce = false;
-    Context context;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         appLanguage = getAppLanguage();
         setContentView(R.layout.activity_main);
         context = this;
-
 
         setUserLanguage();
         progressBar = findViewById(R.id.mainProgressBar);
@@ -70,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (!tempLang.equals(appLanguage)) {
             getFirebaseUpdates();
         }
-
 
         viewPager = findViewById(R.id.view_pager);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -94,10 +96,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void OnAdapterFull() {
                 //adapter is now full! start geofence creation chain!
-                //if (!runOnce) {
-                    createGeoFences(museumAdapter);
-                    runOnce = true;
-                //}
+                createGeoFences(FirebaseHandler.museumAdapter);
+                runOnce = true;
             }
         });
 
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         //handling navigation view item event
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView =findViewById(R.id.nav_view);
 
 
         assert navigationView != null;
@@ -139,10 +139,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void getFirebaseUpdates() {
+        FirebaseHandler firebaseHandler = new FirebaseHandler();
+        //Get geofence data
+        firebaseHandler.getMuseumsForGeofence();
+        // Get data for fragment
         progressBar.setVisibility(View.VISIBLE);
         getFirebase = new GetFirebase();
         museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage, findViewById(android.R.id.content));
         museumAdapter.notifyDataSetChanged();
+        runOnce = true;
     }
 
     @Override
@@ -151,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         appLanguage = getAppLanguage();
         Context context = LocaleHelper.setLocale(this, Locale.getDefault().getLanguage());
         Resources resources = context.getResources();
+        //change nav drawer layout based on language
 
         int id;
         int itemCount = navigationView.getMenu().size();
@@ -197,15 +203,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.attachBaseContext(LocaleHelper.onAttach(base));
     }
 
+    // If app language is changed  this function is called to changed default locale
     private void updateViews(String language) {
         LocaleHelper.setLocale(this, language);
 
     }
 
+    // recreate view if app config is changed
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
 
         this.setContentView(R.layout.activity_main);
         NavigationView navigationView = (NavigationView) this.findViewById(R.id.nav_view);
@@ -244,7 +251,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             try {
                 mGeofenceList.add(geofence);
             } catch (Exception ex) {
-
+                Log.e("Exception", ex.getMessage());
+                Log.e("Exception", Arrays.toString(ex.getStackTrace()));
             }
 
         }
