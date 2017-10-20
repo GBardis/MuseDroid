@@ -1,6 +1,5 @@
 package com.example.musedroid.musedroid;
 
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -30,22 +29,16 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingClient;
-import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 
 public class Fragment2 extends Fragment implements LocationListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, OnCompleteListener<Void> {
@@ -75,9 +68,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     RecyclerView mRecyclerView;
     private int minLocationUpdateTime = 0;
     private int minLocationUpdateInterval = 0;
-    private GeofencingClient mGeofencingClient;
-    public List<Geofence> mGeofenceList = new ArrayList<>();
-    private PendingIntent mGeofencePendingIntent;
+
 
     @Nullable
     @Override
@@ -97,7 +88,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         } else if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             getUpdates();
         }
-        mGeofencingClient = LocationServices.getGeofencingClient(getActivity().getApplicationContext());
+
 
 
         //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -159,98 +150,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 startActivity(intent);
             }
         });
-    }
-
-    public void addGeofences(GeofencingClient mGeofencingClient) {
-        if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        try {
-            mGeofencingClient.addGeofences(getGeofencingRequest(mGeofenceList), getGeofencePendingIntent())
-                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            // Geofences added
-                            //
-                        }
-                    })
-                    .addOnFailureListener(getActivity(), new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // Failed to add geofences
-                            // ...
-                        }
-                    });
-        } catch (Exception ex) {
-
-        }
-    }
-
-    public void createGeoFences(MuseumAdapter adapter) {
-        for (int i = 0; i < adapter.getItemCount(); i++) {
-            if (areEqual(mGeofenceList, adapter) != true) {
-                //removeAllFences(mGeofenceList);
-                Geofence geofence = new Geofence.Builder()
-                        .setRequestId(adapter.getItem(i).name) // Geofence ID
-                        .setCircularRegion(Double.parseDouble(adapter.getItem(i).lat), Double.parseDouble(adapter.getItem(i).lon), 100) // defining fence region
-                        .setExpirationDuration(Geofence.NEVER_EXPIRE) // expiring date
-                        // Transition types that it should look for
-                        .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
-                        .build();
-                try {
-                    mGeofenceList.add(geofence);
-                } catch (Exception ex) {
-
-                }
-            }
-        }
-        //getGeofencingRequest(mGeofenceList);
-        //call pending intent!
-        //getGeofencePendingIntent();
-        addGeofences(mGeofencingClient);
-    }
-
-
-    public boolean areEqual(List<Geofence> list, MuseumAdapter adapter) {
-        if (list.size() != adapter.getItemCount()) {
-            return false;
-        }
-        for (Geofence geofence : list) {
-            for (int i = 0; i < adapter.getItemCount(); i++) {
-                if (adapter.getItem(i) != geofence) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    @NonNull
-    private GeofencingRequest getGeofencingRequest(List<Geofence> mGeofenceList) {
-        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
-        builder.addGeofences(mGeofenceList);
-        return builder.build();
-    }
-
-    private PendingIntent getGeofencePendingIntent() {
-        // Reuse the PendingIntent if we already have it.
-        if (mGeofencePendingIntent != null) {
-            return mGeofencePendingIntent;
-        }
-        Intent intent = new Intent(getActivity().getApplicationContext(), GeofenceTransitionsIntentService.class);
-        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
-        // calling addGeofences() and removeGeofences().
-        mGeofencePendingIntent = PendingIntent.getService(getActivity().getApplicationContext(), 0, intent, PendingIntent.
-                FLAG_UPDATE_CURRENT);
-        return mGeofencePendingIntent;
     }
 
 
@@ -419,7 +318,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 onLocationChangeAdapter.notifyDataSetChanged();
 
             }
-            createGeoFences(onLocationChangeAdapter);
+
 
             if (onLocationChangeAdapter != tempMuseumList) {
 
