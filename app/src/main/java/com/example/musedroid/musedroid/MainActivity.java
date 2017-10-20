@@ -24,7 +24,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
-
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -32,7 +31,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,11 +49,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ViewPager viewPager;
     private DrawerLayout drawer;
     private TabLayout tabLayout;
-    private String[] pageTitle = {"All Museums", "Near by Museums", "Fragment 3"};
     //Geofencing
     private GeofencingClient mGeofencingClient;
     private PendingIntent mGeofencePendingIntent;
-    private boolean runOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +91,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void OnAdapterFull() {
                 //adapter is now full! start geofence creation chain!
                 createGeoFences(FirebaseHandler.museumAdapter);
-                runOnce = true;
             }
         });
 
@@ -104,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         //handling navigation view item event
         navigationView = findViewById(R.id.nav_view);
-
 
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
@@ -140,19 +134,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         FirebaseHandler firebaseHandler = new FirebaseHandler();
         //Get geofence data
         firebaseHandler.getMuseumsForGeofence();
-        // Get data for fragment
+        // Get fragment data
         progressBar.setVisibility(View.VISIBLE);
         getFirebase = new GetFirebase();
         museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage, findViewById(android.R.id.content));
         museumAdapter.notifyDataSetChanged();
-        runOnce = true;
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         appLanguage = getAppLanguage();
-        Context context = LocaleHelper.setLocale(this, Locale.getDefault().getLanguage());
+        changeLayout();
+        if (!tempLang.equals(appLanguage)) {
+            progressBar.setVisibility(View.GONE);
+            getFirebaseUpdates();
+            FirebaseHandler.database.goOnline();
+        }
+    }
+
+    private void changeLayout() {
+        Context context = LocaleHelper.setLocale(this, LocaleHelper.getLanguage(this));
         Resources resources = context.getResources();
         //change nav drawer layout based on language
         tabLayout.removeAllTabs();
@@ -179,12 +181,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     item.setTitle(resources.getString(R.string.info));
                     break;
             }
-        }
-        updateViews(appLanguage);
-        if (!tempLang.equals(appLanguage)) {
-            progressBar.setVisibility(View.GONE);
-            getFirebaseUpdates();
-            FirebaseHandler.database.goOnline();
         }
     }
 
@@ -218,11 +214,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onConfigurationChanged(newConfig);
 
         this.setContentView(R.layout.activity_main);
-        NavigationView navigationView = (NavigationView) this.findViewById(R.id.nav_view);
+        NavigationView navigationView = this.findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(MainActivity.this);
 
     }
-
 
     //set language in preferences manager equals to locale of the current phone
     private void setUserLanguage() {
@@ -237,7 +232,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             editor.putString("prefAppLanguage", Locale.getDefault().getLanguage());
             editor.apply();
             appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
-            updateViews(appLanguage);
         }
     }
 
@@ -257,9 +251,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 Log.e("Exception", ex.getMessage());
                 Log.e("Exception", Arrays.toString(ex.getStackTrace()));
             }
-
         }
-
         addGeofences(mGeofencingClient);
     }
 
@@ -283,7 +275,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 FLAG_UPDATE_CURRENT);
         return mGeofencePendingIntent;
     }
-
 
     public void addGeofences(GeofencingClient mGeofencingClient) {
         //app context was getActivity().getApplicationContext()
@@ -315,7 +306,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         }
                     });
         } catch (Exception ex) {
-
+            Log.e("Exception", ex.getMessage());
+            Log.e("Exception", Arrays.toString(ex.getStackTrace()));
         }
     }
 
@@ -337,7 +329,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(MainActivity.this, MapsActivity.class));
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -380,7 +371,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 
     @Override
     public void onBackPressed() {

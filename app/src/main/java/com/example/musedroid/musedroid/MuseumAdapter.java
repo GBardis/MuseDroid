@@ -21,7 +21,7 @@ import java.util.List;
  * Created by gdev on 22/9/2017.
  */
 
-class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder>{
+class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
     public static FirebaseDatabase database = FirebaseDatabase.getInstance();
     private static DatabaseReference mDatabase = database.getReference();
     private static FirebaseHandler firebaseHandler = new FirebaseHandler();
@@ -54,8 +54,7 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder>{
         holder.description.setText(museum.shortDescription);
 
         // Firebase listener that check if a user has any favorite museums
-        String uId = auth.getCurrentUser().getUid();
-        mDatabase.child("user-favorites").child(uId);
+        mDatabase.child("user-favorites").child(auth.getCurrentUser().getUid());
         followListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -99,7 +98,6 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder>{
                         }
                     }
                 });
-//        mDatabase.removeEventListener(followListener);
     }
 
     public void addItem(Museum dataObj, int index) {
@@ -156,8 +154,6 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder>{
         followRef.removeEventListener(followListener); //Removes the listener
         super.onViewDetachedFromWindow(holder);
     }
-
-
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
