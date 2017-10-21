@@ -28,6 +28,40 @@ public class FirebaseHandler extends AppCompatActivity {
     private static boolean signalFull;
     private static List<AdapterFullListener> adapterFullListeners = new ArrayList<>();
 
+    //Create named childEventListener to keep the reference for when you want to mDatabase.removeEventListener(listener)
+    ChildEventListener childEventListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            //It is important for the adapter to works to use museumAdapter.notifyDataSetChanged(); after
+            //firebase add all museum inside the list , triggers adapter to see the data changes\
+            final Museum museum = dataSnapshot.getValue(Museum.class);
+            assert museum != null;
+            museum.key = dataSnapshot.getKey();
+            museumAdapter.add(museum);
+            museumAdapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
+
     public static boolean getSignalFull() {
         return signalFull;
     }
@@ -135,7 +169,11 @@ public class FirebaseHandler extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //Fire the adapterFull event!
-                setSignalFull(true);
+                if (museumAdapter.getItemCount() != 0) {
+                    setSignalFull(true);
+                    mDatabase.removeEventListener(this);
+                    mDatabase.removeEventListener(childEventListener);
+                }
             }
 
             @Override
@@ -143,38 +181,8 @@ public class FirebaseHandler extends AppCompatActivity {
 
             }
         });
-        mDatabase.child("museums").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                //It is important for the adapter to works to use museumAdapter.notifyDataSetChanged(); after
-                //firebase add all museum inside the list , triggers adapter to see the data changes\
-                final Museum museum = dataSnapshot.getValue(Museum.class);
-                assert museum != null;
-                museum.key = dataSnapshot.getKey();
-                museumAdapter.add(museum);
-                museumAdapter.notifyDataSetChanged();
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+        mDatabase.child("museums").addChildEventListener(childEventListener);
     }
 
     public void userFavorite(String userId, Museum museum, boolean isfav) {
