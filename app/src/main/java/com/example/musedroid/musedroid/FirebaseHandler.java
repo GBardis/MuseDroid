@@ -1,8 +1,6 @@
 package com.example.musedroid.musedroid;
 
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -77,14 +75,12 @@ public class FirebaseHandler extends AppCompatActivity {
         adapterFullListeners.add(adapterFullListener);
     }
 
-    public void getMuseums(final MuseumAdapter adapter, final ProgressBar progressBar, final String appLanguage, final View view) {
+    public void getMuseums(final MuseumAdapter adapter, final String appLanguage) {
 
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if (flag) {
-                    progressBar.setVisibility(view.GONE);
-                }
+               
             }
 
             @Override

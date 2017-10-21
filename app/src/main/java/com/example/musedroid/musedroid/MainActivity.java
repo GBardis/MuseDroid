@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             public void OnAdapterFull() {
                 //adapter is now full! start geofence creation chain!
                 createGeoFences(FirebaseHandler.museumAdapter);
+                progressBar.setVisibility(View.GONE);
             }
         });
 
@@ -137,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         // Get fragment data
         progressBar.setVisibility(View.VISIBLE);
         getFirebase = new GetFirebase();
-        museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), progressBar, appLanguage, findViewById(android.R.id.content));
+        museumAdapter = getFirebase.listViewFromFirebase(new MuseumAdapter(new ArrayList<Museum>()), appLanguage);
         museumAdapter.notifyDataSetChanged();
     }
 
