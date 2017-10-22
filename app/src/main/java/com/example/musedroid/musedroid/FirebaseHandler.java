@@ -9,10 +9,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -188,14 +185,6 @@ public class FirebaseHandler extends AppCompatActivity {
         Map<String, Object> museumValues = museum.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
 
-        Map<String, List<String>> hm = new HashMap<String, List<String>>();
-        List<String> values = new ArrayList<String>();
-        JSONObject haha = new JSONObject(museumValues);
-
-        values.add("Value 1");
-        values.add("Value 2");
-        hm.put("Key1", values);
-        Collection<List<String>> output = hm.values();
         if (isfav) {
             childUpdates.put("/user-favorites/" + userId + "/" + museum.key, museumValues);
             mDatabase.updateChildren(childUpdates);

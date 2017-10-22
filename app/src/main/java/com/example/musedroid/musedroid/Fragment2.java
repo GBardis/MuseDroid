@@ -178,7 +178,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
     @Override
     public void onPause() {
-        googleApiClient.disconnect();
         FirebaseHandler.database.goOffline();
         super.onPause();
 
@@ -187,7 +186,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public void onStop() {
         super.onStop();
-        googleApiClient.disconnect();
         FirebaseHandler.database.goOffline();
     }
 

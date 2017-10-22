@@ -37,6 +37,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
     Intent intent;
     String museumAddress, museumName;
     TextView textDescription;
+
     Intent i;
     private GoogleApiClient mGoogleApiClient;
 
@@ -89,7 +90,7 @@ public class ShowActivity extends AppCompatActivity implements GoogleApiClient.O
         qrButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent(ShowActivity.this, QrShowActivity.class);
+                intent = new Intent(ShowActivity.this, MuseumShow.class);
                 intent.putExtra("flag", false);
                 startActivity(intent);
             }
