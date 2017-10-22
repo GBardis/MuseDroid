@@ -70,6 +70,8 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     RecyclerView mRecyclerView;
     String appLanguage;
     String tempLang;
+    Location mLastLocation;
+
     private int minLocationUpdateTime = 0;
     private int minLocationUpdateInterval = 0;
 
@@ -82,7 +84,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         //progressBar = view.findViewById(R.id.nearByMuseumProgressBar);
 
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-
         //onCreatedView code
 
         if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -91,7 +92,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         } else if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             getUpdates();
         }
-
 
         //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -159,7 +159,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FirebaseHandler.database.goOnline();
     }
 
     @Override
@@ -169,18 +168,26 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         if (!tempLang.equals(appLanguage)) {
             getFirebaseUpdates();
         }
+    }
+
+    @Override
+    public void onStart() {
         FirebaseHandler.database.goOnline();
+        super.onStart();
     }
 
     @Override
     public void onPause() {
-        super.onPause();
+        googleApiClient.disconnect();
         FirebaseHandler.database.goOffline();
+        super.onPause();
+
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        googleApiClient.disconnect();
         FirebaseHandler.database.goOffline();
     }
 
@@ -265,8 +272,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     private void getFirebaseUpdates() {
         allMuseumAdapter = MainActivity.museumAdapter;
         allMuseumAdapter.notifyDataSetChanged();
-        onLocationChangeAdapter.clear();
-        getUpdates();
+        mEnableGps();
+        Location dest = new Location("provider");
+        findNearbyMuseums(mLastLocation, dest);
         mRecyclerView.setAdapter(onLocationChangeAdapter);
     }
 
@@ -339,6 +347,10 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     public void onLocationChanged(final Location location) {
         Location dest = new Location("provider");
         currentLocation = location;
+        findNearbyMuseums(location, dest);
+    }
+
+    private void findNearbyMuseums(Location location, Location dest) {
         try {
             onLocationChangeAdapter.clear();
             for (int i = 0; i < allMuseumAdapter.getItemCount(); i++) {
@@ -379,8 +391,20 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-
+        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                googleApiClient);
     }
+
 
     @Override
     public void onConnectionSuspended(int i) {
