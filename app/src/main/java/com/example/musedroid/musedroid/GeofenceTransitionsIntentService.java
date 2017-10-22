@@ -32,6 +32,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabase = database.getReference();
     private Museum museum;
+    private MuseumFields museumFields;
 
 
     private static final String TAG = "GeofenceTransitionsIS";
@@ -69,7 +70,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
             // Get the geofences that were triggered. A single event can trigger multiple geofences.
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-            fetchTriggeredMuseum(triggeringGeofences.get(0).getRequestId(),geofenceTransition, triggeringGeofences);
+            fetchTriggeredMuseum(triggeringGeofences.get(triggeringGeofences.size() - 1).getRequestId(),geofenceTransition, triggeringGeofences);
             //continueHandleIntent(geofenceTransition, triggeringGeofences);
 
 
@@ -106,32 +107,21 @@ public class GeofenceTransitionsIntentService extends IntentService {
     }
 
     private void fetchTriggeredMuseumFields(final Museum museum, String museumKey, final int geofenceTransition, final List<Geofence> triggeringGeofences){
-
-        mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                //String done = "done";
-                continueHandleIntent(geofenceTransition,triggeringGeofences,museum);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
         try {
             mDatabase.child("museumFields").orderByChild("museum").equalTo(museumKey).addChildEventListener(new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                     try {
-                        MuseumFields museumFields = dataSnapshot.getValue(MuseumFields.class);
+                        museumFields = dataSnapshot.getValue(MuseumFields.class);
                         assert museumFields != null;
                         //...
                         if (museumFields.museum.equals(museum.key) && museumFields.language.equals(MainActivity.appLanguage.toLowerCase())) {
                             museum.description = museumFields.description;
                             museum.name = museumFields.name;
                             museum.shortDescription = museumFields.shortDescription;
-
+                        }
+                        if (museum.description != null){
+                            continueHandleIntent(geofenceTransition, triggeringGeofences, museum);
                         }
                     } catch (Exception ex) {
 
@@ -204,14 +194,16 @@ public class GeofenceTransitionsIntentService extends IntentService {
         // Push the content Intent onto the stack.
         stackBuilder.addNextIntent(notificationIntent);
 
-        //Write intent that get's you to activity
-        //Intent intent = new Intent(getBaseContext(),ShowActivity.class);
+        //Write intent that get's you to activity [1.new]
+        Intent intent = new Intent(getBaseContext(),ShowActivity.class);
+        intent.putExtra("museum",museum);
         // Get a PendingIntent containing the entire back stack.
+        //[1.old]
         PendingIntent notificationPendingIntent =
                 stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        //set the pending intent to get you to the according museum
-        //notificationPendingIntent = PendingIntent.getActivity(this,0,intent,0);
+        //set the pending intent to get you to the according museum [2.new]
+        notificationPendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Get a notification builder that's compatible with platform versions >= 4
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
