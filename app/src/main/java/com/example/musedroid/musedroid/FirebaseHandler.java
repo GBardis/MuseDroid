@@ -83,7 +83,7 @@ public class FirebaseHandler extends AppCompatActivity {
         mDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-               
+
             }
 
             @Override
