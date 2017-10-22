@@ -73,7 +73,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     private int minLocationUpdateTime = 0;
     private int minLocationUpdateInterval = 0;
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -94,7 +93,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         }
 
 
-
         //locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             new ShowGpsSuccessToast().execute();
@@ -112,7 +110,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         appLanguage = getAppLanguage();
-        tempLang = MainActivity.tempLang;
+
+        tempLang = appLanguage;
+
         nearbyMuseumList = new ArrayList<>();
         mRecyclerView = view.findViewById(R.id.museumNearbyRecycleView);
         // use this setting to improve performance if you know that changes
@@ -156,18 +156,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         });
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -207,9 +195,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     //Restore last state for checked position.
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        appLanguage = getAppLanguage();
         try {
             if (savedInstanceState != null && tempLang.equals(appLanguage)) {
+                tempLang = appLanguage;
                 mRecyclerView.getRecycledViewPool().clear();
                 allMuseumAdapter.clear();
                 onLocationChangeAdapter.clear();
@@ -229,7 +217,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 }
             } else {
                 getFirebaseUpdates();
-                getUpdates();
             }
         } catch (Exception ex) {
             Log.e("Exception", ex.getMessage());
@@ -278,7 +265,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     private void getFirebaseUpdates() {
         allMuseumAdapter = MainActivity.museumAdapter;
         allMuseumAdapter.notifyDataSetChanged();
-        mRecyclerView.setAdapter(allMuseumAdapter);
+        onLocationChangeAdapter.clear();
+        getUpdates();
+        mRecyclerView.setAdapter(onLocationChangeAdapter);
     }
 
     public void askForPermission() {
@@ -297,7 +286,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minLocationUpdateTime, minLocationUpdateInterval, Fragment2.this);
-
     }
 
     public void mEnableGps() {
@@ -360,14 +348,10 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                 if (Double.parseDouble(allMuseumAdapter.getItem(i).distance) < 5) {
                     onLocationChangeAdapter.add(allMuseumAdapter.getItem(i));
                 }
-
                 onLocationChangeAdapter.notifyDataSetChanged();
-
             }
 
-
             if (onLocationChangeAdapter != tempMuseumList) {
-
                 tempMuseumList = onLocationChangeAdapter;
                 mRecyclerView.getRecycledViewPool().clear();
             }

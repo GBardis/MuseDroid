@@ -24,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
@@ -31,6 +32,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static GetFirebase getFirebase;
     public static String appLanguage;
     public static String tempLang;
+    static int tabIndex;
     public ProgressBar progressBar;
     public List<Geofence> mGeofenceList = new ArrayList<>();
     NavigationView navigationView;
@@ -84,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //setting Tab layout (number of Tabs = number of ViewPager pages)
         tabLayout = findViewById(R.id.tab_layout);
 
-
         //this will run when the adapter is full from firebase!
         FirebaseHandler.addAdapterFullListener(new AdapterFullListener() {
             @Override
@@ -96,10 +98,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         });
 
         //set gravity for tab bar
-        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
+        //tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         //handling navigation view item event
         navigationView = findViewById(R.id.nav_view);
+
 
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
@@ -154,6 +156,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        tabIndex = tabLayout.getSelectedTabPosition();
+    }
+
     private void changeLayout() {
         Context context = LocaleHelper.setLocale(this, LocaleHelper.getLanguage(this));
         Resources resources = context.getResources();
@@ -162,6 +170,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tabLayout.addTab(tabLayout.newTab().setText(resources.getString(R.string.tab_layout_all_museums)));
         tabLayout.addTab(tabLayout.newTab().setText(resources.getString(R.string.tab_layout_near_by_museum)));
         tabLayout.addTab(tabLayout.newTab().setText(resources.getString(R.string.tab_layout_visited)));
+        if (tabIndex != -1) {
+            TabLayout.Tab tab = tabLayout.getTabAt(tabIndex);
+            assert tab != null;
+            tab.select();
+        }
         int id;
         int itemCount = navigationView.getMenu().size();
         MenuItem item;
