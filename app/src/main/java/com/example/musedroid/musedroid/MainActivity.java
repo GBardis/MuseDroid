@@ -252,6 +252,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     //Geofencing chain
     public void createGeoFences(MuseumAdapter adapter) {
         for (int i = 0; i < adapter.getItemCount(); i++) {
+            //adapter.getItem(i)
             Geofence geofence = new Geofence.Builder()
                     .setRequestId(adapter.getItem(i).key) // Geofence ID
                     .setCircularRegion(Double.parseDouble(adapter.getItem(i).lat), Double.parseDouble(adapter.getItem(i).lon), 100) // defining fence region
@@ -285,8 +286,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(context, GeofenceTransitionsIntentService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when
         // calling addGeofences() and removeGeofences().
-        mGeofencePendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.
-                FLAG_UPDATE_CURRENT);
+        mGeofencePendingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         return mGeofencePendingIntent;
     }
 
