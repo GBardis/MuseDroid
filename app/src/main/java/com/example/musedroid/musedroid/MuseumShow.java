@@ -88,9 +88,12 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
         mFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent = new Intent(MuseumShow.this, QrShowActivity.class);
-                intent.putExtra("flag", false);
-                intent.putExtra("museumId", museum.key);
+//                intent = new Intent(MuseumShow.this, QrShowActivity.class);
+//                intent.putExtra("flag", false);
+//                intent.putExtra("museumId", museum.key);
+//                startActivity(intent);
+                //TODO: bring all the upper code back!
+                intent = new Intent(MuseumShow.this,NfcScanActivity.class);
                 startActivity(intent);
             }
         });
