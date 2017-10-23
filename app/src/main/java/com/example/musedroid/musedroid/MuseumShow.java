@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -38,6 +39,7 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
     ImageView toolbarImage;
     String address, phoneNumber, website;
     Bitmap museumImage;
+    RatingBar ratingBar;
     private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -58,6 +60,7 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
         museumPhoneNumber = findViewById(R.id.museumphoneNumber);
         museumWebsite = findViewById(R.id.museumWebsite);
         museumDescription = findViewById(R.id.museum_description);
+        ratingBar = findViewById(R.id.ratingBar);
         museum = i.getParcelableExtra("museum");
 
         if (savedInstanceState == null) {
@@ -74,7 +77,6 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                 }
             }
         }
-
     }
 
     @Override
@@ -96,7 +98,7 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
         // Save custom values into the bundle
         if (savedInstanceState != null) {
             try {
-//compress bitmap to pass it into byteArray
+                //compress bitmap to pass it into byteArray
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 museumImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 byte[] bytes = stream.toByteArray();
@@ -193,9 +195,9 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                             museumPhoneNumber.setText(address);
                             museumWebsite.setText(website);
                             museumAddress.setText(phoneNumber);
-//                            ratingBar = findViewById(R.id.ratingBar);
-//                            ratingBar.setNumStars(5);
-//                            ratingBar.setRating(rating);
+
+                            ratingBar.setNumStars(5);
+                            ratingBar.setRating(rating);
                             Log.i(TAG, "Place found: " + myPlace.getName());
 
 

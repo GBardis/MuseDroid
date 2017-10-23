@@ -195,7 +195,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         stackBuilder.addNextIntent(notificationIntent);
 
         //Write intent that get's you to activity [1.new]
-        Intent intent = new Intent(getBaseContext(),ShowActivity.class);
+        Intent intent = new Intent(getBaseContext(),MuseumShow.class);
         intent.putExtra("museum",museum);
         // Get a PendingIntent containing the entire back stack.
         //[1.old]
