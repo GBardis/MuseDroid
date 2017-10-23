@@ -234,6 +234,7 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                             museumPhoneNumber.setText(phoneNumber);
                             museumWebsite.setText(website);
                             museumAddress.setText(address);
+                            museumAddress.setMaxLines(4);
 
                             ratingBar.setNumStars(5);
                             ratingBar.setRating(rating);
