@@ -22,11 +22,22 @@
             android:title="@string/pref_sync_language" />
 
         <SeekBarPreference
-            android:key="keyName"
-            android:title="Property Label"
+            android:key="distanceInterval"
+            android:title="Gps Distance interval"
             android:summary="Summary."
-            android:max="5"
-            android:defaultValue="0" />
+            android:max="100"
+            android:min="30"
+            android:progress="10"
+            android:defaultValue="100" />
+
+        <SeekBarPreference
+            android:key="timeInterval"
+            android:title="Gps Time interval"
+            android:summary="Summary."
+            android:max="900"
+            android:min="300"
+            android:progress="100"
+            android:defaultValue="450" />
     </PreferenceCategory>
 
 </PreferenceScreen>

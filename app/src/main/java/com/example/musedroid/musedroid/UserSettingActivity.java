@@ -85,6 +85,10 @@ public class UserSettingActivity extends PreferenceActivity implements SharedPre
                     updateViews(sharedPrefs.getString("prefAppLanguage", "NULL"));
                 }
                 break;
+
+            case "distanceInterval":
+                    int interval = sharedPrefs.getInt("distanceInterval", 0);
+
             default:
                 break;
         }

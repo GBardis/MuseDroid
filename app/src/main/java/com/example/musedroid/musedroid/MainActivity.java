@@ -245,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             SharedPreferences.Editor editor = sharedPrefs.edit();
             editor.putString("prefAppLanguage", Locale.getDefault().getLanguage());
             editor.apply();
-            appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
+            appLanguage = sharedPrefs.getString("prefAppLanguage",Locale.getDefault().getLanguage());
         }
     }
 
