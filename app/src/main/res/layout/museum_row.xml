@@ -7,9 +7,9 @@
 
 
     <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:padding="16dp">
 
         <com.github.ivbaranov.mfb.MaterialFavoriteButton
             android:id="@+id/museum_image"
@@ -18,20 +18,23 @@
             android:layout_alignParentRight="true" />
 
         <TextView
-                android:id="@+id/museum_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
+            android:id="@+id/museum_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
 
-                android:textSize="15sp" />
+            android:layout_marginBottom="5dp"
+            android:textSize="19sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/museum_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/museum_name" />
+        <TextView
+            android:id="@+id/museum_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/museum_name"
+            android:layout_marginRight="40dp" />
 
 
-        </RelativeLayout>
+    </RelativeLayout>
 
 </LinearLayout>
