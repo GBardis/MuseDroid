@@ -1,6 +1,8 @@
 package com.example.musedroid.musedroid;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -19,11 +21,23 @@ import com.google.android.gms.location.places.PlacePhotoMetadataResult;
 import com.google.android.gms.location.places.PlacePhotoResult;
 import com.google.android.gms.location.places.Places;
 
+import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
+
 public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+    private static final String RATING = "Museum rating";
+    private static final String DESCRIPTION = "museum description";
+    private static final String TITLE = "museum title";
+    private static final String ADDRESS = "museum address";
+    private static final String PHONENUMBER = "museum phoneNumber";
+    private static final String WEBSITE = "museum website";
+    private static final String MUSEUM_BITMAP = "museum image";
     Intent i;
     TextView museumDescription, museumAddress, museumPhoneNumber, museumWebsite;
     Museum museum;
     ImageView toolbarImage;
+    String address, phoneNumber, website;
+    Bitmap museumImage;
     private GoogleApiClient mGoogleApiClient;
 
     @Override
@@ -36,23 +50,105 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                 .addApi(Places.PLACE_DETECTION_API)
                 .enableAutoManage(this, this)
                 .build();
-        i = getIntent();
-        museum = i.getParcelableExtra("museum");
-        toolbarImage = findViewById(R.id.backdrop);
 
+        i = getIntent();
+
+        toolbarImage = findViewById(R.id.backdrop);
         museumAddress = findViewById(R.id.museumAddress);
         museumPhoneNumber = findViewById(R.id.museumphoneNumber);
         museumWebsite = findViewById(R.id.museumWebsite);
         museumDescription = findViewById(R.id.museum_description);
+        museum = i.getParcelableExtra("museum");
 
-        museumDescription.setText(museum.description);
-        setTitle(museum.name);
+        if (savedInstanceState == null) {
+            if (i != null) {
+                try {
 
-
-        getPhotos(museum.placeId);
-        getPlace(museum.placeId);
+                    getPhotos(museum.placeId);
+                    getPlace(museum.placeId);
+                    museumDescription.setText(museum.description);
+                    setTitle(museum.name);
+                } catch (Exception ex) {
+                    Log.e("Exception", ex.getMessage());
+                    Log.d("Exception", Arrays.toString(ex.getStackTrace()));
+                }
+            }
+        }
 
     }
+
+    @Override
+    protected void onStart() {
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
+    //This function convert adapter to arrayList and serialize it into a bundle, so that can be restore
+    //after orientation change
+    @Override
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save custom values into the bundle
+        if (savedInstanceState != null) {
+            try {
+//compress bitmap to pass it into byteArray
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                museumImage.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] bytes = stream.toByteArray();
+                savedInstanceState.putByteArray(MUSEUM_BITMAP, bytes);
+
+                savedInstanceState.putString(DESCRIPTION, museum.description);
+                savedInstanceState.putString(TITLE, museum.name);
+                savedInstanceState.putString(ADDRESS, address);
+                savedInstanceState.putString(WEBSITE, website);
+                savedInstanceState.putString(PHONENUMBER, phoneNumber);
+            } catch (Exception ex) {
+                Log.e("Exception", ex.getMessage());
+                Log.d("Exception", Arrays.toString(ex.getStackTrace()));
+            }
+        }
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    //This function restores View after orientation
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        // Always call the superclass so it can restore the view hierarchy
+        super.onRestoreInstanceState(savedInstanceState);
+        if (savedInstanceState != null) {
+
+            // Restore state members from saved instance
+            try {
+
+                //Decompress Bitmap and Restore Image
+                byte[] bytes = savedInstanceState.getByteArray(MUSEUM_BITMAP);
+                assert bytes != null;
+                Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                museumImage = bmp;
+                toolbarImage.setImageBitmap(bmp);
+
+                address = savedInstanceState.getString(ADDRESS);
+                website = savedInstanceState.getString(WEBSITE);
+                phoneNumber = savedInstanceState.getString(PHONENUMBER);
+                museum.description = savedInstanceState.getString(DESCRIPTION);
+                museumDescription.setText(savedInstanceState.getString(DESCRIPTION));
+
+                museumPhoneNumber.setText(phoneNumber);
+                museumWebsite.setText(website);
+                museumAddress.setText(address);
+                setTitle(savedInstanceState.getString(TITLE));
+            } catch (Exception ex) {
+                Log.e("Exception", ex.getMessage());
+                Log.d("Exception", Arrays.toString(ex.getStackTrace()));
+            }
+        }
+    }
+
 
     private void getPhotos(final String placeId) {
 
@@ -62,12 +158,13 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                 if (placePhotoMetadataResult.getStatus().isSuccess()) {
                     PlacePhotoMetadataBuffer photoMetadata = placePhotoMetadataResult.getPhotoMetadata();
 
-                    PlacePhotoMetadata placePhotoMetadata = photoMetadata.get(1);
+                    final PlacePhotoMetadata placePhotoMetadata = photoMetadata.get(1);
 
                     placePhotoMetadata.getPhoto(mGoogleApiClient).setResultCallback(new ResultCallback<PlacePhotoResult>() {
                         @Override
                         public void onResult(@NonNull PlacePhotoResult placePhotoResult) {
-                            toolbarImage.setImageBitmap(placePhotoResult.getBitmap());
+                            museumImage = placePhotoResult.getBitmap();
+                            toolbarImage.setImageBitmap(museumImage);
                         }
                     });
                     photoMetadata.release();
@@ -89,10 +186,13 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                         if (places.getStatus().isSuccess() && places.getCount() > 0) {
                             final Place myPlace = places.get(0);
                             final float rating = myPlace.getRating();
+                            address = String.valueOf(myPlace.getAddress());
+                            website = String.valueOf(myPlace.getWebsiteUri());
+                            phoneNumber = String.valueOf(myPlace.getPhoneNumber());
 
-                            museumPhoneNumber.setText(myPlace.getAddress());
-                            museumWebsite.setText(String.valueOf(myPlace.getWebsiteUri()));
-                            museumAddress.setText(myPlace.getPhoneNumber());
+                            museumPhoneNumber.setText(address);
+                            museumWebsite.setText(website);
+                            museumAddress.setText(phoneNumber);
 //                            ratingBar = findViewById(R.id.ratingBar);
 //                            ratingBar.setNumStars(5);
 //                            ratingBar.setRating(rating);
