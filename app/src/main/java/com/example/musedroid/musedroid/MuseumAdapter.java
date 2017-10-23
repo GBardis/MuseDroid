@@ -81,23 +81,23 @@ class MuseumAdapter extends RecyclerView.Adapter<MuseumAdapter.ViewHolder> {
         };
         //Close firebase listener
         mDatabase.addValueEventListener(followListener);
-        //Favorite button listener that responds to user action and save or delete userFavorites to firebase
-        holder.favoriteButton.setOnFavoriteChangeListener(
-                new MaterialFavoriteButton.OnFavoriteChangeListener() {
-                    @Override
-                    public void onFavoriteChanged(MaterialFavoriteButton buttonView, boolean favorite) {
 
-                        if (favorite && !buttonView.isFavorite()) {
-                            //firebase call to save the user favorite museum
-                            String userId = auth.getCurrentUser().getUid();
-                            firebaseHandler.userFavorite(userId, museum, true);
-                        } else {
-                            //firebase call to delete user favorites museum
-                            String userId = auth.getCurrentUser().getUid();
-                            firebaseHandler.userFavorite(userId, museum, favorite);
-                        }
-                    }
-                });
+        holder.favoriteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (holder.favoriteButton.isFavorite()) {
+                    //firebase call to save the user favorite museum
+                    String userId = auth.getCurrentUser().getUid();
+                    firebaseHandler.userFavorite(userId, museum, false);
+                    holder.favoriteButton.toggleFavorite();
+                } else {
+                    //firebase call to delete user favorites museum
+                    String userId = auth.getCurrentUser().getUid();
+                    firebaseHandler.userFavorite(userId, museum, true);
+                    holder.favoriteButton.toggleFavorite();
+                }
+            }
+        });
     }
 
     public void addItem(Museum dataObj, int index) {
