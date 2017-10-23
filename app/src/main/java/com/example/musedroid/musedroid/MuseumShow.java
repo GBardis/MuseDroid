@@ -3,10 +3,13 @@ package com.example.musedroid.musedroid;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -33,14 +36,16 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
     private static final String PHONENUMBER = "museum phoneNumber";
     private static final String WEBSITE = "museum website";
     private static final String MUSEUM_BITMAP = "museum image";
-    Intent i;
+    Intent intent;
     TextView museumDescription, museumAddress, museumPhoneNumber, museumWebsite;
     Museum museum;
     ImageView toolbarImage;
     String address, phoneNumber, website;
     Bitmap museumImage;
+
     RatingBar ratingBar;
     private GoogleApiClient mGoogleApiClient;
+    private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +58,7 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                 .enableAutoManage(this, this)
                 .build();
 
-        i = getIntent();
+        intent = getIntent();
 
         toolbarImage = findViewById(R.id.backdrop);
         museumAddress = findViewById(R.id.museumAddress);
@@ -61,10 +66,12 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
         museumWebsite = findViewById(R.id.museumWebsite);
         museumDescription = findViewById(R.id.museum_description);
         ratingBar = findViewById(R.id.ratingBar);
-        museum = i.getParcelableExtra("museum");
+        mFab = findViewById(R.id.fab);
+
+        museum = intent.getParcelableExtra("museum");
 
         if (savedInstanceState == null) {
-            if (i != null) {
+            if (intent != null) {
                 try {
 
                     getPhotos(museum.placeId);
@@ -77,6 +84,37 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                 }
             }
         }
+
+        mFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent = new Intent(MuseumShow.this, QrShowActivity.class);
+                intent.putExtra("flag", false);
+                intent.putExtra("museumId", museum.key);
+                startActivity(intent);
+            }
+        });
+
+        museumAddress.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri gmmIntentUri = Uri.parse("google.navigation:q= " + museum.name + museumAddress);
+                intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                intent.setPackage("com.google.android.apps.maps");
+                startActivity(intent);
+            }
+        });
+
+        museumWebsite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Uri uri = Uri.parse(website);
+                intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
     @Override
@@ -135,14 +173,15 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                 toolbarImage.setImageBitmap(bmp);
 
                 address = savedInstanceState.getString(ADDRESS);
-                website = savedInstanceState.getString(WEBSITE);
                 phoneNumber = savedInstanceState.getString(PHONENUMBER);
+                website = savedInstanceState.getString(WEBSITE);
                 museum.description = savedInstanceState.getString(DESCRIPTION);
-                museumDescription.setText(savedInstanceState.getString(DESCRIPTION));
 
+                museumDescription.setText(museum.description);
+                museumAddress.setText(address);
                 museumPhoneNumber.setText(phoneNumber);
                 museumWebsite.setText(website);
-                museumAddress.setText(address);
+
                 setTitle(savedInstanceState.getString(TITLE));
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
@@ -192,35 +231,19 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                             website = String.valueOf(myPlace.getWebsiteUri());
                             phoneNumber = String.valueOf(myPlace.getPhoneNumber());
 
-                            museumPhoneNumber.setText(address);
+                            museumPhoneNumber.setText(phoneNumber);
                             museumWebsite.setText(website);
-                            museumAddress.setText(phoneNumber);
+                            museumAddress.setText(address);
 
                             ratingBar.setNumStars(5);
                             ratingBar.setRating(rating);
-                            Log.i(TAG, "Place found: " + myPlace.getName());
-
-
-//                            if (myPlace.getWebsiteUri() != null) {
-//                                browseImage.setOnClickListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View v) {
-//                                        Uri uri = Uri.parse(museum.website);
-//                                        Intent intent = new Intent(ACTION_VIEW, uri);
-//                                        startActivity(intent);
-//                                    }
-//                                });
-//                            }
                             Log.i(TAG, "Place found: " + myPlace.getName());
                         } else {
                             Log.e(TAG, "Place not found");
                         }
                         places.release();
-                        // mGoogleApiClient.disconnect();
                     }
                 });
-
-
     }
 
     @Override
