@@ -36,8 +36,7 @@ public class NfcScanActivity extends AppCompatActivity implements Listener {
         setContentView(R.layout.activity_nfc_scan);
 
         //initViews
-        mEtMessage = (EditText) findViewById(R.id.et_message);
-        mBtWrite = (Button) findViewById(R.id.btn_write);
+
         mBtRead = (Button) findViewById(R.id.btn_read);
 
         //mBtWrite.setOnClickListener(view -> showWriteFragment());
