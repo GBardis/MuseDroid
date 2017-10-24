@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -13,6 +14,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.Arrays;
 
 public class ExhibitShowActivity extends AppCompatActivity {
     private static final String DESCRIPTION = "exhibit_description";
@@ -68,7 +71,8 @@ public class ExhibitShowActivity extends AppCompatActivity {
                 exhibitDescription.setText(exhibit.description);
                 exhibitName.setText(exhibit.name);
             } catch (Exception ex) {
-
+                Log.e("Exception", ex.getMessage());
+                Log.e("Exception", Arrays.toString(ex.getStackTrace()));
                 intent = getIntent();
                 Exhibit exhibit = intent.getParcelableExtra("Exhibit");
             }
@@ -90,7 +94,8 @@ public class ExhibitShowActivity extends AppCompatActivity {
                         exhibitName.setText(exhibitFields.name);
                     }
                 } catch (Exception ex) {
-
+                    Log.e("Exception", ex.getMessage());
+                    Log.e("Exception", Arrays.toString(ex.getStackTrace()));
                 }
 
             }

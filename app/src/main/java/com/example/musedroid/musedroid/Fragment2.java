@@ -161,6 +161,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public void onResume() {
         super.onResume();
+        FirebaseHandler.database.goOnline();
         appLanguage = getAppLanguage();
         if (!tempLang.equals(appLanguage)) {
             getFirebaseUpdates();
@@ -169,6 +170,8 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
     @Override
     public void onStart() {
+        mEnableGps();
+        googleApiClient.connect();
         FirebaseHandler.database.goOnline();
         super.onStart();
     }
@@ -177,21 +180,19 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     public void onPause() {
         FirebaseHandler.database.goOffline();
         super.onPause();
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        googleApiClient.disconnect();
         FirebaseHandler.database.goOffline();
     }
 
     private String getAppLanguage() {
         SharedPreferences sharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(getActivity());
-
         return sharedPrefs.getString("prefAppLanguage", "NULL");
-
     }
 
     //Restore last state for checked position.
@@ -311,7 +312,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(1000);
         locationRequest.setFastestInterval(1000);
-
         locationSettingsRequest = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
         mResult();
     }
@@ -330,8 +330,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         try {
                             status.startResolutionForResult(getActivity(), REQUEST_LOCATION);
-                        } catch (IntentSender.SendIntentException e) {
-
+                        } catch (IntentSender.SendIntentException ex) {
+                            Log.e("Exception", ex.getMessage());
+                            Log.e("Exception", Arrays.toString(ex.getStackTrace()));
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:

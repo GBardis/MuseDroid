@@ -1,5 +1,6 @@
 package com.example.musedroid.musedroid;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -42,10 +44,8 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
     ImageView toolbarImage;
     String address, phoneNumber, website;
     Bitmap museumImage;
-
     RatingBar ratingBar;
     private GoogleApiClient mGoogleApiClient;
-    private FloatingActionButton mFab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,14 +66,13 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
         museumWebsite = findViewById(R.id.museumWebsite);
         museumDescription = findViewById(R.id.museum_description);
         ratingBar = findViewById(R.id.ratingBar);
-        mFab = findViewById(R.id.fab);
+        FloatingActionButton mFab = findViewById(R.id.fab);
 
         museum = intent.getParcelableExtra("museum");
 
         if (savedInstanceState == null) {
             if (intent != null) {
                 try {
-
                     getPhotos(museum.placeId);
                     getPlace(museum.placeId);
                     museumDescription.setText(museum.description);
@@ -164,29 +163,32 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
 
             // Restore state members from saved instance
             try {
-
                 //Decompress Bitmap and Restore Image
                 byte[] bytes = savedInstanceState.getByteArray(MUSEUM_BITMAP);
                 assert bytes != null;
                 Bitmap bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                 museumImage = bmp;
                 toolbarImage.setImageBitmap(bmp);
-
-                address = savedInstanceState.getString(ADDRESS);
-                phoneNumber = savedInstanceState.getString(PHONENUMBER);
-                website = savedInstanceState.getString(WEBSITE);
-                museum.description = savedInstanceState.getString(DESCRIPTION);
-
-                museumDescription.setText(museum.description);
-                museumAddress.setText(address);
-                museumPhoneNumber.setText(phoneNumber);
-                museumWebsite.setText(website);
-
-                setTitle(savedInstanceState.getString(TITLE));
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
                 Log.d("Exception", Arrays.toString(ex.getStackTrace()));
             }
+            try {
+                address = savedInstanceState.getString(ADDRESS);
+                phoneNumber = savedInstanceState.getString(PHONENUMBER);
+                website = savedInstanceState.getString(WEBSITE);
+                museum.description = savedInstanceState.getString(DESCRIPTION);
+            } catch (Exception ex) {
+                Log.e("Exception", ex.getMessage());
+                Log.d("Exception", Arrays.toString(ex.getStackTrace()));
+            }
+            museumDescription.setText(museum.description);
+            museumAddress.setText(address);
+            museumPhoneNumber.setText(phoneNumber);
+            museumWebsite.setText(website);
+
+            setTitle(savedInstanceState.getString(TITLE));
+
         }
     }
 
@@ -194,6 +196,7 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
     private void getPhotos(final String placeId) {
 
         Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, placeId).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
+
             @Override
             public void onResult(@NonNull final PlacePhotoMetadataResult placePhotoMetadataResult) {
                 if (placePhotoMetadataResult.getStatus().isSuccess()) {
@@ -210,10 +213,11 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                     });
                     photoMetadata.release();
                 } else {
-                    Log.e("ShowActivity ", "No photos returned");
+                    createToastMessages("No Photos Found , Check Internet Access");
                 }
             }
         });
+
     }
 
     private void getPlace(final String placeId) {
@@ -240,7 +244,7 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                             ratingBar.setRating(rating);
                             Log.i(TAG, "Place found: " + myPlace.getName());
                         } else {
-                            Log.e(TAG, "Place not found");
+                            createToastMessages("Museum Data Not Found, Check Internet Access");
                         }
                         places.release();
                     }
@@ -249,6 +253,13 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        createToastMessages(connectionResult.toString());
+    }
 
+    private void createToastMessages(String message) {
+        Context context = getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, message, duration);
+        toast.show();
     }
 }
