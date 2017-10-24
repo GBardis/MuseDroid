@@ -40,6 +40,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.google.firebase:firebase-auth:11.2.2'
     compile 'com.google.firebase:firebase-database:11.2.2'
+    compile 'com.google.firebase:firebase-storage:11.2.2'
     compile 'com.google.firebase:firebase-core:11.2.2'
     compile 'com.google.firebase:firebase-messaging:11.2.2'
     compile 'com.google.android.gms:play-services-places:11.2.2'
