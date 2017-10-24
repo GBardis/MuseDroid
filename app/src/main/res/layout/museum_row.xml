@@ -31,6 +31,8 @@
             android:id="@+id/museum_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="3"
             android:layout_below="@+id/museum_name"
             android:layout_marginRight="40dp" />
 
