@@ -22,7 +22,7 @@ public class ExhibitShowActivity extends AppCompatActivity {
     private static final String TITLE = "exhibit_title";
     private static final String USER_LANG = "user language";
     public static Exhibit exhibit;
-    public static String exhibitId, language;
+    public static String exhibitId;
     public ExhibitFields exhibitFields;
     public String userLanguage;
     TextView exhibitName, exhibitDescription;
@@ -73,8 +73,6 @@ public class ExhibitShowActivity extends AppCompatActivity {
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
                 Log.e("Exception", Arrays.toString(ex.getStackTrace()));
-                intent = getIntent();
-                Exhibit exhibit = intent.getParcelableExtra("Exhibit");
             }
         }
     }
@@ -85,7 +83,6 @@ public class ExhibitShowActivity extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 try {
                     exhibitFields = dataSnapshot.getValue(ExhibitFields.class);
-                    //exhibitFieldsList.add(exhibitFields);
                     assert exhibitFields != null;
                     if (exhibitFields.exhibit.equals(ExhibitShowActivity.exhibitId) && exhibitFields.language.equals(userLanguage.toLowerCase())) {
                         exhibitDescription = findViewById(R.id.exhibitDescription);
@@ -97,7 +94,6 @@ public class ExhibitShowActivity extends AppCompatActivity {
                     Log.e("Exception", ex.getMessage());
                     Log.e("Exception", Arrays.toString(ex.getStackTrace()));
                 }
-
             }
 
             @Override

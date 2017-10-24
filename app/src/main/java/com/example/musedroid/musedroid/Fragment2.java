@@ -268,9 +268,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     private void getFirebaseUpdates() {
         allMuseumAdapter = MainActivity.museumAdapter;
         allMuseumAdapter.notifyDataSetChanged();
-        mEnableGps();
-        Location dest = new Location("provider");
-        findNearbyMuseums(mLastLocation, dest);
+        onLocationChangeAdapter.clear();
         mRecyclerView.setAdapter(onLocationChangeAdapter);
     }
 

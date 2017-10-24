@@ -55,7 +55,6 @@ public class Fragment1 extends Fragment {
         //call getfirebase object to get the museumAdapter with all museums
 
         if ((savedInstanceState == null)) {
-
             try {
                 //set the adapter with the museum list form firebase
                 getFirebaseUpdates();
@@ -87,9 +86,7 @@ public class Fragment1 extends Fragment {
                 allMuseums = new MuseumAdapter(savedInstanceState.<Museum>getParcelableArrayList(ALL_MUSEUM));
                 allMuseums.notifyDataSetChanged();
                 mRecyclerView.setAdapter(allMuseums);
-
             } else {
-
                 getFirebaseUpdates();
             }
         } catch (Exception ex) {
@@ -102,7 +99,6 @@ public class Fragment1 extends Fragment {
 
     @Override
     public void onSaveInstanceState(@Nullable Bundle outState) {
-
         try {
 
             if (outState != null && tempLang.equals(appLanguage)) {
@@ -140,38 +136,40 @@ public class Fragment1 extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
         FirebaseHandler.database.goOnline();
+        super.onStart();
     }
 
     @Override
     public void onResume() {
-        super.onResume();
-
         appLanguage = getAppLanguage();
         if (!tempLang.equals(appLanguage)) {
             getFirebaseUpdates();
         }
         FirebaseHandler.database.goOnline();
+        super.onResume();
     }
 
     @Override
     public void onPause() {
-        super.onPause();
         FirebaseHandler.database.goOffline();
+        super.onPause();
     }
 
     @Override
     public void onStop() {
-        super.onStop();
         FirebaseHandler.database.goOffline();
+        super.onStop();
     }
 
     private String getAppLanguage() {
         SharedPreferences sharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(getActivity());
-
         return sharedPrefs.getString("prefAppLanguage", "NULL");
-
     }
 }
 

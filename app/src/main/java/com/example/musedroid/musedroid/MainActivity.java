@@ -96,12 +96,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 progressBar.setVisibility(View.GONE);
             }
         });
-
         //set gravity for tab bar
         //tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         //handling navigation view item event
         navigationView = findViewById(R.id.nav_view);
-
 
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
@@ -226,11 +224,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
         this.setContentView(R.layout.activity_main);
         NavigationView navigationView = this.findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(MainActivity.this);
-
     }
 
     //set language in preferences manager equals to locale of the current phone
