@@ -96,12 +96,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 progressBar.setVisibility(View.GONE);
             }
         });
-
         //set gravity for tab bar
         //tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
         //handling navigation view item event
         navigationView = findViewById(R.id.nav_view);
-
 
         assert navigationView != null;
         navigationView.setNavigationItemSelectedListener(this);
@@ -226,11 +224,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-
         this.setContentView(R.layout.activity_main);
         NavigationView navigationView = this.findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(MainActivity.this);
-
     }
 
     //set language in preferences manager equals to locale of the current phone
@@ -239,13 +235,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .getDefaultSharedPreferences(this);
         //Check phone shareprefenrences if it is null set it to locale else set it equals to user
         // checked preference
+        String language = Locale.getDefault().getLanguage();
         appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
         updateViews(appLanguage);
         if (appLanguage.equals("NULL")) {
             SharedPreferences.Editor editor = sharedPrefs.edit();
-            editor.putString("prefAppLanguage", Locale.getDefault().getLanguage());
+            editor.putString("prefAppLanguage",language);
             editor.apply();
-            appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
+            appLanguage = sharedPrefs.getString("prefAppLanguage",Locale.getDefault().getLanguage());
         }
     }
 

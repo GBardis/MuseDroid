@@ -15,11 +15,30 @@
             android:title="@string/pref_send_report" />
 
         <ListPreference
+            android:defaultValue="en"
             android:entries="@array/languangeArray"
             android:entryValues="@array/languangeValues"
             android:key="prefAppLanguage"
             android:summary="App language summary"
             android:title="@string/pref_sync_language" />
+
+        <SeekBarPreference
+            android:defaultValue="100"
+            android:key="distanceInterval"
+            android:max="100"
+            android:min="30"
+            android:progress="10"
+            android:summary="Summary."
+            android:title="Gps Distance interval" />
+
+        <SeekBarPreference
+            android:defaultValue="450"
+            android:key="timeInterval"
+            android:max="900"
+            android:min="300"
+            android:progress="100"
+            android:summary="Summary."
+            android:title="Gps Time interval" />
     </PreferenceCategory>
 
 </PreferenceScreen>

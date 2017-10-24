@@ -72,9 +72,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     String tempLang;
     Location mLastLocation;
 
-    private int minLocationUpdateTime = 0;
-    private int minLocationUpdateInterval = 0;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -164,6 +161,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     @Override
     public void onResume() {
         super.onResume();
+        FirebaseHandler.database.goOnline();
         appLanguage = getAppLanguage();
         if (!tempLang.equals(appLanguage)) {
             getFirebaseUpdates();
@@ -172,6 +170,8 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
 
     @Override
     public void onStart() {
+        mEnableGps();
+        googleApiClient.connect();
         FirebaseHandler.database.goOnline();
         super.onStart();
     }
@@ -180,21 +180,19 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     public void onPause() {
         FirebaseHandler.database.goOffline();
         super.onPause();
-
     }
 
     @Override
     public void onStop() {
         super.onStop();
+        googleApiClient.disconnect();
         FirebaseHandler.database.goOffline();
     }
 
     private String getAppLanguage() {
         SharedPreferences sharedPrefs = PreferenceManager
                 .getDefaultSharedPreferences(getActivity());
-
         return sharedPrefs.getString("prefAppLanguage", "NULL");
-
     }
 
     //Restore last state for checked position.
@@ -270,9 +268,7 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     private void getFirebaseUpdates() {
         allMuseumAdapter = MainActivity.museumAdapter;
         allMuseumAdapter.notifyDataSetChanged();
-        mEnableGps();
-        Location dest = new Location("provider");
-        findNearbyMuseums(mLastLocation, dest);
+        onLocationChangeAdapter.clear();
         mRecyclerView.setAdapter(onLocationChangeAdapter);
     }
 
@@ -281,6 +277,12 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     }
 
     public void getUpdates() {
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(getActivity());
+        int minLocationUpdateTime = sharedPrefs.getInt("timeInterval", 0);
+        int minLocationUpdateInterval = sharedPrefs.getInt("distanceInterval", 0);
+
+
         if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -308,7 +310,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(1000);
         locationRequest.setFastestInterval(1000);
-
         locationSettingsRequest = new LocationSettingsRequest.Builder().addLocationRequest(locationRequest);
         mResult();
     }
@@ -327,8 +328,9 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         try {
                             status.startResolutionForResult(getActivity(), REQUEST_LOCATION);
-                        } catch (IntentSender.SendIntentException e) {
-
+                        } catch (IntentSender.SendIntentException ex) {
+                            Log.e("Exception", ex.getMessage());
+                            Log.e("Exception", Arrays.toString(ex.getStackTrace()));
                         }
                         break;
                     case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
