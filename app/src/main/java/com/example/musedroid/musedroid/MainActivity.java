@@ -239,11 +239,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .getDefaultSharedPreferences(this);
         //Check phone shareprefenrences if it is null set it to locale else set it equals to user
         // checked preference
+        String language = Locale.getDefault().getLanguage();
         appLanguage = sharedPrefs.getString("prefAppLanguage", "NULL");
         updateViews(appLanguage);
         if (appLanguage.equals("NULL")) {
             SharedPreferences.Editor editor = sharedPrefs.edit();
-            editor.putString("prefAppLanguage", Locale.getDefault().getLanguage());
+            editor.putString("prefAppLanguage",language);
             editor.apply();
             appLanguage = sharedPrefs.getString("prefAppLanguage",Locale.getDefault().getLanguage());
         }
