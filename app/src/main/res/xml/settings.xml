@@ -20,6 +20,13 @@
             android:key="prefAppLanguage"
             android:summary="App language summary"
             android:title="@string/pref_sync_language" />
+
+        <SeekBarPreference
+            android:key="keyName"
+            android:title="Property Label"
+            android:summary="Summary."
+            android:max="5"
+            android:defaultValue="0" />
     </PreferenceCategory>
 
 </PreferenceScreen>
