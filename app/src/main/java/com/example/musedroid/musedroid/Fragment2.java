@@ -72,9 +72,6 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     String tempLang;
     Location mLastLocation;
 
-    private int minLocationUpdateTime = 0;
-    private int minLocationUpdateInterval = 0;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -281,6 +278,12 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
     }
 
     public void getUpdates() {
+        SharedPreferences sharedPrefs = PreferenceManager
+                .getDefaultSharedPreferences(getActivity());
+        int minLocationUpdateTime = sharedPrefs.getInt("timeInterval", 0);
+        int minLocationUpdateInterval = sharedPrefs.getInt("distanceInterval", 0);
+
+
         if (ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity().getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions

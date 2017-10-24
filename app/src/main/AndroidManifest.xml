@@ -15,16 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".MainActivity"
-            android:configChanges="layoutDirection|locale"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-            </intent-filter>
-        </activity>
 
         <uses-feature
             android:glEsVersion="0x00020000"
@@ -42,13 +32,15 @@
         <!-- <meta-data -->
         <!-- android:name="com.google.android.geo.API_KEY" -->
         <!-- android:value="@string/google_maps_key" /> -->
-
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="layoutDirection|locale"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".QrShowActivity" />
         <activity android:name=".ExhibitShowActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
