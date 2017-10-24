@@ -9,6 +9,7 @@ import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -40,7 +41,12 @@ public class NfcScanActivity extends AppCompatActivity implements Listener {
         mBtRead = (Button) findViewById(R.id.btn_read);
 
         //mBtWrite.setOnClickListener(view -> showWriteFragment());
-        mBtRead.setOnClickListener(view -> showReadFragment());
+        mBtRead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showReadFragment();
+            }
+        });
 
         //initNFC
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);

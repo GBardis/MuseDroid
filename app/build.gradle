@@ -13,9 +13,9 @@ android {
         defaultConfig {
             applicationId "com.example.musedroid.musedroid"
         }
-        jackOptions {
-            enabled true
-        }
+//        jackOptions {
+//            enabled true
+//        }
     }
     dataBinding {
         enabled = true
