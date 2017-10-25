@@ -26,7 +26,6 @@ import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
 import com.google.android.gms.location.places.PlacePhotoMetadataResult;
 import com.google.android.gms.location.places.PlacePhotoResult;
 import com.google.android.gms.location.places.Places;
-import com.google.firebase.auth.FirebaseAuth;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
@@ -51,9 +50,6 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        auth.signInWithEmailAndPassword("georgebardis1990@gmail.com", "trelos777");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_museum_show);
 
