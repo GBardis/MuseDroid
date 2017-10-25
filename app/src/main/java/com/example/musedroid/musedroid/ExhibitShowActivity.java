@@ -3,12 +3,10 @@ package com.example.musedroid.musedroid;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -16,7 +14,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.Arrays;
 
@@ -33,7 +30,7 @@ public class ExhibitShowActivity extends AppCompatActivity {
     Context context;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabase = database.getReference();
-    ImageView exhibitImage;
+    String exhibitDesc, exhibitN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,24 +38,41 @@ public class ExhibitShowActivity extends AppCompatActivity {
         setContentView(R.layout.activity_exhibit_show);
         context = this;
         intent = getIntent();
-        ExhibitShowActivity.exhibitId = intent.getStringExtra("exhibitId");
-        exhibitImage = findViewById(R.id.exhibitImage);
 
         if (savedInstanceState == null) {
-            getExhibitImage();
+            ExhibitShowActivity.exhibitId = intent.getStringExtra("exhibitId");
+            //getExhibitImage();
             getExhibitFields();
             userLanguage = userSettingsLang();
         }
     }
 
     @Override
+    protected void onStart() {
+        FirebaseHandler.database.goOnline();
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        FirebaseHandler.database.goOffline();
+        super.onStop();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
         // Save custom values into the bundle
         if (savedInstanceState != null) {
-            savedInstanceState.putString(USER_LANG, userLanguage);
-            savedInstanceState.putString(DESCRIPTION, exhibit.description);
-            savedInstanceState.putString(TITLE, exhibit.name);
+            try {
+                savedInstanceState.putString(USER_LANG, userLanguage);
+                savedInstanceState.putString(DESCRIPTION, exhibitDesc);
+                savedInstanceState.putString(TITLE, exhibitN);
+            } catch (Exception ex) {
+                Log.e("Exception", ex.getMessage());
+                Log.e("Exception", Arrays.toString(ex.getStackTrace()));
+            }
         }
+
         super.onSaveInstanceState(savedInstanceState);
     }
 
@@ -69,13 +83,13 @@ public class ExhibitShowActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null) {
             userLanguage = savedInstanceState.getString(USER_LANG);
-            savedInstanceState.getString(DESCRIPTION, exhibit.description);
-            savedInstanceState.getString(TITLE, exhibit.name);
+            exhibitDesc = savedInstanceState.getString(DESCRIPTION);
+            exhibitN = savedInstanceState.getString(TITLE);
             try {
                 exhibitName = findViewById(R.id.exhibitName);
                 exhibitDescription = findViewById(R.id.exhibitDescription);
-                exhibitDescription.setText(exhibit.description);
-                exhibitName.setText(exhibit.name);
+                exhibitDescription.setText(exhibitDesc);
+                exhibitName.setText(exhibitN);
             } catch (Exception ex) {
                 Log.e("Exception", ex.getMessage());
                 Log.e("Exception", Arrays.toString(ex.getStackTrace()));
@@ -92,9 +106,11 @@ public class ExhibitShowActivity extends AppCompatActivity {
                     assert exhibitFields != null;
                     if (exhibitFields.exhibit.equals(ExhibitShowActivity.exhibitId) && exhibitFields.language.equals(userLanguage.toLowerCase())) {
                         exhibitDescription = findViewById(R.id.exhibitDescription);
-                        exhibitDescription.setText(exhibitFields.description);
+                        exhibitDesc = exhibitFields.description;
+                        exhibitDescription.setText(exhibitDesc);
+                        exhibitN = exhibitFields.name;
                         exhibitName = findViewById(R.id.exhibitName);
-                        exhibitName.setText(exhibitFields.name);
+                        exhibitName.setText(exhibitN);
                     }
                 } catch (Exception ex) {
                     Log.e("Exception", ex.getMessage());
@@ -124,13 +140,13 @@ public class ExhibitShowActivity extends AppCompatActivity {
         });
     }
 
-    private void getExhibitImage() {
-        mDatabase.child("exhibits").child(ExhibitShowActivity.exhibitId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                String imageUrl = (String) dataSnapshot.child("imageUrl").getValue();
-                Uri uri = Uri.parse(imageUrl);
-                exhibitImage.setImageURI(uri);
+//    private void getExhibitImage() {
+//        mDatabase.child("exhibits").child(ExhibitShowActivity.exhibitId).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                String imageUrl = (String) dataSnapshot.child("imageUrl").getValue();
+//                Uri uri = Uri.parse(imageUrl);
+//                exhibitImage.setImageURI(uri);
 //                FirebaseStorage storage = FirebaseStorage.getInstance();
 //                StorageReference storageRef = storage.getReference();
 //                assert imageUrl != null;
@@ -146,14 +162,14 @@ public class ExhibitShowActivity extends AppCompatActivity {
 //                        // Handle any errors
 //                    }
 //                });
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//
+//            }
+//        });
+//    }
 
     private String userSettingsLang() {
         //get user settings language
