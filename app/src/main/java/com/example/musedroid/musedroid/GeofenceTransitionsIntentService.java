@@ -29,13 +29,11 @@ import java.util.List;
  */
 
 public class GeofenceTransitionsIntentService extends IntentService {
+    private static final String TAG = "GeofenceTransitionsIS";
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabase = database.getReference();
     private Museum museum;
     private MuseumFields museumFields;
-
-
-    private static final String TAG = "GeofenceTransitionsIS";
 
     /**
      * This constructor is required, and calls the super IntentService(String)
@@ -48,6 +46,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
     /**
      * Handles incoming intents.
+     *
      * @param intent sent by Location Services. This Intent is provided to Location
      *               Services (inside a PendingIntent) when addGeofences() is called.
      */
@@ -70,7 +69,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
             // Get the geofences that were triggered. A single event can trigger multiple geofences.
             List<Geofence> triggeringGeofences = geofencingEvent.getTriggeringGeofences();
-            fetchTriggeredMuseum(triggeringGeofences.get(triggeringGeofences.size() - 1).getRequestId(),geofenceTransition, triggeringGeofences);
+            fetchTriggeredMuseum(triggeringGeofences.get(triggeringGeofences.size() - 1).getRequestId(), geofenceTransition, triggeringGeofences);
             //continueHandleIntent(geofenceTransition, triggeringGeofences);
 
 
@@ -95,8 +94,9 @@ public class GeofenceTransitionsIntentService extends IntentService {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 museum = dataSnapshot.getValue(Museum.class);
+                assert museum != null;
                 museum.key = dataSnapshot.getKey();
-                fetchTriggeredMuseumFields(museum, museum.key,geofenceTransition,triggeringGeofences);
+                fetchTriggeredMuseumFields(museum, museum.key, geofenceTransition, triggeringGeofences);
             }
 
             @Override
@@ -106,7 +106,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         });
     }
 
-    private void fetchTriggeredMuseumFields(final Museum museum, String museumKey, final int geofenceTransition, final List<Geofence> triggeringGeofences){
+    private void fetchTriggeredMuseumFields(final Museum museum, String museumKey, final int geofenceTransition, final List<Geofence> triggeringGeofences) {
         try {
             mDatabase.child("museumFields").orderByChild("museum").equalTo(museumKey).addChildEventListener(new ChildEventListener() {
                 @Override
@@ -120,10 +120,10 @@ public class GeofenceTransitionsIntentService extends IntentService {
                             museum.name = museumFields.name;
                             museum.shortDescription = museumFields.shortDescription;
                         }
-                        if (museum.description != null){
+                        if (museum.description != null) {
                             continueHandleIntent(geofenceTransition, triggeringGeofences, museum);
                         }
-                    } catch (Exception ex) {
+                    } catch (Exception ignored) {
 
                     }
                 }
@@ -148,16 +148,17 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
                 }
             });
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
     }
+
     /**
      * Gets transition details and returns them as a formatted string.
      *
-     * @param geofenceTransition    The ID of the geofence transition.
-     * @param triggeringGeofences   The geofence(s) triggered.
-     * @return                      The transition details formatted as String.
+     * @param geofenceTransition  The ID of the geofence transition.
+     * @param triggeringGeofences The geofence(s) triggered.
+     * @return The transition details formatted as String.
      */
     private String getGeofenceTransitionDetails(
             int geofenceTransition,
@@ -172,7 +173,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
             //triggeringGeofencesIdsList.add(geofence.getRequestId());
             triggeringGeofencesIdsList.add(museum.name);
         }
-        String triggeringGeofencesIdsString = TextUtils.join(", ",  triggeringGeofencesIdsList);
+        String triggeringGeofencesIdsString = TextUtils.join(", ", triggeringGeofencesIdsList);
 
         return geofenceTransitionString + ": " + triggeringGeofencesIdsString;
     }
@@ -195,15 +196,15 @@ public class GeofenceTransitionsIntentService extends IntentService {
         stackBuilder.addNextIntent(notificationIntent);
 
         //Write intent that get's you to activity [1.new]
-        Intent intent = new Intent(getBaseContext(),MuseumShow.class);
-        intent.putExtra("museum",museum);
+        Intent intent = new Intent(getBaseContext(), MuseumShow.class);
+        intent.putExtra("museum", museum);
         // Get a PendingIntent containing the entire back stack.
         //[1.old]
         PendingIntent notificationPendingIntent =
                 stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
 
         //set the pending intent to get you to the according museum [2.new]
-        notificationPendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationPendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // Get a notification builder that's compatible with platform versions >= 4
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
@@ -233,8 +234,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
     /**
      * Maps geofence transition types to their human-readable equivalents.
      *
-     * @param transitionType    A transition type constant defined in Geofence
-     * @return                  A String indicating the type of transition
+     * @param transitionType A transition type constant defined in Geofence
+     * @return A String indicating the type of transition
      */
     private String getTransitionString(int transitionType) {
         switch (transitionType) {

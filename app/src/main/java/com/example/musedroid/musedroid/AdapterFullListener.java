@@ -5,5 +5,5 @@ package com.example.musedroid.musedroid;
  */
 
 public interface AdapterFullListener {
-    public void OnAdapterFull();
+    void OnAdapterFull();
 }

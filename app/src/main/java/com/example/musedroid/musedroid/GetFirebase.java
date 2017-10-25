@@ -10,10 +10,8 @@ public class GetFirebase extends AppCompatActivity {
 
     private FirebaseHandler firebaseHandler = new FirebaseHandler();
 
-
-    public MuseumAdapter listViewFromFirebase(MuseumAdapter adapter,  String appLanguage) {
-
-        firebaseHandler.getMuseums(adapter,  appLanguage);
+    public MuseumAdapter listViewFromFirebase(MuseumAdapter adapter, String appLanguage) {
+        firebaseHandler.getMuseums(adapter, appLanguage);
         return adapter;
     }
 }
