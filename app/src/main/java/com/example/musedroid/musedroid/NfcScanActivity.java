@@ -43,7 +43,7 @@ public class NfcScanActivity extends AppCompatActivity implements Listener {
         mBtRead.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showReadFragment();
+
             }
         });
 
@@ -65,6 +65,7 @@ public class NfcScanActivity extends AppCompatActivity implements Listener {
         }
 
         handleIntent(getIntent());
+        showReadFragment();
     }
 
 

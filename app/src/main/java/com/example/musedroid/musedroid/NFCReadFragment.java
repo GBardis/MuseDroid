@@ -74,8 +74,8 @@ public class NFCReadFragment extends DialogFragment {
             intent.putExtra("exhibitId", message.substring(3));
             startActivity(intent);
             //getFragmentManager().popBackStackImmediate();
-            Log.d(TAG, "readFromNFC: "+message);
-            mTvMessage.setText(message.substring(3));
+//            Log.d(TAG, "readFromNFC: "+message);
+//            mTvMessage.setText(message.substring(3));
             ndef.close();
 
         } catch (IOException | FormatException e) {
@@ -83,5 +83,7 @@ public class NFCReadFragment extends DialogFragment {
         }
 
     }
+
+
 }
 
