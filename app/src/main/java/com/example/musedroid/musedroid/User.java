@@ -6,7 +6,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
  * Created by gdev on 30/9/2017.
  */
 @IgnoreExtraProperties
-public class User {
+class User {
     public String name;
     public String email;
 
@@ -14,7 +14,7 @@ public class User {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public User(String name, String email) {
+    User(String name, String email) {
         this.name = name;
         this.email = email;
     }

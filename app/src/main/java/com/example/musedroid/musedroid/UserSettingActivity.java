@@ -87,7 +87,7 @@ public class UserSettingActivity extends PreferenceActivity implements SharedPre
                 break;
 
             case "distanceInterval":
-                    int interval = sharedPrefs.getInt("distanceInterval", 0);
+                int interval = sharedPrefs.getInt("distanceInterval", 0);
 
             default:
                 break;

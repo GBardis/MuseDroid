@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -98,7 +99,7 @@ public class QrShowActivity extends AppCompatActivity {
             public void receiveDetections(Detector.Detections<Barcode> detections) {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
 
-                if (barcodes.size() != 0 && foundFlag == false) {
+                if (barcodes.size() != 0 && !foundFlag) {
 
                     // Vibrate for 500 milliseconds
                     v.vibrate(500);
@@ -120,7 +121,7 @@ public class QrShowActivity extends AppCompatActivity {
 
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case 101: {
                 // If request is cancelled, the result arrays are empty.
@@ -147,7 +148,6 @@ public class QrShowActivity extends AppCompatActivity {
                     // functionality that depends on this permission.
 
                 }
-                return;
             }
 
             // other 'case' lines to check for other

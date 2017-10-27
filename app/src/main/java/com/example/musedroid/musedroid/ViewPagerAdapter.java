@@ -6,8 +6,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.view.ViewGroup;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
-    public static Fragment1 fragment1;
-    public static Fragment2 fragment2;
+    public Fragment1 fragment1;
+    public Fragment2 fragment2;
 
     public ViewPagerAdapter(FragmentManager fm) {
         super(fm);

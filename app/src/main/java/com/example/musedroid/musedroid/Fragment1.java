@@ -20,8 +20,8 @@ import java.util.Arrays;
 
 public class Fragment1 extends Fragment {
     private static final String ALL_MUSEUM = "ALL MUSEUMS";
-    public static View rootView;
     public static String tempLang;
+    public View rootView;
     ArrayList<Museum> bundledMuseumsList = new ArrayList<>();
     Intent intent;
     RecyclerView mRecyclerView;
@@ -51,8 +51,6 @@ public class Fragment1 extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), LinearLayoutManager.VERTICAL));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        //initialize Museum adapter and give as import an array list
-        //call getfirebase object to get the museumAdapter with all museums
 
         if ((savedInstanceState == null)) {
             try {
@@ -100,7 +98,6 @@ public class Fragment1 extends Fragment {
     @Override
     public void onSaveInstanceState(@Nullable Bundle outState) {
         try {
-
             if (outState != null && tempLang.equals(appLanguage)) {
                 restoreMuseumAdapter(outState);
             } else {
@@ -111,7 +108,6 @@ public class Fragment1 extends Fragment {
             Log.e("Exception", ex.getMessage());
             Log.e("Exception", Arrays.toString(ex.getStackTrace()));
         }
-
         // Always call the superclass so it can save the view hierarchy state
         super.onSaveInstanceState(outState);
     }

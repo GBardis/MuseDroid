@@ -29,6 +29,7 @@ import com.google.android.gms.location.places.Places;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
+import java.util.Random;
 
 public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private static final String RATING = "Museum rating";
@@ -112,8 +113,6 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                 startActivity(intent);
             }
         });
-
-
     }
 
     @Override
@@ -192,7 +191,6 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
         }
     }
 
-
     private void getPhotos(final String placeId) {
 
         Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, placeId).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
@@ -201,16 +199,22 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
             public void onResult(@NonNull final PlacePhotoMetadataResult placePhotoMetadataResult) {
                 if (placePhotoMetadataResult.getStatus().isSuccess()) {
                     PlacePhotoMetadataBuffer photoMetadata = placePhotoMetadataResult.getPhotoMetadata();
+                    try {
+                        Random rand = new Random();
 
-                    final PlacePhotoMetadata placePhotoMetadata = photoMetadata.get(1);
+                        int  n = rand.nextInt(5) + 1;
+                        final PlacePhotoMetadata placePhotoMetadata = photoMetadata.get(n);
+                        placePhotoMetadata.getPhoto(mGoogleApiClient).setResultCallback(new ResultCallback<PlacePhotoResult>() {
+                            @Override
+                            public void onResult(@NonNull PlacePhotoResult placePhotoResult) {
+                                museumImage = placePhotoResult.getBitmap();
+                                toolbarImage.setImageBitmap(museumImage);
+                            }
+                        });
+                    } catch (IllegalStateException ex) {
+                        photoMetadata.release();
+                    }
 
-                    placePhotoMetadata.getPhoto(mGoogleApiClient).setResultCallback(new ResultCallback<PlacePhotoResult>() {
-                        @Override
-                        public void onResult(@NonNull PlacePhotoResult placePhotoResult) {
-                            museumImage = placePhotoResult.getBitmap();
-                            toolbarImage.setImageBitmap(museumImage);
-                        }
-                    });
                     photoMetadata.release();
                 } else {
                     createToastMessages("No Photos Found , Check Internet Access");
