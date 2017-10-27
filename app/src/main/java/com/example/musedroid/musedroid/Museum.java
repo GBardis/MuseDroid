@@ -11,7 +11,7 @@ import com.google.firebase.database.Exclude;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Museum implements Parcelable {
+class Museum implements Parcelable {
     public static final Creator<Museum> CREATOR = new Creator<Museum>() {
         @Override
         public Museum createFromParcel(Parcel in) {
@@ -59,7 +59,7 @@ public class Museum implements Parcelable {
     }
 
     @Exclude
-    public Map<String, Object> toMap() {
+    Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
         result.put("mKey", key);
         result.put("mName", name);
@@ -91,6 +91,6 @@ public class Museum implements Parcelable {
 
     @Override
     public String toString() {
-        return this.name.toString();
+        return this.name;
     }
 }

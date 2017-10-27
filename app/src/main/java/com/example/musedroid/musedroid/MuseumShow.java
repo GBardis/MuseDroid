@@ -113,8 +113,6 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                 startActivity(intent);
             }
         });
-
-
     }
 
     @Override

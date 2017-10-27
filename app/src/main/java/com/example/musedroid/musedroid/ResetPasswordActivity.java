@@ -68,5 +68,4 @@ public class ResetPasswordActivity extends AppCompatActivity {
             }
         });
     }
-
 }

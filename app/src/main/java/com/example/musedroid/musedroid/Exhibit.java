@@ -7,7 +7,7 @@ import android.os.Parcelable;
  * Created by gdev on 24/8/2017.
  */
 
-public class Exhibit implements Parcelable {
+class Exhibit implements Parcelable {
     public static final Creator<Exhibit> CREATOR = new Creator<Exhibit>() {
         @Override
         public Exhibit createFromParcel(Parcel in) {
@@ -35,7 +35,7 @@ public class Exhibit implements Parcelable {
         this.musuemId = musuemId;
     }
 
-    protected Exhibit(Parcel in) {
+    private Exhibit(Parcel in) {
         key = in.readString();
         name = in.readString();
         description = in.readString();
