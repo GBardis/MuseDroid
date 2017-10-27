@@ -40,12 +40,12 @@ public class NfcScanActivity extends AppCompatActivity implements Listener {
         mBtRead = (Button) findViewById(R.id.btn_read);
 
         //mBtWrite.setOnClickListener(view -> showWriteFragment());
-        mBtRead.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+//        mBtRead.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
 
         //initNFC
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);

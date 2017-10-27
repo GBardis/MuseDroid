@@ -47,7 +47,7 @@ public class NFCReadFragment extends DialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mListener = (NfcScanActivity)context;
+        mListener = (MuseumShow)context;
         mListener.onDialogDisplayed();
     }
 
