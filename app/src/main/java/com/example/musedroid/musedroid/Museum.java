@@ -23,14 +23,14 @@ public class Museum implements Parcelable {
             return new Museum[size];
         }
     };
-    String key;
-    String name;
-    String description;
-    String shortDescription;
-    String lat;
-    String lon;
-    String placeId;
-    String distance = "";
+    public  String key;
+    public String name;
+    public String description;
+    public   String shortDescription;
+    public  String lat;
+    public  String lon;
+    public  String placeId;
+    public  String distance = "";
 
     public Museum() {
 

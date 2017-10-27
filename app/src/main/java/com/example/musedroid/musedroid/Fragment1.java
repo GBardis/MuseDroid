@@ -20,8 +20,8 @@ import java.util.Arrays;
 
 public class Fragment1 extends Fragment {
     private static final String ALL_MUSEUM = "ALL MUSEUMS";
-    public static View rootView;
     public static String tempLang;
+    public View rootView;
     ArrayList<Museum> bundledMuseumsList = new ArrayList<>();
     Intent intent;
     RecyclerView mRecyclerView;
