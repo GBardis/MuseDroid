@@ -19,17 +19,17 @@
 
         <TextView
             android:id="@+id/museum_name"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
 
-            android:layout_marginBottom="5dp"
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@+id/museum_image"
             android:textSize="19sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/museum_description"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/museum_name"
             android:layout_marginRight="40dp" />
