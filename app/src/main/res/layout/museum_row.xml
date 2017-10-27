@@ -15,7 +15,7 @@
             android:id="@+id/museum_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true" />
+            android:layout_alignParentEnd="true" />
 
         <TextView
             android:id="@+id/museum_name"
@@ -32,8 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/museum_name"
-            android:layout_marginRight="40dp" />
-
+            android:layout_marginEnd="40dp" />
 
     </RelativeLayout>
 
