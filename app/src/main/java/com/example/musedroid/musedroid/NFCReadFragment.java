@@ -2,6 +2,7 @@ package com.example.musedroid.musedroid;
 
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.tech.Ndef;
@@ -27,12 +28,13 @@ public class NFCReadFragment extends DialogFragment {
 
     private TextView mTvMessage;
     private Listener mListener;
+    View view;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_nfcread,container,false);
+        view = inflater.inflate(R.layout.fragment_nfcread,container,false);
         initViews(view);
         return view;
     }
@@ -66,13 +68,20 @@ public class NFCReadFragment extends DialogFragment {
             ndef.connect();
             NdefMessage ndefMessage = ndef.getNdefMessage();
             String message = new String(ndefMessage.getRecords()[0].getPayload());
+            //
+
+            Intent intent = new Intent(view.getContext(), ExhibitShowActivity.class);
+            intent.putExtra("exhibitId", message.substring(3));
+            startActivity(intent);
+            //getFragmentManager().popBackStackImmediate();
             Log.d(TAG, "readFromNFC: "+message);
-            mTvMessage.setText(message);
+            mTvMessage.setText(message.substring(3));
             ndef.close();
 
         } catch (IOException | FormatException e) {
             e.printStackTrace();
         }
+
     }
 }
 
