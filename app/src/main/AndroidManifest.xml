@@ -77,9 +77,6 @@
 
         <activity android:name=".UserSettingActivity" />
         <activity android:name=".MuseumShow" />
-        <activity
-            android:name=".NfcScanActivity"
-            android:label="@string/title_activity_nfc_scan"></activity>
     </application>
 
 </manifest>
