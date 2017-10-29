@@ -39,6 +39,8 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, Listener {
+    //NFC
+    public static final String TAG = MainActivity.class.getSimpleName();
     private static final String RATING = "Museum rating";
     private static final String DESCRIPTION = "museum description";
     private static final String TITLE = "museum title";
@@ -53,11 +55,8 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
     String address, phoneNumber, website;
     Bitmap museumImage;
     RatingBar ratingBar;
-    private GoogleApiClient mGoogleApiClient;
     Context context;
-    //NFC
-    public static final String TAG = MainActivity.class.getSimpleName();
-
+    private GoogleApiClient mGoogleApiClient;
     private EditText mEtMessage;
     private Button mBtWrite;
     private Button mBtRead;
@@ -89,9 +88,9 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
         museumWebsite = findViewById(R.id.museumWebsite);
         museumDescription = findViewById(R.id.museum_description);
         ratingBar = findViewById(R.id.ratingBar);
+
         FloatingActionButton mFabQr = findViewById(R.id.fab_qr);
         FloatingActionButton mFabNfc = findViewById(R.id.fab_nfc);
-
 
         museum = intent.getParcelableExtra("museum");
 
@@ -112,14 +111,16 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
         mFabQr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                intent = new Intent(MuseumShow.this, QrShowActivity.class);
-//                intent.putExtra("flag", false);
-//                intent.putExtra("museumId", museum.key);
-//                startActivity(intent);
-                //TODO: bring all the upper code back!
-                //OLD NFC ACTIVITY
-//                intent = new Intent(MuseumShow.this,NfcScanActivity.class);
-//                startActivity(intent);
+                intent = new Intent(MuseumShow.this, QrShowActivity.class);
+                intent.putExtra("flag", false);
+                intent.putExtra("museumId", museum.key);
+                startActivity(intent);
+            }
+        });
+
+        mFabNfc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 if (isNfcSupported) {
                     showReadFragment();
                 } else {

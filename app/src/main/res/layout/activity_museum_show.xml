@@ -190,35 +190,28 @@
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/menu_down"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="65dp"
-        android:elevation="6dp"
-        android:paddingBottom="10dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingTop="120dp"
-        fab:menu_icon="@drawable/magnify"
+        android:layout_marginTop="220dp"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end"
-        fab:menu_fab_size="mini"
+        fab:menu_icon="@drawable/magnify"
         fab:menu_labels_ellipsize="end"
         fab:menu_labels_singleLine="true"
         fab:menu_openDirection="down">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_qr"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:src="@drawable/qrcode_scan"
             fab:fab_label="Qr Scaning"
             fab:fab_size="mini" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_nfc"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:src="@drawable/nfc"
             fab:fab_label="Nfc Scaning"
             fab:fab_size="mini" />
