@@ -7,7 +7,6 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +15,7 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -67,7 +67,9 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
         museumWebsite = findViewById(R.id.museumWebsite);
         museumDescription = findViewById(R.id.museum_description);
         ratingBar = findViewById(R.id.ratingBar);
-        FloatingActionButton mFab = findViewById(R.id.fab);
+        FloatingActionButton mFabQr = findViewById(R.id.fab_qr);
+        FloatingActionButton mFabNfc = findViewById(R.id.fab_nfc);
+
 
         museum = intent.getParcelableExtra("museum");
 
@@ -85,7 +87,7 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
             }
         }
 
-        mFab.setOnClickListener(new View.OnClickListener() {
+        mFabQr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 intent = new Intent(MuseumShow.this, QrShowActivity.class);
@@ -98,7 +100,7 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
         museumAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Uri gmmIntentUri = Uri.parse("google.navigation:q= " + museum.name + museumAddress);
+                Uri gmmIntentUri = Uri.parse("google.navigation:q= " + museum.name + address);
                 intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                 intent.setPackage("com.google.android.apps.maps");
                 startActivity(intent);
@@ -202,7 +204,7 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                     try {
                         Random rand = new Random();
 
-                        int  n = rand.nextInt(5) + 1;
+                        int n = rand.nextInt(5) + 1;
                         final PlacePhotoMetadata placePhotoMetadata = photoMetadata.get(n);
                         placePhotoMetadata.getPhoto(mGoogleApiClient).setResultCallback(new ResultCallback<PlacePhotoResult>() {
                             @Override
