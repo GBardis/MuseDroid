@@ -64,10 +64,10 @@ public class Fragment1 extends Fragment {
         }
         ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
-            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+            public void onItemClicked(RecyclerView recyclerView, int position, View view) {
                 // do it
                 MuseumAdapter adapter = (MuseumAdapter) recyclerView.getAdapter();
-                intent = new Intent(v.getContext(), MuseumShow.class);
+                intent = new Intent(view.getContext(), MuseumShow.class);
                 intent.putExtra("museum", adapter.getItem(position));
                 startActivity(intent);
             }

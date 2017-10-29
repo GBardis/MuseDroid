@@ -1,15 +1,22 @@
 package com.example.musedroid.musedroid;
 
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -31,7 +38,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Random;
 
-public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, Listener {
     private static final String RATING = "Museum rating";
     private static final String DESCRIPTION = "museum description";
     private static final String TITLE = "museum title";
@@ -47,12 +54,27 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
     Bitmap museumImage;
     RatingBar ratingBar;
     private GoogleApiClient mGoogleApiClient;
+    Context context;
+    //NFC
+    public static final String TAG = MainActivity.class.getSimpleName();
+
+    private EditText mEtMessage;
+    private Button mBtWrite;
+    private Button mBtRead;
+
+    //private NFCWriteFragment mNfcWriteFragment;
+    private NFCReadFragment mNfcReadFragment;
+
+    private boolean isDialogDisplayed = false;
+
+    private NfcAdapter mNfcAdapter;
+    private boolean isNfcSupported = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_museum_show);
-
+        context = this;
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
@@ -90,10 +112,19 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
         mFabQr.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                intent = new Intent(MuseumShow.this, QrShowActivity.class);
-                intent.putExtra("flag", false);
-                intent.putExtra("museumId", museum.key);
-                startActivity(intent);
+//                intent = new Intent(MuseumShow.this, QrShowActivity.class);
+//                intent.putExtra("flag", false);
+//                intent.putExtra("museumId", museum.key);
+//                startActivity(intent);
+                //TODO: bring all the upper code back!
+                //OLD NFC ACTIVITY
+//                intent = new Intent(MuseumShow.this,NfcScanActivity.class);
+//                startActivity(intent);
+                if (isNfcSupported) {
+                    showReadFragment();
+                } else {
+                    Toast.makeText(context, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -115,6 +146,27 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
                 startActivity(intent);
             }
         });
+
+        //NFC
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        if (mNfcAdapter == null) {
+            // Stop here, we definitely need NFC
+            Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
+            isNfcSupported = false;
+
+        }
+        try {
+            if (!mNfcAdapter.isEnabled()) {
+                Toast.makeText(this, "NFC is disabled.", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "NFC is enabled.", Toast.LENGTH_LONG).show();
+            }
+
+            handleIntent(getIntent());
+        } catch (Exception ignore) {
+
+        }
     }
 
     @Override
@@ -267,5 +319,75 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
         int duration = Toast.LENGTH_SHORT;
         Toast toast = Toast.makeText(context, message, duration);
         toast.show();
+    }
+
+    //NFC
+    private void showReadFragment() {
+
+        mNfcReadFragment = (NFCReadFragment) getFragmentManager().findFragmentByTag(NFCReadFragment.TAG);
+
+        if (mNfcReadFragment == null) {
+
+            mNfcReadFragment = NFCReadFragment.newInstance();
+        }
+        mNfcReadFragment.show(getFragmentManager(), NFCReadFragment.TAG);
+
+    }
+
+    @Override
+    public void onDialogDisplayed() {
+
+        isDialogDisplayed = true;
+    }
+
+    @Override
+    public void onDialogDismissed() {
+
+        isDialogDisplayed = false;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter tagDetected = new IntentFilter(NfcAdapter.ACTION_TAG_DISCOVERED);
+        IntentFilter ndefDetected = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+        IntentFilter techDetected = new IntentFilter(NfcAdapter.ACTION_TECH_DISCOVERED);
+        IntentFilter[] nfcIntentFilter = new IntentFilter[]{techDetected, tagDetected, ndefDetected};
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(
+                this, 0, new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+        if (mNfcAdapter != null)
+            mNfcAdapter.enableForegroundDispatch(this, pendingIntent, nfcIntentFilter, null);
+
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mNfcAdapter != null)
+            mNfcAdapter.disableForegroundDispatch(this);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
+        Log.d(TAG, "onNewIntent: " + intent.getAction());
+
+        if (tag != null) {
+            Toast.makeText(this, getString(R.string.message_tag_detected), Toast.LENGTH_SHORT).show();
+            Ndef ndef = Ndef.get(tag);
+
+            if (isDialogDisplayed) {
+
+                mNfcReadFragment = (NFCReadFragment) getFragmentManager().findFragmentByTag(NFCReadFragment.TAG);
+                mNfcReadFragment.onNfcDetected(ndef);
+            }
+        }
+    }
+
+    private void handleIntent(Intent intent) {
+        // TODO: handle Intent
     }
 }

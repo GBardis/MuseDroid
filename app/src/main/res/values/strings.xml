@@ -130,5 +130,18 @@
     <string name="navigation_sub_items">Sub items</string>
     <string name="navigation_dummy_item_1">Dummy item 1</string>
     <string name="navigation_dummy_item_2">Dummy item 2</string>
+    <string name="title_activity_nfc_scan">NfcScanActivity</string>
+    <string name="explanation" />
+
+    <!--NFC -->
+    <string name="message_write_error">Error Writing Message !</string>
+    <string name="message_write_success">Successfully written to Tag !</string>
+    <string name="message_write_progress">Writing to Tag..</string>
+    <string name="message_tag_detected">NFC Tag Detected !</string>
+    <string name="message_read_tag">Read from NFC Tag</string>
+    <string name="message_write_tag">Write to NFC Tag</string>
+    <string name="message_tap_tag">Tap the NFC Tag to your device !</string>
+    <string name="hint_message">Message</string>
+
 </resources>
 
