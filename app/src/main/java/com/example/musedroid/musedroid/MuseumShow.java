@@ -15,15 +15,12 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.PlaceBufferResponse;
@@ -58,10 +55,6 @@ public class MuseumShow extends AppCompatActivity implements Listener {
     RatingBar ratingBar;
     Context context;
     GeoDataClient mGeoDataClient;
-    private GoogleApiClient mGoogleApiClient;
-    private EditText mEtMessage;
-    private Button mBtWrite;
-    private Button mBtRead;
     //private NFCWriteFragment mNfcWriteFragment;
     private NFCReadFragment mNfcReadFragment;
     private boolean isDialogDisplayed = false;
