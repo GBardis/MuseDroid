@@ -23,22 +23,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.GeoDataClient;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.PlaceBufferResponse;
 import com.google.android.gms.location.places.PlacePhotoMetadata;
 import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
-import com.google.android.gms.location.places.PlacePhotoMetadataResult;
-import com.google.android.gms.location.places.PlacePhotoResult;
+import com.google.android.gms.location.places.PlacePhotoMetadataResponse;
+import com.google.android.gms.location.places.PlacePhotoResponse;
 import com.google.android.gms.location.places.Places;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
 import java.util.Random;
 
-public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, Listener {
+public class MuseumShow extends AppCompatActivity implements Listener {
     //NFC
     public static final String TAG = MainActivity.class.getSimpleName();
     private static final String RATING = "Museum rating";
@@ -56,16 +57,14 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
     Bitmap museumImage;
     RatingBar ratingBar;
     Context context;
+    GeoDataClient mGeoDataClient;
     private GoogleApiClient mGoogleApiClient;
     private EditText mEtMessage;
     private Button mBtWrite;
     private Button mBtRead;
-
     //private NFCWriteFragment mNfcWriteFragment;
     private NFCReadFragment mNfcReadFragment;
-
     private boolean isDialogDisplayed = false;
-
     private NfcAdapter mNfcAdapter;
     private boolean isNfcSupported = true;
 
@@ -74,11 +73,8 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_museum_show);
         context = this;
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Places.GEO_DATA_API)
-                .addApi(Places.PLACE_DETECTION_API)
-                .enableAutoManage(this, this)
-                .build();
+        mGeoDataClient = Places.getGeoDataClient(this, null);
+
 
         intent = getIntent();
 
@@ -172,13 +168,13 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
 
     @Override
     protected void onStart() {
-        mGoogleApiClient.connect();
+
         super.onStart();
     }
 
     @Override
     protected void onStop() {
-        mGoogleApiClient.disconnect();
+
         super.onStop();
     }
 
@@ -247,72 +243,71 @@ public class MuseumShow extends AppCompatActivity implements GoogleApiClient.OnC
     }
 
     private void getPhotos(final String placeId) {
-
-        Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, placeId).setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
-
+        final Task<PlacePhotoMetadataResponse> photoMetadataResponse = mGeoDataClient.getPlacePhotos(placeId);
+        photoMetadataResponse.addOnCompleteListener(new OnCompleteListener<PlacePhotoMetadataResponse>() {
             @Override
-            public void onResult(@NonNull final PlacePhotoMetadataResult placePhotoMetadataResult) {
-                if (placePhotoMetadataResult.getStatus().isSuccess()) {
-                    PlacePhotoMetadataBuffer photoMetadata = placePhotoMetadataResult.getPhotoMetadata();
+            public void onComplete(@NonNull Task<PlacePhotoMetadataResponse> task) {
+                if (task.isSuccessful()) {
+                    // Get the list of photos.
+                    PlacePhotoMetadataResponse photos = task.getResult();
+                    // Get the PlacePhotoMetadataBuffer (metadata for all of the photos).
+                    PlacePhotoMetadataBuffer photoMetadataBuffer = photos.getPhotoMetadata();
                     try {
                         Random rand = new Random();
 
                         int n = rand.nextInt(5) + 1;
-                        final PlacePhotoMetadata placePhotoMetadata = photoMetadata.get(n);
-                        placePhotoMetadata.getPhoto(mGoogleApiClient).setResultCallback(new ResultCallback<PlacePhotoResult>() {
+                        // Get the first photo in the list.
+                        PlacePhotoMetadata photoMetadata = photoMetadataBuffer.get(n);
+                        // Get the attribution text.
+                        CharSequence attribution = photoMetadata.getAttributions();
+                        // Get a full-size bitmap for the photo.
+                        Task<PlacePhotoResponse> photoResponse = mGeoDataClient.getPhoto(photoMetadata);
+                        photoResponse.addOnCompleteListener(new OnCompleteListener<PlacePhotoResponse>() {
                             @Override
-                            public void onResult(@NonNull PlacePhotoResult placePhotoResult) {
-                                museumImage = placePhotoResult.getBitmap();
+                            public void onComplete(@NonNull Task<PlacePhotoResponse> task) {
+                                PlacePhotoResponse photo = task.getResult();
+                                museumImage = photo.getBitmap();
                                 toolbarImage.setImageBitmap(museumImage);
                             }
                         });
                     } catch (IllegalStateException ex) {
-                        photoMetadata.release();
+                        photoMetadataBuffer.release();
                     }
-
-                    photoMetadata.release();
+                    photoMetadataBuffer.release();
                 } else {
                     createToastMessages("No Photos Found , Check Internet Access");
                 }
             }
         });
-
     }
 
     private void getPlace(final String placeId) {
-        mGoogleApiClient.connect();
-        Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId)
-                .setResultCallback(new ResultCallback<PlaceBuffer>() {
-                    public static final String TAG = "TAG";
 
-                    @Override
-                    public void onResult(@NonNull PlaceBuffer places) {
-                        if (places.getStatus().isSuccess() && places.getCount() > 0) {
-                            final Place myPlace = places.get(0);
-                            final float rating = myPlace.getRating();
-                            address = String.valueOf(myPlace.getAddress());
-                            website = String.valueOf(myPlace.getWebsiteUri());
-                            phoneNumber = String.valueOf(myPlace.getPhoneNumber());
+        mGeoDataClient.getPlaceById(placeId).addOnCompleteListener(new OnCompleteListener<PlaceBufferResponse>() {
+            @Override
+            public void onComplete(@NonNull Task<PlaceBufferResponse> task) {
+                if (task.isSuccessful()) {
+                    PlaceBufferResponse places = task.getResult();
+                    Place myPlace = places.get(0);
+                    float rating = myPlace.getRating();
+                    address = String.valueOf(myPlace.getAddress());
+                    website = String.valueOf(myPlace.getWebsiteUri());
+                    phoneNumber = String.valueOf(myPlace.getPhoneNumber());
 
-                            museumPhoneNumber.setText(phoneNumber);
-                            museumWebsite.setText(website);
-                            museumAddress.setText(address);
-                            museumAddress.setMaxLines(4);
+                    museumPhoneNumber.setText(phoneNumber);
+                    museumWebsite.setText(website);
+                    museumAddress.setText(address);
+                    museumAddress.setMaxLines(4);
 
-                            ratingBar.setNumStars(5);
-                            ratingBar.setRating(rating);
-                            Log.i(TAG, "Place found: " + myPlace.getName());
-                        } else {
-                            createToastMessages("Museum Data Not Found, Check Internet Access");
-                        }
-                        places.release();
-                    }
-                });
-    }
+                    ratingBar.setNumStars(5);
+                    ratingBar.setRating(rating);
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        createToastMessages(connectionResult.toString());
+                    places.release();
+                } else {
+                    createToastMessages("Museum Data Not Found, Check Internet Access");
+                }
+            }
+        });
     }
 
     private void createToastMessages(String message) {
