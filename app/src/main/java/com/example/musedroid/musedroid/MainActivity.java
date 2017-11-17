@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         tabLayout.removeAllTabs();
         tabLayout.addTab(tabLayout.newTab().setText(resources.getString(R.string.tab_layout_all_museums)));
         tabLayout.addTab(tabLayout.newTab().setText(resources.getString(R.string.tab_layout_near_by_museum)));
-        tabLayout.addTab(tabLayout.newTab().setText(resources.getString(R.string.tab_layout_visited)));
+        //tabLayout.addTab(tabLayout.newTab().setText(resources.getString(R.string.tab_layout_visited)));
         if (tabIndex != -1) {
             TabLayout.Tab tab = tabLayout.getTabAt(tabIndex);
             assert tab != null;
