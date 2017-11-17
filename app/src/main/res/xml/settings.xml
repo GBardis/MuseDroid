@@ -8,11 +8,11 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_update_setting">
-        <CheckBoxPreference
-            android:defaultValue="false"
-            android:key="prefSendReport"
-            android:summary="@string/pref_send_report_summary"
-            android:title="@string/pref_send_report" />
+        <!--<CheckBoxPreference-->
+            <!--android:defaultValue="false"-->
+            <!--android:key="prefSendReport"-->
+            <!--android:summary="@string/pref_send_report_summary"-->
+            <!--android:title="@string/pref_send_report" />-->
 
         <ListPreference
             android:defaultValue="en"

@@ -189,9 +189,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 case R.id.Settings:
                     item.setTitle(resources.getString(R.string.settings));
                     break;
-                case R.id.Info:
-                    item.setTitle(resources.getString(R.string.info));
-                    break;
+//                case R.id.Info:
+//                    item.setTitle(resources.getString(R.string.info));
+//                    break;
             }
         }
     }
