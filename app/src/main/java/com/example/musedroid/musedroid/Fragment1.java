@@ -1,7 +1,10 @@
 package com.example.musedroid.musedroid;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -65,14 +69,33 @@ public class Fragment1 extends Fragment {
         ItemClickSupport.addTo(mRecyclerView).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View view) {
-                // do it
-                MuseumAdapter adapter = (MuseumAdapter) recyclerView.getAdapter();
-                intent = new Intent(view.getContext(), MuseumShow.class);
-                intent.putExtra("museum", adapter.getItem(position));
-                startActivity(intent);
+                if (isNetworkAvailable()) {
+                    MuseumAdapter adapter = (MuseumAdapter) recyclerView.getAdapter();
+                    intent = new Intent(view.getContext(), MuseumShow.class);
+                    intent.putExtra("museum", adapter.getItem(position));
+                    startActivity(intent);
+                } else {
+                    createToastMessages("Check Internet Access");
+                }
             }
         });
     }
+
+    private void createToastMessages(String message) {
+        Context context = getActivity().getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, message, duration);
+        toast.show();
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert connectivityManager != null;
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
