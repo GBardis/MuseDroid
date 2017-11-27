@@ -39,8 +39,7 @@ public class QrShowActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_show);
-        cameraView = (SurfaceView) findViewById(R.id.cameraView);
-        qrInfo = (TextView) findViewById(R.id.qrTextView);
+        cameraView = findViewById(R.id.cameraView);
         ActivityCompat.requestPermissions(QrShowActivity.this, perm, permissionCode);
         context = this;
         Intent i = getIntent();
@@ -103,16 +102,12 @@ public class QrShowActivity extends AppCompatActivity {
 
                     // Vibrate for 500 milliseconds
                     v.vibrate(500);
-                    qrInfo.post(new Runnable() {    // Use the post method of the TextView
-                        // Update the TextView
-                        public void run() {
-                            qrInfo.setText(barcodes.valueAt(0).displayValue);
-                            intent = new Intent(QrShowActivity.this, ExhibitShowActivity.class);
-                            intent.putExtra("exhibitId", barcodes.valueAt(0).displayValue);
-                            startActivity(intent);
-                            finish();
-                        }
-                    });
+
+                    intent = new Intent(QrShowActivity.this, ExhibitShowActivity.class);
+                    intent.putExtra("exhibitId", barcodes.valueAt(0).displayValue);
+                    startActivity(intent);
+                    finish();
+
                     foundFlag = true;
                 }
             }
@@ -142,16 +137,8 @@ public class QrShowActivity extends AppCompatActivity {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-
                 }
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 }

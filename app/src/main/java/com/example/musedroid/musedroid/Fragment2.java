@@ -8,6 +8,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -145,14 +147,31 @@ public class Fragment2 extends Fragment implements LocationListener, GoogleApiCl
             @Override
             public void onItemClicked(RecyclerView recyclerView, int position, View v) {
                 // do it
+                if (isNetworkAvailable()) {
                 MuseumAdapter adapter = (MuseumAdapter) recyclerView.getAdapter();
                 intent = new Intent(v.getContext(), MuseumShow.class);
                 intent.putExtra("museum", adapter.getItem(position));
                 startActivity(intent);
+                }else{
+                    createToastMessages("Check Internet Access");
+                }
             }
         });
     }
+    private void createToastMessages(String message) {
+        Context context = getActivity().getApplicationContext();
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, message, duration);
+        toast.show();
+    }
 
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert connectivityManager != null;
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

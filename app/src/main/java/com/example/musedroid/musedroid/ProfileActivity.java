@@ -52,7 +52,8 @@ public class ProfileActivity extends AppCompatActivity {
         btnChangePassword = findViewById(R.id.change_password_button);
         changeEmail = findViewById(R.id.changeEmail);
         changePassword = findViewById(R.id.changePass);
-
+        sendEmail = findViewById(R.id.send);
+        remove = findViewById(R.id.remove);
 
         oldEmail = findViewById(R.id.old_email);
         newEmail = findViewById(R.id.new_email);
@@ -65,6 +66,8 @@ public class ProfileActivity extends AppCompatActivity {
         newPassword.setVisibility(View.GONE);
         changeEmail.setVisibility(View.GONE);
         changePassword.setVisibility(View.GONE);
+        sendEmail.setVisibility(View.GONE);
+        remove.setVisibility(View.GONE);
 
         progressBar = findViewById(R.id.progressBar);
 
@@ -81,6 +84,8 @@ public class ProfileActivity extends AppCompatActivity {
                 newPassword.setVisibility(View.GONE);
                 changeEmail.setVisibility(View.VISIBLE);
                 changePassword.setVisibility(View.GONE);
+                sendEmail.setVisibility(View.GONE);
+                remove.setVisibility(View.GONE);
             }
         });
 
@@ -119,6 +124,8 @@ public class ProfileActivity extends AppCompatActivity {
                 newPassword.setVisibility(View.VISIBLE);
                 changeEmail.setVisibility(View.GONE);
                 changePassword.setVisibility(View.VISIBLE);
+                sendEmail.setVisibility(View.GONE);
+                remove.setVisibility(View.GONE);
             }
         });
 
@@ -177,7 +184,10 @@ public class ProfileActivity extends AppCompatActivity {
                 }
             }
         });
+
+
     }
+
     //sign out method
 
     public void signOut() {
